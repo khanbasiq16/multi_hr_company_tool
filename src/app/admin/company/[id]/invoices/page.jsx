@@ -8,30 +8,11 @@ import React, { use, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 const page = () => {
-
     const dispatach = useDispatch();
 
-
-      const [loading, setLoading] = useState(true);
     //   const { invoice } = useSelector((state) => state.User);
     
-      useEffect(() => {
-        const fetchclients = async () => {
-          try {
-            const res = await axios.get(`/api/get-all-invoice`);
-
-            dispatach(getallinvoice(res.data?.invoices || []));
-
-          } catch (error) {
-            console.error("Error fetching employees:", error);
-            setExpense([]); 
-          } finally {
-            setLoading(false);
-          }
-        };
     
-        fetchclients();
-      }, []);
 
   return (
     <>

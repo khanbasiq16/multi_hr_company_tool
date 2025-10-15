@@ -8,7 +8,6 @@ const InvoiceSlice = createSlice({
   name: "invoice",
   initialState,
   reducers: {
-  
     getallinvoice: (state, action) => {
       state.invoices = action.payload;
     },

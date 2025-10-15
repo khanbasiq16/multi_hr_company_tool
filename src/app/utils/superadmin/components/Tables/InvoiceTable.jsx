@@ -31,12 +31,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 
-export const InvoiceTable = ({ invoices }) => {
+export const InvoiceTable = ({ invoices , slug }) => {
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
+
+
 
   const columns = [
     {
@@ -60,44 +64,56 @@ export const InvoiceTable = ({ invoices }) => {
       enableHiding: false,
     },
     {
-      accessorKey: "expenseName",
-      header: "Expense Name",
+      accessorKey: "invoiceNumber",
+      header: "Invoice Number",
       cell: ({ row }) => (
         <div className="capitalize whitespace-nowrap overflow-hidden text-ellipsis">
-          {row.getValue("expenseName")}
+          {row.getValue("invoiceNumber")}
         </div>
       ),
     },
     {
-      accessorKey: "price",
+      accessorKey:"totalAmount",
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="whitespace-nowrap"
         >
-          Price
+          Total Amount
           <ArrowUpDown />
         </Button>
       ),
       cell: ({ row }) => (
-        <div className="whitespace-nowrap">Rs. {row.getValue("price")}</div>
+        <div className="whitespace-nowrap">$ {row.getValue("totalAmount")}</div>
       ),
     },
-    {
-      accessorKey: "description",
-      header: "Description",
-      cell: ({ row }) => (
-        <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
-          {row.getValue("description")}
-        </div>
-      ),
-    },
+   {
+  accessorKey: "status",
+  header: "Status",
+  cell: ({ row }) => {
+    const status = row.getValue("status");
+
+    const badgeClasses = {
+      Draft: "bg-red-100 text-red-600 border border-red-300 px-2 py-1 rounded-md text-sm",
+      Sent: "bg-blue-100 text-blue-600 border border-blue-300 px-2 py-1 rounded-md text-sm",
+      Paid: "bg-green-100 text-green-600 border border-green-300 px-2 py-1 rounded-md text-sm",
+      Default: "bg-gray-100 text-gray-600 border border-gray-300 px-2 py-1 rounded-md text-sm",
+    };
+
+    return (
+      <span className={badgeClasses[status] || badgeClasses.Default}>
+        {status}
+      </span>
+    );
+  },
+}
+    ,
     {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const expense = row.original;
+        const invoice = row.original;
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -110,16 +126,18 @@ export const InvoiceTable = ({ invoices }) => {
 
               <DropdownMenuItem
                 onClick={() =>
-                  navigator.clipboard.writeText(expense.expenseName)
+                  navigator.clipboard.writeText(invoice.invoiceLink)
                 }
               >
-                Copy Name
+                Copy Invoice Link
               </DropdownMenuItem>
 
               <DropdownMenuSeparator />
 
-              <DropdownMenuItem>View Details</DropdownMenuItem>
-              <DropdownMenuItem>Edit Expense</DropdownMenuItem>
+              <DropdownMenuItem >
+  <Link href={`/admin/company/${slug}/invoices/${invoice.id}/invoice-details`}>View Details</Link>
+</DropdownMenuItem>
+              <DropdownMenuItem>Edit Invoice</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );

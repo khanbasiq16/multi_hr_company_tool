@@ -27,7 +27,7 @@ export async function POST(req) {
       salesTarget,
     } = body;
 
-    // ✅ Ensure companyIds is an array
+  
     if (!Array.isArray(companyIds) || companyIds.length === 0) {
       return NextResponse.json(
         { success: false, error: "At least one company must be selected" },

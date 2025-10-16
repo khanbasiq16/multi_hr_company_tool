@@ -1,9 +1,7 @@
 import { db } from "@/lib/firebase";
 import {
   collection,
-  addDoc,
   getDocs,
-  serverTimestamp,
   setDoc,
   doc,
 } from "firebase/firestore";
@@ -13,7 +11,14 @@ import { v4 as uuidv4 } from "uuid";
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { departmentName, description } = body;
+    const {
+      departmentName,
+      description,
+      checkInTime,
+      checkOutTime,
+      graceTime,
+    } = body;
+
 
     if (!departmentName) {
       return NextResponse.json(
@@ -28,17 +33,20 @@ export async function POST(req) {
       departmentId,
       departmentName,
       description: description || "",
+      checkInTime: checkInTime || "",
+      checkOutTime: checkOutTime || "",
+      graceTime: graceTime || "",
       createdAt: Date.now(),
     };
 
-    await  setDoc(doc(db, "departments", departmentId), newDepartment);
+    await setDoc(doc(db, "departments", departmentId), newDepartment);
 
     const querySnapshot = await getDocs(collection(db, "departments"));
     const departments = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
-    
+
 
     return NextResponse.json({
       success: true,

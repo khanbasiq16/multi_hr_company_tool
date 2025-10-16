@@ -37,51 +37,57 @@ const Companydailog = () => {
   };
 
   const formHandler = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
+  try {
+    const formData = new FormData(e.target);
 
-
-    try {
-
-      if(!e.target.name.value || !e.target.companyPhoneNumber.value || !e.target.companyAddress.value || !e.target.companywebsite.value){
-        toast.error("All fields is required");
-        setLoading(false);
-        return;
-      }
-      const formData = new FormData();
-      formData.append("name", e.target.name.value);
-      formData.append("companyAddress", e.target.companyAddress.value);
-      formData.append("companyPhoneNumber", e.target.companyPhoneNumber.value);
-      formData.append("companywebsite", e.target.companywebsite.value);
-      if (file) formData.append("file", file);
-
-      const res = await axios.post("/api/create-company", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      const data = res.data;
-
-      if (data.success) {
-        toast.success("Company Created Successfully");
-        e.target.reset();
-        setFile(null);
-        setPreview(null);
-        dispatch(createcompany(data.companies));
-        
-      } else {
-        alert("❌ " + data.error);
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Error creating company");
-    } finally {
-      setLoading(false);
-      setOpen(false); 
+    for (let [key, value] of formData.entries()) {
+      console.log(key+" : "+value);
     }
-  };
+
+    if (
+      !formData.get("name") ||
+      !formData.get("companyPhoneNumber") ||
+      !formData.get("companyAddress") ||
+      !formData.get("companywebsite")
+    ) {
+      toast.error("All fields are required");
+      setLoading(false);
+      return;
+    }
+
+    if (file) {
+      formData.append("file", file);
+    }
+
+    const res = await axios.post("/api/create-company", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    const data = res.data;
+
+    if (data.success) {
+      toast.success("Company Created Successfully");
+      e.target.reset();
+      setFile(null);
+      setPreview(null);
+      dispatch(createcompany(data.companies));
+    } else {
+      alert("❌ " + data.error);
+    }
+
+
+  } catch (error) {
+    toast.error(error.message);
+     setFile(null);
+      setPreview(null);
+  } finally {
+    setLoading(false);
+    setOpen(false);
+  }
+};
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -101,40 +107,51 @@ const Companydailog = () => {
           {/* Left Column */}
           <div className="space-y-4">
             <div>
-              <Label htmlFor="name">Company Name</Label>
+              <Label htmlFor="name">Company Name <span className="text-red-500">*</span></Label>
               <Input className="mt-2" id="name" name="name" placeholder="Enter company name" required />
             </div>
 
             <div>
-              <Label htmlFor="companyAddress">Company Address</Label>
+              <Label htmlFor="companyAddress">Company Address <span className="text-red-500">*</span></Label>
               <Input className="mt-2" id="companyAddress" name="companyAddress" placeholder="Enter company address" required/>
             </div>
 
             <div>
-              <Label htmlFor="companyPhoneNumber">Company Phone</Label>
-              <Input className="mt-2" id="companyPhoneNumber" name="companyPhoneNumber" placeholder="Enter phone number" required/>
+              <Label htmlFor="companyphoneNumber">Company Phone <span className="text-red-500">*</span></Label>
+              <Input className="mt-2" id="companyphoneNumber" name="companyPhoneNumber" placeholder="Enter phone number" required/>
             </div>
+
+              <div>
+              <Label htmlFor="companyfacebook">Company Facebook Account</Label>
+              <Input className="mt-2" id="companyfacebook" name="companyFacebook" placeholder="https://www.facebook.com/" />
+            </div>
+
             <div>
-              <Label htmlFor="companyPhoneNumber">Company Email</Label>
-              <Input className="mt-2" id="companyPhoneNumber" name="companyPhoneNumber" placeholder="Enter phone number" />
+              <Label htmlFor="companylinkedin">Company Linkedin Account</Label>
+              <Input className="mt-2" id="companylinkedin" name="companyLinkedin" placeholder="https://www.linkedin.com/" />
             </div>
+
             <div>
-              <Label htmlFor="companyPhoneNumber">Company Email Password</Label>
-              <Input className="mt-2" type="password" id="companyPhoneNumber" name="companyPhoneNumber" placeholder="Enter phone number" />
+              <Label htmlFor="companyinstagram">Company Instagram Account</Label>
+              <Input className="mt-2" id="companyinstagram" name="companyInstagram" placeholder="https://www.instagram.com/" />
             </div>
+
+          
            
           </div>
 
           {/* Right Column */}
           <div className="space-y-4">
             <div>
-              <Label htmlFor="file">Company Logo</Label>
+              <Label htmlFor="file">Company Logo <span className="text-red-500">*</span></Label>
               <Input
                 type="file"
                 className="mt-2"
                 id="file"
                 accept="image/*"
                 onChange={handleFileChange}
+
+                required
               />
 
               {/* ✅ Image Preview */}
@@ -150,18 +167,27 @@ const Companydailog = () => {
 
             
             <div>
-              <Label htmlFor="companyWebsite">Company Website</Label>
+              <Label htmlFor="companyWebsite">Company Website <span className="text-red-500">*</span></Label>
               <Input className="mt-2" id="companyWebsite" name="companywebsite" placeholder="https://example.com/" required/>
             </div>
 
+  <div>
+              <Label htmlFor="companyEmail">Company Email</Label>
+              <Input className="mt-2" id="companyEmail" name="companyemail" placeholder="Enter Email" />
+            </div>
+            <div>
+              <Label htmlFor="companyEmailpassword">Company Email Password</Label>
+              <Input className="mt-2" type="password" id="companyEmailpassword" name="companyemailpassword" placeholder="Enter Password" />
+            </div>
+          
 
              <div>
-              <Label htmlFor="companyPhoneNumber">Company Email HOST</Label>
-              <Input className="mt-2" id="companyPhoneNumber" name="companyPhoneNumber" placeholder="Enter phone number" />
+              <Label htmlFor="companyEmailhost">Company Email HOST</Label>
+              <Input className="mt-2" id="companyEmailhost" name="companyemailhost" placeholder="Enter Email Host" />
             </div>
              <div>
-              <Label htmlFor="companyPhoneNumber">Company SMTP HOST</Label>
-              <Input className="mt-2" id="companyPhoneNumber" name="companyPhoneNumber" placeholder="Enter phone number" />
+              <Label htmlFor="companySmtphost">Company SMTP HOST</Label>
+              <Input className="mt-2" id="companySmtphost" name="companysmtphost" placeholder="Enter SMTP Host" />
             </div>
 
           

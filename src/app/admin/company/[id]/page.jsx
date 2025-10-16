@@ -1,12 +1,17 @@
 "use client";
+import EditCompanyDialog from "@/app/utils/superadmin/components/dialog/EditCompanyDialog";
 import SuperAdminlayout from "@/app/utils/superadmin/layout/SuperAdmin";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import axios from "axios";
+import { Pencil } from "lucide-react";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const Page = () => {
   const { id } = useParams();
   const [company, setCompany] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     const getCompany = async () => {
@@ -37,7 +42,6 @@ const Page = () => {
   return (
     <SuperAdminlayout>
       <div className="max-w-5xl mx-auto p-8">
-        {/* Top Section: Logo & Name */}
         <div className="flex items-center gap-6 bg-white shadow-lg rounded-2xl p-6 mb-8 border border-gray-100">
           <img
             src={company.companyLogo}
@@ -45,9 +49,7 @@ const Page = () => {
             className="w-24 h-24 object-contain rounded-xl shadow-md border"
           />
           <div>
-            <h1 className="text-3xl font-bold text-gray-800">
-              {company.name}
-            </h1>
+            <h1 className="text-3xl font-bold text-gray-800">{company.name}</h1>
             <span
               className={`inline-block mt-2 px-4 py-1 rounded-full text-sm font-semibold ${
                 company.status === "active"
@@ -56,30 +58,65 @@ const Page = () => {
               }`}
             >
               {company.status
-  ? company.status.charAt(0).toUpperCase() + company.status.slice(1)
-  : ""}
+                ? company.status.charAt(0).toUpperCase() +
+                  company.status.slice(1)
+                : ""}
             </span>
+          </div>
+
+          <div className="w-full   flex justify-end">
+            <Button
+              className="bg-[#5965AB] text-white"
+              onClick={() => setOpenDialog(true)}
+            >
+              <Pencil /> Edit
+            </Button>
           </div>
         </div>
 
-        {/* Details Section */}
+        <EditCompanyDialog
+          company={company}
+          open={openDialog}
+          setOpen={setOpenDialog}
+        />
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <VIPCard title="Company Slug" value={company.companyslug} />
           <VIPCard title="ID" value={company.companyId} />
           <VIPCard title="Website" value={company.companyWebsite} isLink />
           <VIPCard title="Phone Number" value={company.companyPhoneNumber} />
           <VIPCard title="Address" value={company.companyAddress} />
-          <VIPCard
-            title="Timezone"
-            value={company.timezone}
-          />
+          <VIPCard title="Email Address" value={company.companyemail} />
+          <VIPCard title="Timezone" value={company.timezone} />
           <VIPCard
             title="Created At"
             value={new Date(company.createdAt).toLocaleString()}
           />
+          
         </div>
 
-        {/* Arrays Section */}
+          <div className=" shadow-lg rounded-xl p-5 mt-4 border border-gray-100">
+            <Label className={"text-sm font-semibold text-gray-500 mb-1 uppercase tracking-wider"}>Social Links</Label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
+          <VIPCard
+            title="Facebook Account"
+            value={company.companyFacebook}
+            isLink
+          />
+          <VIPCard
+            title="Instagram Account"
+            value={company.companyInstagram}
+            isLink
+          />
+
+          <VIPCard
+            title="Linkedin Account"
+            value={company.companyLinkedin}
+            isLink
+          />
+        </div>
+          </div>
+
         <div className="mt-10 space-y-6">
           <VIPArray title="Assigned Invoices" data={company.assignedInvoices} />
           <VIPArray title="Assign Employee" data={company.AssignEmployee} />
@@ -93,8 +130,6 @@ const Page = () => {
 };
 
 export default Page;
-
-// -------- VIP Reusable Components ----------
 
 const VIPCard = ({ title, value, isLink }) => (
   <div className="bg-white shadow-lg rounded-xl p-5 border border-gray-100">

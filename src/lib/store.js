@@ -10,6 +10,7 @@ import EmployeeReducer from "../features/Slice/EmployeeSlice";
 import ExpenseReducer from "../features/Slice/ExpenseSlice";
 import ClientReducer from "../features/Slice/ClientSlice";
 import InvoiceReducer from "../features/Slice/InvoiceSlice";
+import IpwhiteReducer from "../features/Slice/IpwhiteSlice";
 
 const rootReducer = combineReducers({
   User: UserReducer,
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
   Employee:EmployeeReducer,
   Expense:ExpenseReducer,
   Client:ClientReducer,
-  Invoice:InvoiceReducer
+  Invoice:InvoiceReducer,
+  Ipwhitelist:IpwhiteReducer,
 });
 
 

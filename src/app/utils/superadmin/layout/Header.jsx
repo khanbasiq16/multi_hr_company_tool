@@ -1,20 +1,20 @@
-"use client"
-import React from "react"
-import { Input } from "@/components/ui/input"
-import { Bell, Search } from "lucide-react"
-import { usePathname } from "next/navigation"
-import { useSelector } from "react-redux"
+"use client";
+import React from "react";
+import { Input } from "@/components/ui/input";
+import { Bell, Search } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { useSelector } from "react-redux";
 const Header = () => {
-  const pathname = usePathname()
-//   const { user } = useSelector((state) => state.User);
+  const pathname = usePathname();
+  const { user } = useSelector((state) => state.User);
 
-  // same links jese Sidebar me use ho rahe hain
   const links = [
     { href: "/panel", label: "Dashboard" },
     { href: "/companies", label: "Companies" },
-  ]
+  ];
   // current active page ka label find karna
-  const activePage = links.find((link) => link.href === pathname)?.label || "Dashboard"
+  const activePage =
+    links.find((link) => link.href === pathname)?.label || "Dashboard";
   return (
     <div className="pt-6 overflow-hidden z-30 fixed w-full bg-[#F6F6F6]">
       <header className="fixed bg-white px-6 py-3 rounded-xl shadow-sm w-[97%] z-50">
@@ -49,27 +49,26 @@ const Header = () => {
               <span className="absolute top-0 right-0 block w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
             {/* User */}
-          <div className=" hidden lg:flex items-center  gap-3">
-  <div className="leading-tight">
-    <p className="font-medium text-sm flex items-center gap-1">
-      {/* {user?.name} */} Muhammad Basiq Khan
-    {/* {user?.role && ( */}
-  <span className="text-gray-500 text-xs">
-    {/* ({user?.role.charAt(0).toUpperCase() + user?.role.slice(1).replace(/\s+/g, "")}) */}
-    (SuperAdmin)
-  </span>
-{/* )} */}
-
-    </p>
-    {/* <p className="text-xs text-gray-500">{user?.email}</p> */}
-    <p className="text-xs text-gray-500">khanbasiq16@gmail.com</p>
-  </div>
-</div>
-
+            <div className=" hidden lg:flex items-center  gap-3">
+              <div className="leading-tight">
+                <p className="font-medium text-sm flex items-center gap-1">
+                  {user?.name}
+                  {user?.role && (
+                    <span className="text-gray-500 text-xs">
+                      (
+                      {user?.role.charAt(0).toUpperCase() +
+                        user?.role.slice(1).replace(/\s+/g, "")}
+                      )
+                    </span>
+                  )}
+                </p>
+                <p className="text-xs text-gray-500">{user?.email}</p>
+              </div>
+            </div>
           </div>
         </div>
       </header>
     </div>
-  )
-}
-export default Header
+  );
+};
+export default Header;

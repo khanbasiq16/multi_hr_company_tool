@@ -55,7 +55,7 @@ const Clientdialog = () => {
         toast.success("Client Created Successfully");
         e.target.reset();
 
-        dispatch(getallclients(data?.clients));
+        dispatch(getallclients(data?.allclients));
         setOpen(false);
       } else {
         toast.error(data.error || "Failed to create client");

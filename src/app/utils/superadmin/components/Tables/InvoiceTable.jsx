@@ -34,13 +34,11 @@ import {
 import { useParams } from "next/navigation";
 import Link from "next/link";
 
-export const InvoiceTable = ({ invoices , slug }) => {
+export const InvoiceTable = ({ invoices, slug }) => {
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
-
-
 
   const columns = [
     {
@@ -73,7 +71,7 @@ export const InvoiceTable = ({ invoices , slug }) => {
       ),
     },
     {
-      accessorKey:"totalAmount",
+      accessorKey: "totalAmount",
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -88,27 +86,28 @@ export const InvoiceTable = ({ invoices , slug }) => {
         <div className="whitespace-nowrap">$ {row.getValue("totalAmount")}</div>
       ),
     },
-   {
-  accessorKey: "status",
-  header: "Status",
-  cell: ({ row }) => {
-    const status = row.getValue("status");
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.getValue("status");
 
-    const badgeClasses = {
-      Draft: "bg-red-100 text-red-600 border border-red-300 px-2 py-1 rounded-md text-sm",
-      Sent: "bg-blue-100 text-blue-600 border border-blue-300 px-2 py-1 rounded-md text-sm",
-      Paid: "bg-green-100 text-green-600 border border-green-300 px-2 py-1 rounded-md text-sm",
-      Default: "bg-gray-100 text-gray-600 border border-gray-300 px-2 py-1 rounded-md text-sm",
-    };
+        const badgeClasses = {
+          Draft:
+            "bg-red-100 text-red-600 border border-red-300 px-2 py-1 rounded-md text-sm",
+          Sent: "bg-blue-100 text-blue-600 border border-blue-300 px-2 py-1 rounded-md text-sm",
+          Paid: "bg-green-100 text-green-600 border border-green-300 px-2 py-1 rounded-md text-sm",
+          Default:
+            "bg-gray-100 text-gray-600 border border-gray-300 px-2 py-1 rounded-md text-sm",
+        };
 
-    return (
-      <span className={badgeClasses[status] || badgeClasses.Default}>
-        {status}
-      </span>
-    );
-  },
-}
-    ,
+        return (
+          <span className={badgeClasses[status] || badgeClasses.Default}>
+            {status}
+          </span>
+        );
+      },
+    },
     {
       id: "actions",
       enableHiding: false,
@@ -123,21 +122,26 @@ export const InvoiceTable = ({ invoices , slug }) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-              <DropdownMenuItem
-                onClick={() =>
-                  navigator.clipboard.writeText(invoice.invoiceLink)
-                }
-              >
-                Copy Invoice Link
-              </DropdownMenuItem>
+              {invoice.status != "Paid" && (
+                <DropdownMenuItem
+                  onClick={() =>
+                    navigator.clipboard.writeText(invoice.invoiceLink)
+                  }
+                >
+                  Copy Invoice Link
+                </DropdownMenuItem>
+              )}
 
               <DropdownMenuSeparator />
 
-              <DropdownMenuItem >
-  <Link href={`/admin/company/${slug}/invoices/${invoice.id}/invoice-details`}>View Details</Link>
-</DropdownMenuItem>
-              <DropdownMenuItem>Edit Invoice</DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link
+                  href={`/admin/company/${slug}/invoices/${invoice?.invoiceId}/invoice-details`}
+                >
+                  View Details
+                </Link>
+              </DropdownMenuItem>
+              {/* <DropdownMenuItem>Edit Invoice</DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
         );

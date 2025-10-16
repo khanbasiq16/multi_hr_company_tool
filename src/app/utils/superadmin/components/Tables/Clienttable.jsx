@@ -31,8 +31,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import Link from "next/link"
 
-export function Clienttable({clients}) {
+export function Clienttable({clients , slug}) {
 
   const [sorting, setSorting] = React.useState([])
   const [columnFilters, setColumnFilters] = React.useState([])
@@ -133,8 +134,14 @@ const columns = [
               Copy Email
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View Details</DropdownMenuItem>
-            <DropdownMenuItem>Edit Client</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link
+                  href={`/admin/company/${slug}/clients/${client?.id}/client-details`}
+                >
+                  View Details
+                </Link>
+              </DropdownMenuItem>
+            {/* <DropdownMenuItem>Edit Client</DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       );

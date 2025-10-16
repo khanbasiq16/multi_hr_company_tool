@@ -26,12 +26,12 @@ const Invoicedialog = () => {
   const [selectedClient, setSelectedClient] = useState(null);
   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [currentDate, setCurrentDate] = useState("");
-  const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
 
   // const { user } = useSelector((state) => state.User);
   const { id } = useParams();
 
-  const companySlug = id; 
+  const companySlug = id;
 
   const capitalizedCompanyName = id
     ? id.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
@@ -84,7 +84,7 @@ const Invoicedialog = () => {
       data.invoiceDate = currentDate;
       data.Description = data.invoiceDescription || "";
       data.totalAmount = Number(data.invoiceAmount);
-      data.createdBy ="Muhammad Basiq khan";
+      data.createdBy = "Muhammad Basiq khan";
       data.status = "Draft";
       data.user_id = "BOXwDMnBLmYPxK45UGDREL1Gj4563";
 
@@ -99,8 +99,8 @@ const Invoicedialog = () => {
         setSelectedClient(null);
         setSearch("");
 
+
         dispatch(getallinvoice(res.data.assignedInvoices));
-        
       } else toast.error(res.data.error || "Failed to create invoice");
     } catch (error) {
       toast.error("Error creating invoice");
@@ -125,7 +125,8 @@ const Invoicedialog = () => {
               Create New Invoice
             </DialogTitle>
             <p className="text-sm text-gray-500 mt-1">
-              Select a client and enter the total amount to generate a draft invoice.
+              Select a client and enter the total amount to generate a draft
+              invoice.
             </p>
           </DialogHeader>
 
@@ -144,7 +145,9 @@ const Invoicedialog = () => {
                 </span>
               </div>
               <div className="flex flex-col">
-                <Label className="text-xs font-semibold text-gray-600">DATE</Label>
+                <Label className="text-xs font-semibold text-gray-600">
+                  DATE
+                </Label>
                 <span className="text-base font-medium text-gray-800 mt-1">
                   {currentDate}
                 </span>
@@ -173,24 +176,26 @@ const Invoicedialog = () => {
                   setSelectedClient(null);
                 }}
                 placeholder="Search client name..."
-                className="rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                className="rounded-md border-gray-300 shadow-sm "
               />
               {filteredClients.length > 0 && (
                 <div className="absolute z-50 bg-white border border-gray-200 w-full mt-1 rounded-xl shadow-xl max-h-48 overflow-y-auto">
-                  {filteredClients.map((c) => (
-                    <div
-                      key={c.id}
-                      onClick={() => {
-                        setSearch(c.clientName);
-                        setSelectedClient(c);
-                        setFilteredClients([]);
-                      }}
-                      className="px-4 py-3 hover:bg-indigo-50 cursor-pointer text-gray-800 transition duration-150"
-                    >
-                      {c.clientName}
-                      <span className="text-xs text-gray-500 ml-2">({c.clientEmail})</span>
-                    </div>
-                  ))}
+                 {filteredClients.map((c) => (
+  <div
+    key={c.id}
+     onClick={() => {
+      setSearch(c.clientName);
+      setSelectedClient(c);
+      setFilteredClients([]);
+    }}
+    className="px-4 py-3 hover:bg-indigo-50 cursor-pointer text-gray-800 transition duration-150"
+  >
+    {c.clientName}
+    <span className="text-xs text-gray-500 ml-2">
+      ({c.clientEmail})
+    </span>
+  </div>
+))}
                 </div>
               )}
             </div>
@@ -202,10 +207,12 @@ const Invoicedialog = () => {
                   Client: {selectedClient.clientName}
                 </p>
                 <p className="text-xs text-gray-600">
-                  <span className="font-medium">Email:</span> {selectedClient.clientEmail}
+                  <span className="font-medium">Email:</span>{" "}
+                  {selectedClient.clientEmail}
                 </p>
                 <p className="text-xs text-gray-600">
-                  <span className="font-medium">Address:</span> {selectedClient.clientAddress}
+                  <span className="font-medium">Address:</span>{" "}
+                  {selectedClient.clientAddress}
                 </p>
               </div>
             )}
@@ -219,7 +226,7 @@ const Invoicedialog = () => {
                 name="invoiceDescription"
                 rows={3}
                 placeholder="Enter a detailed description of the services rendered (e.g., Monthly Retainership, Project X Development, etc.)"
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 mt-2 outline-none resize-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-sm"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 mt-2 outline-none resize-none  text-sm shadow-sm"
               />
             </div>
 

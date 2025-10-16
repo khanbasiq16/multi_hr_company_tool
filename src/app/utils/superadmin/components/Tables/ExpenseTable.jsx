@@ -119,7 +119,7 @@ export const Expensetable = ({ expenses }) => {
               <DropdownMenuSeparator />
 
               <DropdownMenuItem>View Details</DropdownMenuItem>
-              <DropdownMenuItem>Edit Expense</DropdownMenuItem>
+              {/* <DropdownMenuItem>Edit Expense</DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
         );

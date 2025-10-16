@@ -31,6 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import Link from "next/link"
 
 export function EmployeeTable({employees}) {
 
@@ -151,8 +152,10 @@ const columns = [
               Copy Email
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View Details</DropdownMenuItem>
-            <DropdownMenuItem>Edit Employee</DropdownMenuItem>
+            <DropdownMenuItem >
+              <Link href={`/admin/employees/${emp.employeeId}/viewdetails`}>View Details</Link>
+            </DropdownMenuItem>
+            {/* <DropdownMenuItem>Edit Employee</DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       );

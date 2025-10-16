@@ -32,7 +32,7 @@ const EmailDialog = ({ open, setOpen, onSubmit , client  }) => {
           },
         });
       }
-    }, 100); // wait 100ms for DOM to render
+    }, 100); 
 
     return () => clearTimeout(timer);
   }
@@ -61,6 +61,7 @@ const EmailDialog = ({ open, setOpen, onSubmit , client  }) => {
             <Input
               type="email"
               placeholder="Enter recipient email"
+              disabled
               value={toEmail}
               onChange={(e) => setToEmail(e.target.value)}
             />
@@ -80,7 +81,7 @@ const EmailDialog = ({ open, setOpen, onSubmit , client  }) => {
             <Label>Message</Label>
             <div
               ref={editorRef}
-              className="border rounded-md h-[100px] overflow-y-auto"
+              className="border rounded-md h-[120px] overflow-y-auto"
             ></div>
           </div>
 

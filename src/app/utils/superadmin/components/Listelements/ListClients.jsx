@@ -42,7 +42,7 @@ const ListClients = () => {
         </div>
       ) : (
         <>
-        <Clienttable clients={clients}/>
+        <Clienttable clients={clients} slug={id}/>
         </>
       )}
     </Card>

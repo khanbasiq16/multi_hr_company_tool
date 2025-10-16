@@ -108,15 +108,19 @@ const Invoicedetails = ({ invoice, client }) => {
         </div>
       </div>
 
-      {/* Buttons */}
       <div className="flex justify-end gap-4 border-t pt-6">
+{invoice.status != "Paid" &&
+
+(
+
+<>
         <div className="flex items-center bg-gray-100 border border-gray-300 rounded-lg overflow-hidden w-full max-w-md">
           <input
             type="text"
             value={invoice.invoiceLink}
             readOnly
             className="flex-1 px-3 py-2 text-sm bg-transparent text-gray-700 focus:outline-none"
-          />
+            />
           <button
             onClick={handleCopyLink}
             className="px-3 py-2 hover:bg-gray-200 transition flex items-center justify-center"
@@ -132,16 +136,19 @@ const Invoicedetails = ({ invoice, client }) => {
         <button
           onClick={() => setOpenDialog(true)}
           className="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
-        >
+          >
           Send Invoice
         </button>
+        </>
+        )
+          }
 
         <EmailDialog
           open={openDialog}
           setOpen={setOpenDialog}
           onSubmit={handleSendEmail}
           client={client}
-        />
+          />
       </div>
     </div>
   );

@@ -8,7 +8,6 @@ import {
   setDoc,
   updateDoc,
   arrayUnion,
-  serverTimestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { v4 as uuidv4 } from "uuid";
@@ -36,6 +35,19 @@ export async function POST(req) {
     const companyDoc = querySnapshot.docs[0];
     const companyData = { id: companyDoc.id, ...companyDoc.data() };
 
+    const q2 = query(
+      collection(db, "clients"),
+      where("clientEmail", "==", clientEmail)
+    );
+    const existingClientSnapshot = await getDocs(q2);
+
+    if (!existingClientSnapshot.empty) {
+      return NextResponse.json(
+        { success: false, error: "Client already exists with this email" },
+        { status: 400 }
+      );
+    }
+
     const clientId = uuidv4();
 
     const clientData = {
@@ -49,7 +61,7 @@ export async function POST(req) {
       projectsDetails: body.projectsDetails,
       packageDetails: body.packageDetails,
       clientWebsite: body.clientWebsite,
-      ccreatedAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     await setDoc(doc(db, "clients", clientId), clientData);

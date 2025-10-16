@@ -140,8 +140,11 @@ import {
   PersonStanding,
   CardSim,
   NotepadTextDashed,
+  Settings,
 } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
+import toast from "react-hot-toast"
+import Link from "next/link"
 
 const Sidebar = () => {
   const [open, setOpen] = useState(false)
@@ -211,6 +214,36 @@ const Sidebar = () => {
           <nav className="flex flex-col gap-2 text-xs 2xl:text-lg">
             {links.map((link) => {
               const isActive = pathname === link.href
+ const isDevLink =
+    link.href.includes("/contracts") || link.href.includes("/templates");
+
+  const handleClick = (e) => {
+    if (isDevLink) {
+      e.preventDefault()
+      
+      toast('This feature is in development', {
+  icon: '⚠️',
+});
+    }
+  };
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                    onClick={handleClick}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-colors
+                    ${
+                      isActive
+                        ? "bg-gradient-to-r from-[#5965AB] to-[#60B89E] text-white"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                >
+                  {link.icon} {link.label}
+                </a>
+              )
+            })}
+            {/* {links.map((link) => {
+              const isActive = pathname === link.href
 
               return (
                 <a
@@ -226,18 +259,18 @@ const Sidebar = () => {
                   {link.icon} {link.label}
                 </a>
               )
-            })}
+            })} */}
           </nav>
         </div>
 
         {/* Bottom Section */}
         <div className="flex flex-col gap-2 text-xs 2xl:text-lg">
-          <a
-            href="#"
+          <Link
+            href="/admin/settings"
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100"
           >
-            <HelpCircle className="2xl:w-5 w-4 2xl:h-5 h-4" /> Help & Information
-          </a>
+            <Settings className="2xl:w-5 w-4 2xl:h-5 h-4" /> Settings
+          </Link>
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-red-500 hover:bg-red-100"

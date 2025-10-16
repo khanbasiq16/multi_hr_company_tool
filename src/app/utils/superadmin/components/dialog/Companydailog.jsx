@@ -70,7 +70,6 @@ const Companydailog = () => {
         setFile(null);
         setPreview(null);
         dispatch(createcompany(data.companies));
-
         
       } else {
         alert("❌ " + data.error);
@@ -115,6 +114,15 @@ const Companydailog = () => {
               <Label htmlFor="companyPhoneNumber">Company Phone</Label>
               <Input className="mt-2" id="companyPhoneNumber" name="companyPhoneNumber" placeholder="Enter phone number" required/>
             </div>
+            <div>
+              <Label htmlFor="companyPhoneNumber">Company Email</Label>
+              <Input className="mt-2" id="companyPhoneNumber" name="companyPhoneNumber" placeholder="Enter phone number" />
+            </div>
+            <div>
+              <Label htmlFor="companyPhoneNumber">Company Email Password</Label>
+              <Input className="mt-2" type="password" id="companyPhoneNumber" name="companyPhoneNumber" placeholder="Enter phone number" />
+            </div>
+           
           </div>
 
           {/* Right Column */}
@@ -144,6 +152,16 @@ const Companydailog = () => {
             <div>
               <Label htmlFor="companyWebsite">Company Website</Label>
               <Input className="mt-2" id="companyWebsite" name="companywebsite" placeholder="https://example.com/" required/>
+            </div>
+
+
+             <div>
+              <Label htmlFor="companyPhoneNumber">Company Email HOST</Label>
+              <Input className="mt-2" id="companyPhoneNumber" name="companyPhoneNumber" placeholder="Enter phone number" />
+            </div>
+             <div>
+              <Label htmlFor="companyPhoneNumber">Company SMTP HOST</Label>
+              <Input className="mt-2" id="companyPhoneNumber" name="companyPhoneNumber" placeholder="Enter phone number" />
             </div>
 
           

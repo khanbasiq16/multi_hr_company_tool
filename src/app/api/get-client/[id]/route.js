@@ -8,7 +8,7 @@ export async function GET(req, { params }) {
 
     if (!id) {
       return NextResponse.json(
-        { success: false, error: "Invoice ID is required" },
+        { success: false, error: "Client is not found" },
         { status: 400 }
       );
     }

@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    // ✅ Parse incoming JSON
+    
     const body = await req.json();
 
     const {
@@ -19,9 +19,6 @@ export async function POST(req) {
       employeeCNIC,
       employeeSalary,
       department,
-      checkInTime,
-      graceTime,
-      checkOutTime,
       totalWorkingHours,
       dateOfJoining,
       salesTarget,
@@ -57,9 +54,6 @@ export async function POST(req) {
       employeeCNIC,
       employeeSalary,
       department,
-      checkInTime,
-      graceTime,
-      checkOutTime,
       totalWorkingHours,
       dateOfJoining,
       Attendence: [],

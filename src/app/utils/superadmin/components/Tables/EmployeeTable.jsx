@@ -114,27 +114,6 @@ const columns = [
     ),
   },
   {
-    accessorKey: "checkInTime",
-    header: "Check In",
-    cell: ({ row }) => (
-      <div className="whitespace-nowrap">{row.getValue("checkInTime")}</div>
-    ),
-  },
-  {
-    accessorKey: "checkOutTime",
-    header: "Check Out",
-    cell: ({ row }) => (
-      <div className="whitespace-nowrap">{row.getValue("checkOutTime")}</div>
-    ),
-  },
-  {
-    accessorKey: "graceTime",
-    header: "Grace Time",
-    cell: ({ row }) => (
-      <div className="whitespace-nowrap">{row.getValue("graceTime")}</div>
-    ),
-  },
-  {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {

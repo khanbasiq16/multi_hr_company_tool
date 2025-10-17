@@ -1,5 +1,4 @@
 "use client"
-
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -13,11 +12,16 @@ import { useDispatch } from "react-redux"
 import { loginSuccess } from "@/features/Slice/UserSlice"
 
 const page = () => {
-  const router = useRouter()
-  const dispatch = useDispatch();
+    const router = useRouter()
 
-  const [formData, setFormData] = useState({ email: "", password: "" })
+    const dispatch = useDispatch();
+
+      const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  })
   const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState("")
   const [errors, setErrors] = useState({ email: "", password: "" })
   const [showPassword, setShowPassword] = useState(false)
 
@@ -30,7 +34,7 @@ const page = () => {
     let valid = true
     let newErrors = { email: "", password: "" }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(formData.email)) {
       newErrors.email = "Please enter a valid email address"
       valid = false
@@ -45,64 +49,42 @@ const page = () => {
     return valid
   }
 
-const handleSubmit = async (e) => {
-  e.preventDefault()
-  if (!validateForm()) return
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setMessage("")
 
-  setLoading(true)
-  try {
-   
-    const response = await axios.post("/api/check-in-sign-in", {
-      ...formData,
-    })
+    if (!validateForm()) return
 
-    if (response.data.success) {
-      toast.success(response.data.message)
-
-      console.log(response.data.user)
-      dispatch(loginSuccess(response.data.user))
-      const slug = response.data.user.employeeName.trim().replace(/\s+/g, "-").toLowerCase();
-      router.push(`/employee/${slug}`)
-    } else {
-      toast.error(response.data.error || "Login failed")
+    setLoading(true)
+    try {
+      const response = await axios.post("/api/admin/signin", formData)
+      if (response.data.success) {
+        toast.success(response.data.message)
+        dispatch(loginSuccess(response.data.user));
+        router.push("/admin")
+      }
+    } catch (error) {
+        console.log(error)
+      toast.error(error.message )
+    } finally {
+      setLoading(false)
     }
-  } catch (error) {
-    console.log(error)
-    toast.error(error.message || "Something went wrong")
-  } finally {
-    setLoading(false)
   }
-}
-
-
-const convertTo12HourFormat = (time) => {
-  if (!time) return "";
-  const [hoursStr, minutes] = time.split(":");
-  const hours = parseInt(hoursStr, 10);
-  const ampm = hours >= 12 ? "PM" : "AM";
-  const formattedHour = (hours % 12) || 12;
-  return `${formattedHour}:${minutes} ${ampm}`;
-};
-
   return (
+    <>
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Employee Panel</CardTitle>
-          <CardDescription>Login </CardDescription>
+          <CardTitle>Hr Admin Consultation Tool</CardTitle>
+          <CardDescription>Enter your details to sign up</CardDescription>
         </CardHeader>
 
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
+           
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Enter email"
-                value={formData.email}
-                onChange={handleChange}
-              />
+              <Input id="email" type="email" placeholder="Enter email" value={formData.email} onChange={handleChange} />
               {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
             </div>
 
@@ -118,7 +100,7 @@ const convertTo12HourFormat = (time) => {
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                  className="absolute inset-y-0 right-3  flex items-center text-gray-500 hover:text-gray-700"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -127,22 +109,19 @@ const convertTo12HourFormat = (time) => {
               {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
             </div>
 
-
-            
-            
-
-
+            {message && <p className="text-sm text-red-500">{message}</p>}
           </CardContent>
 
           <CardFooter className="flex justify-end mt-3 gap-2">
-          
+            <Button type="button" variant="outline" onClick={() => setFormData({ name: "", email: "", password: "" })}>Cancel</Button>
             <Button type="submit" disabled={loading} className="flex items-center gap-2">
-              {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Verifying your identity...</> : "login"}
+              {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Signing in...</> : "Sign In"}
             </Button>
           </CardFooter>
         </form>
       </Card>
     </div>
+    </>
   )
 }
 

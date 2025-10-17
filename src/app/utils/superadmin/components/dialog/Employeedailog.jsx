@@ -348,7 +348,7 @@ const Employeedailog = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
-  const [selectedCompanies, setSelectedCompanies] = useState([]); // ✅ store as array
+  const [selectedCompanies, setSelectedCompanies] = useState([]); 
   const dispatch = useDispatch();
 
   const { department } = useSelector((state) => state.Department);
@@ -370,16 +370,9 @@ const Employeedailog = () => {
     }
   };
 
-  // ✅ Convert to 12-hour format
-  const convertTo12HourFormat = (time) => {
-    if (!time) return "";
-    const [hours, minutes] = time.split(":");
-    const ampm = hours >= 12 ? "PM" : "AM";
-    const formattedHour = hours % 12 || 12;
-    return `${formattedHour}:${minutes} ${ampm}`;
-  };
+ 
+ 
 
-  // ✅ Handle form submission
   const formHandler = async (e) => {
     e.preventDefault();
     const passwordValue = e.target.employeepassword.value;
@@ -400,7 +393,7 @@ const Employeedailog = () => {
     try {
       const formData = new FormData();
 
-      // ✅ Store company IDs as array
+      
       selectedCompanies.forEach((companyId) => {
         formData.append("companyIds[]", companyId);
       });
@@ -413,18 +406,7 @@ const Employeedailog = () => {
       formData.append("employeeCNIC", e.target.employeeCNIC.value);
       formData.append("employeeSalary", e.target.employeeSalary.value);
       formData.append("department", selectedDepartment);
-      formData.append(
-        "checkInTime",
-        convertTo12HourFormat(e.target.checkInTime.value)
-      );
-      formData.append(
-        "graceTime",
-        convertTo12HourFormat(e.target.graceTime.value)
-      );
-      formData.append(
-        "checkOutTime",
-        convertTo12HourFormat(e.target.checkOutTime.value)
-      );
+      
       formData.append(
         "totalWorkingHours",
         e.target.totalWorkingHours?.value || ""
@@ -444,7 +426,7 @@ const Employeedailog = () => {
         e.target.reset();
         dispatch(createemployees(res.data.employees));
         setSelectedDepartment("");
-        setSelectedCompanies([]); // reset array
+        setSelectedCompanies([]); 
         setOpen(false);
       } else {
         toast.error(res.data.error || "Failed to create employee");
@@ -457,7 +439,7 @@ const Employeedailog = () => {
     }
   };
 
-  // ✅ Handle single select but push to array
+
   const handleCompanySelect = (value) => {
     const selectedCompany = companies.find((c) => c.name === value);
     if (selectedCompany) {
@@ -503,7 +485,7 @@ const Employeedailog = () => {
               />
             </div>
 
-            {/* Department */}
+          
             <div>
               <Label htmlFor="department">Department</Label>
               <Select
@@ -576,7 +558,7 @@ const Employeedailog = () => {
             {/* Email */}
             <div>
               <Label htmlFor="employeeemail">Email</Label>
-              <Input id="employeeemail" name="employeeemail" type="email" required />
+              <Input id="employeeemail" name="employeeemail" placeholder="Enter Email" type="email" required />
             </div>
 
             {/* Password */}
@@ -604,25 +586,7 @@ const Employeedailog = () => {
               )}
             </div>
 
-            <div>
-              <Label htmlFor="employeeAddress">Address</Label>
-              <Input
-                id="employeeAddress"
-                name="employeeAddress"
-                placeholder="Enter address"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="employeePhone">Phone Number</Label>
-              <Input
-                id="employeePhone"
-                name="employeePhone"
-                placeholder="Enter phone number"
-              />
-            </div>
-
-            <div>
+           <div>
               <Label htmlFor="employeeCNIC">CNIC Number</Label>
               <Input
                 id="employeeCNIC"
@@ -643,9 +607,7 @@ const Employeedailog = () => {
               />
             </div>
 
-            <TimeInput label="Check In Time" name="checkInTime" />
-            <TimeInput label="Grace Time" name="graceTime" />
-            <TimeInput label="Check Out Time" name="checkOutTime" />
+           
 
             <div>
               <Label htmlFor="totalWorkingHours">Total Working Hours</Label>
@@ -655,6 +617,26 @@ const Employeedailog = () => {
                 placeholder="Enter total working hours"
               />
             </div>
+
+             <div>
+              <Label htmlFor="employeeAddress">Address</Label>
+              <Input
+                id="employeeAddress"
+                name="employeeAddress"
+                placeholder="Enter address"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="employeePhone">Phone Number</Label>
+              <Input
+                id="employeePhone"
+                name="employeePhone"
+                placeholder="Enter phone number"
+              />
+            </div>
+
+            
 
             <DateInput label="Date of Joining" name="dateOfJoining" />
           </div>
@@ -676,13 +658,7 @@ const Employeedailog = () => {
 
 export default Employeedailog;
 
-// ✅ Helper Components
-const TimeInput = ({ label, name }) => (
-  <div className="flex flex-col w-full max-w-sm mx-auto">
-    <Label className="mb-2 text-sm font-semibold">{label}</Label>
-    <Input id={name} name={name} type="time" className="w-full px-4 py-3" />
-  </div>
-);
+
 
 const DateInput = ({ label, name }) => (
   <div className="flex flex-col w-full max-w-sm mx-auto mt-4">

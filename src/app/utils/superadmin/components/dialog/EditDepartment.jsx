@@ -205,8 +205,7 @@ const EditDepartment = ({ open, setOpen, department }) => {
           ? format(parse(department.checkOutTime, "h:mm a", new Date()), "HH:mm")
           : "",
         graceTime: department.graceTime
-          ? format(parse(department.graceTime, "h:mm a", new Date()), "HH:mm")
-          : "",
+        
       });
     } else {
       setFormData({
@@ -239,8 +238,7 @@ const EditDepartment = ({ open, setOpen, department }) => {
           ? format(parse(formData.checkOutTime, "HH:mm", new Date()), "h:mm a")
           : "",
         graceTime: formData.graceTime
-          ? format(parse(formData.graceTime, "HH:mm", new Date()), "h:mm a")
-          : "",
+         
       };
 
       await axios.post(url, payload);
@@ -325,10 +323,11 @@ const EditDepartment = ({ open, setOpen, department }) => {
               Grace Time <span className="text-red-500">*</span>
             </Label>
             <Input
-              type="time"
+              type="number"
               className="mt-2"
               id="graceTime"
               name="graceTime"
+              placeholder="Enter minutes"
               value={formData.graceTime}
               onChange={handleChange}
             />

@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Bell, Search } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
+import Timer from "../components/attendance/Timer";
 const Header = () => {
   const pathname = usePathname();
   const { user } = useSelector((state) => state.User);
@@ -16,8 +17,10 @@ const Header = () => {
   const activePage =
     links.find((link) => link.href === pathname)?.label || "Dashboard";
   return (
+    <>
     <div className="pt-6 overflow-hidden z-30 fixed w-full bg-[#F6F6F6]">
       <header className="fixed bg-white px-6 py-3 rounded-xl shadow-sm w-[97%] z-50">
+    
         <div className="flex justify-between items-center">
         
           <div className="flex items-center">
@@ -29,7 +32,7 @@ const Header = () => {
               />
             </div>
             <span className="ml-6 text-gray-600 font-medium text-md 2xl:text-lg">
-              {activePage}
+              <Timer/>
             </span>
           </div>
 
@@ -69,6 +72,7 @@ const Header = () => {
         </div>
       </header>
     </div>
+        </>
   );
 };
 export default Header;

@@ -211,6 +211,7 @@ const Sidebar = () => {
 
   // ✅ Extract companyId
   const parts = pathname.split("/")
+
   const companyId = parts[3] || null
 
   const companyDetailsLinks = companyId
@@ -233,7 +234,7 @@ const Sidebar = () => {
       const response = await axios.get("/api/logout")
       if (response.data.success) {
         dispatch(logout())
-        router.push("/superadmin/sign-in")
+        router.push("/")
         toast.success("Logged out successfully")
       }
     } catch (error) {

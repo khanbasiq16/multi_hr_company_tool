@@ -46,12 +46,13 @@ const DepartmentDialog = ({ open, setOpen }) => {
         return;
       }
 
+
       const formattedData = {
         departmentName: formData.get("departmentName"),
         description: formData.get("description"),
         checkInTime: convertTo12HourFormat(formData.get("checkInTime")),
         checkOutTime: convertTo12HourFormat(formData.get("checkOutTime")),
-        graceTime: convertTo12HourFormat(formData.get("graceTime"))  
+        graceTime: formData.get("graceTime")  
       };
 
       const res = await axios.post("/api/create-department", formattedData, {
@@ -142,7 +143,7 @@ const DepartmentDialog = ({ open, setOpen }) => {
               Grace Time  <span className="text-red-500">*</span>
             </Label>
             <Input
-              type="time"
+              type="number"
               className="mt-2"
               id="graceTime"
               name="graceTime"

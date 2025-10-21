@@ -75,14 +75,6 @@ const handleSubmit = async (e) => {
 }
 
 
-const convertTo12HourFormat = (time) => {
-  if (!time) return "";
-  const [hoursStr, minutes] = time.split(":");
-  const hours = parseInt(hoursStr, 10);
-  const ampm = hours >= 12 ? "PM" : "AM";
-  const formattedHour = (hours % 12) || 12;
-  return `${formattedHour}:${minutes} ${ampm}`;
-};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">

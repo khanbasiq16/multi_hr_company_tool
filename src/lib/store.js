@@ -11,6 +11,9 @@ import ExpenseReducer from "../features/Slice/ExpenseSlice";
 import ClientReducer from "../features/Slice/ClientSlice";
 import InvoiceReducer from "../features/Slice/InvoiceSlice";
 import IpwhiteReducer from "../features/Slice/IpwhiteSlice";
+import CheckinReducer from "../features/Slice/CheckInSlice";
+import CheckOutReducer from "../features/Slice/CheckOutSlice";
+import StopwatchReducer from "../features/Slice/StopwatchSlice";
 
 const rootReducer = combineReducers({
   User: UserReducer,
@@ -21,6 +24,10 @@ const rootReducer = combineReducers({
   Client:ClientReducer,
   Invoice:InvoiceReducer,
   Ipwhitelist:IpwhiteReducer,
+  Checkin:CheckinReducer,
+  Checkout:CheckOutReducer,
+  Stopwatch:StopwatchReducer
+  
 });
 
 

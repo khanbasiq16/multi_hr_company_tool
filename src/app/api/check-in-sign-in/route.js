@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth, db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { signToken } from "@/lib/signToken";
 
@@ -21,7 +21,8 @@ export async function POST(req) {
       userCredential = await signInWithEmailAndPassword(auth, email, password);
     } catch (err) {
       return NextResponse.json(
-        { success: false, error: "Invalid email or password" },
+        { success: false, 
+          error: "Invalid email or password" },
         { status: 401 }
       );
     }
@@ -38,28 +39,51 @@ export async function POST(req) {
       );
     }
 
-   
     const userData = userDoc.data();
 
-   
+    let departmentData = null;
+    if (userData.department) {
+      const deptRef = collection(db, "departments");
+      const deptQuery = query(deptRef, where("departmentName", "==", userData.department));
+      const deptSnapshot = await getDocs(deptQuery);
+
+      console.log()
+
+      if (!deptSnapshot.empty) {
+        departmentData = { id: deptSnapshot.docs[0].id, ...deptSnapshot.docs[0].data() };
+      }
+    }
+
+    let companiesData = [];
+    if (Array.isArray(userData.companyIds) && userData.companyIds.length > 0) {
+      const companiesRef = collection(db, "companies");
+      const companiesQuery = query(companiesRef, where("companyId", "in", userData.companyIds));
+      const companiesSnapshot = await getDocs(companiesQuery);
+
+      companiesData = companiesSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+    }
+
     const token = signToken({
       id: loggedInUser.uid,
       email: loggedInUser.email,
       role: "employee",
     });
 
-    
     const response = NextResponse.json({
       message: "Login successfully",
       user: {
         role: "employee",
         ...userData,
+        department: departmentData || null,
+        companies: companiesData || [],
       },
       token,
       success: true,
     });
 
-    // ✅ Cookie set karo
     response.cookies.set("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

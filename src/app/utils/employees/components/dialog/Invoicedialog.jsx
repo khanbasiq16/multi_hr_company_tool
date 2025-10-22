@@ -28,9 +28,8 @@ const Invoicedialog = () => {
   const [currentDate, setCurrentDate] = useState("");
   const dispatch = useDispatch();
 
-    const {user} = useSelector((state)=>state.User)
+  const {user} = useSelector((state)=>state.User)
 
-  // const { user } = useSelector((state) => state.User);
   const { id } = useParams();
 
   const companySlug = id;
@@ -50,7 +49,7 @@ const Invoicedialog = () => {
   useEffect(() => {
     const fetchClients = async () => {
       try {
-        const res = await axios.get(`/api/get-all-clients/${id}`);
+        const res = await axios.get(`/api/get-clients/${id}/${user?.employeeId}`);
         setClients(res.data.clients || []);
       } catch {
         toast.error("Failed to fetch clients");
@@ -86,10 +85,10 @@ const Invoicedialog = () => {
       data.invoiceDate = currentDate;
       data.Description = data.invoiceDescription || "";
       data.totalAmount = Number(data.invoiceAmount);
-      data.createdBy = user?.name;
+      data.createdBy = user?.employeeName;
       data.status = "Draft";
-      data.user_id = user?.uid;
-      data.type = "admin";
+      data.user_id = user.employeeId;
+      data.type = "employee";
 
       const res = await axios.post("/api/create-invoice", data, {
         headers: { "Content-Type": "application/json" },

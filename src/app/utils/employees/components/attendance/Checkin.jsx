@@ -7,11 +7,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { resetCheckIn, setattendanceid, setCheckIn } from "@/features/Slice/CheckInSlice";
+import {
+  resetCheckIn,
+  setattendanceid,
+  setCheckIn,
+} from "@/features/Slice/CheckInSlice";
 import { resetCheckOut } from "@/features/Slice/CheckOutSlice";
 import { resetTimer, startTimer } from "@/features/Slice/StopwatchSlice";
 import axios from "axios";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Loader2 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,7 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 const Checkin = () => {
   const [noteModal, setNoteModal] = useState(false);
   const [loadingsubmit, setLoadingsubmit] = useState(false);
-  const [note, setNote] = useState(null);
+  const [note, setNote] = useState("");
   const { isCheckedIn } = useSelector((state) => state.Checkin);
   const { user } = useSelector((state) => state.User);
   const dispatch = useDispatch();
@@ -40,7 +44,7 @@ const Checkin = () => {
     let hours, minutes;
 
     if (is12HourFormat) {
-      // 9:00 PM wali format
+      
       const [time, meridiem] = checkInStr.split(" ");
       const [h, m] = time.split(":");
       hours = parseInt(h);
@@ -49,25 +53,23 @@ const Checkin = () => {
       if (meridiem.toLowerCase() === "pm" && hours < 12) hours += 12;
       if (meridiem.toLowerCase() === "am" && hours === 12) hours = 0;
     } else {
-      // 24-hour format "21:00"
+      
       [hours, minutes] = checkInStr.split(":").map((v) => parseInt(v));
     }
 
     officeCheckInTime.setHours(hours, minutes, 0, 0);
 
-    // Enable BEFORE 30 mins
+    
     const enableTime = new Date(officeCheckInTime.getTime() - 30 * 60000);
-    // Disable AFTER graceTime mins
+    
     const disableTime = new Date(
       officeCheckInTime.getTime() + graceMinutes * 60000
     );
 
     const now = new Date();
 
-    if(now >= enableTime){
-      dispatch(resetCheckIn())
-      dispatch(resetTimer())
-      dispatch(resetCheckOut())
+    if (now >= enableTime) {
+      dispatch(resetCheckOut());
     }
 
     setCanCheckIn(now >= enableTime && now <= disableTime);
@@ -110,7 +112,7 @@ const Checkin = () => {
         note: null,
       });
 
-       if (res.data?.success) {
+      if (res.data?.success) {
         toast.success(res.data.message || "Check-in successful!");
 
         dispatch(startTimer(now.getTime()));
@@ -120,10 +122,8 @@ const Checkin = () => {
         setLoadingsubmit(false);
         setNoteModal(false);
       }
-
     } catch (error) {
-
-       console.error("Check-in Error:", error);
+      console.error("Check-in Error:", error);
       toast.error(
         error.response?.data?.message || error.message || "Server error"
       );
@@ -171,7 +171,6 @@ const Checkin = () => {
   return (
     <>
       <div className="min-h-[60vh] flex flex-col items-center justify-center  px-4">
-       
         {isCheckedIn && (
           <div className="mb-6 text-lg font-medium text-green-600 flex items-center gap-2">
             <span className="text-2xl">✅</span> You’re already checked in
@@ -210,10 +209,6 @@ const Checkin = () => {
           </div>
         )}
 
-        
-      
-
-        
         <Dialog open={noteModal} onOpenChange={setNoteModal}>
           <DialogContent className="sm:max-w-md rounded-xl p-6">
             <DialogHeader>

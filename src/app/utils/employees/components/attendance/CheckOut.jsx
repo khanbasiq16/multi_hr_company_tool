@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -24,6 +22,9 @@ const CheckOut = () => {
   const [workModal, setWorkModal] = useState(false);
   const [loadingsubmit, setLoadingsubmit] = useState(false);
   const [note, setNote] = useState("");
+  const [shownote, setShowNote] = useState(false);
+  const [canCheckOut, setCanCheckOut] = useState(false);
+
   const { isCheckedIn, attendenceid } = useSelector((state) => state.Checkin);
   const { isCheckedOut } = useSelector((state) => state.Checkout);
   const { user } = useSelector((state) => state.User);
@@ -31,9 +32,7 @@ const CheckOut = () => {
     (state) => state.Stopwatch
   );
   const dispatch = useDispatch();
-  const [canCheckOut, setCanCheckOut] = useState(false);
 
-  // 🔹 Sales form fields
   const [workData, setWorkData] = useState({
     totalCalls: "",
     followUps: "",
@@ -45,7 +44,7 @@ const CheckOut = () => {
     satisfaction: "",
   });
 
-  // 🔹 Convert ISO time to 12-hour format
+  // Convert ISO to 12-hour format
   const isoTo12Hour = (isoString) => {
     const date = new Date(isoString);
     let hours = date.getHours();
@@ -56,14 +55,12 @@ const CheckOut = () => {
     return `${hours}:${minutes} ${modifier}`;
   };
 
-  // 🔹 Get current IP address
   const getcurrentip = async () => {
     const res = await fetch("https://api.ipify.org?format=json");
     const { ip } = await res.json();
     return ip;
   };
 
-  // 🔹 Format stopwatch seconds to HH:MM:SS
   const formatElapsedTime = (sec) => {
     const h = Math.floor(sec / 3600);
     const m = Math.floor((sec % 3600) / 60);
@@ -73,16 +70,18 @@ const CheckOut = () => {
       .padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
- 
   useEffect(() => {
     if (!user?.department?.checkOutTime) return;
+
     const checkOutStr = user.department.checkOutTime;
     const officeCheckOut = new Date();
+
     const is12Hour =
       checkOutStr.toLowerCase().includes("am") ||
       checkOutStr.toLowerCase().includes("pm");
 
     let hours, minutes;
+
     if (is12Hour) {
       const [time, meridiem] = checkOutStr.split(" ");
       const [h, m] = time.split(":");
@@ -98,12 +97,18 @@ const CheckOut = () => {
 
     const enableTime = new Date(officeCheckOut.getTime() - 30 * 60000);
     const disableTime = new Date(officeCheckOut.getTime() + 30 * 60000);
-    const now = new Date();
 
-    setCanCheckOut(now >= enableTime && now <= disableTime);
+    const checkWindow = () => {
+      const now = new Date();
+      const canCheck = now >= enableTime && now <= disableTime;
+      setCanCheckOut(canCheck);
+    };
+
+    checkWindow();
+    const timer = setInterval(checkWindow, 60 * 1000);
+    return () => clearInterval(timer);
   }, [user]);
 
-  // 🔹 Handle successful checkout
   const handleCheckoutSuccess = (time) => {
     toast.success("Checked out successfully!");
     dispatch(resetTimer());
@@ -112,9 +117,21 @@ const CheckOut = () => {
     setLoadingsubmit(false);
     setNoteModal(false);
     setWorkModal(false);
+    setShowNote(false);
+    setNote("");
+    setWorkData({
+      totalCalls: "",
+      followUps: "",
+      followUpNames: "",
+      newLeads: "",
+      salesClosed: "",
+      meetings: "",
+      notes: "",
+      satisfaction: "",
+    });
   };
 
-  // 🔹 Normal checkout request
+  // 🔹 Normal checkout
   const normalcheckout = async () => {
     try {
       setLoadingsubmit(true);
@@ -148,7 +165,6 @@ const CheckOut = () => {
     }
   };
 
-
   const latecheckout = async () => {
     try {
       setLoadingsubmit(true);
@@ -167,6 +183,7 @@ const CheckOut = () => {
         note: note || "",
         stopwatchTime: formattedStopwatchTime,
         attendenceid,
+        earlycheckout: false,
       });
 
       if (res.data?.success) {
@@ -182,7 +199,6 @@ const CheckOut = () => {
     }
   };
 
-
   const submitWorkSummary = async () => {
     try {
       setLoadingsubmit(true);
@@ -194,26 +210,27 @@ const CheckOut = () => {
         : elapsedTime;
       const formattedStopwatchTime = formatElapsedTime(totalElapsedSeconds);
 
+      console.log(note);
+
       const res = await axios.post("/api/check-out", {
         ip,
         time,
         employeeId: user?.employeeId,
-        note: JSON.stringify(workData),
+        note:note,
         stopwatchTime: formattedStopwatchTime,
-        attendenceid
+        attendenceid,
+        earlycheckout: true,
       });
 
-      if (res.data?.success){ 
-        const res = await axios.post("/api/summary-work" , {
+      if (res.data?.success) {
+        const res2 = await axios.post("/api/summary-work", {
           ...workData,
-           employeeId: user?.employeeId,
-        })
-        if(res.data?.success){
+          employeeId: user?.employeeId,
+        });
+        if (res2.data?.success) {
           handleCheckoutSuccess(time);
         }
-        
-      }
-      else {
+      } else {
         toast.error(res.data?.message || "Something went wrong!");
         setLoadingsubmit(false);
       }
@@ -226,18 +243,22 @@ const CheckOut = () => {
 
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
-
+      {/* ✅ Main Checkout Button */}
       <button
-        disabled={!isCheckedIn || isCheckedOut}
+        disabled={!isCheckedIn || isCheckedOut || !canCheckOut}
         onClick={() => {
-          if (user?.department?.departmentName === "Sales") {
+          if (
+            user?.department?.departmentName === "Sales" ||
+            user?.department?.departmentName === "sales"
+          ) {
             setWorkModal(true);
+            setShowNote(false);
           } else {
             normalcheckout();
-          } 
+          }
         }}
         className={`w-36 h-36 md:w-40 md:h-40 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 ${
-          isCheckedIn && !isCheckedOut
+          isCheckedIn && !isCheckedOut && canCheckOut
             ? "bg-[#5965AB] hover:bg-[#5766bc]"
             : "bg-gray-300 cursor-not-allowed"
         }`}
@@ -245,13 +266,13 @@ const CheckOut = () => {
         <CheckCircle size={80} color="white" />
       </button>
 
-      {/* 🔹 Secondary Button */}
       {!canCheckOut && (
         <div className="mt-8 w-full flex justify-center">
           <button
             onClick={() => {
               if (user?.department?.departmentName === "Sales") {
                 setWorkModal(true);
+                setShowNote(true);
               } else {
                 setNoteModal(true);
               }
@@ -270,7 +291,7 @@ const CheckOut = () => {
         </div>
       )}
 
-      {/* ✅ Regular Note Dialog */}
+      {/* ✅ Note Modal */}
       <Dialog open={noteModal} onOpenChange={setNoteModal}>
         <DialogContent className="sm:max-w-md rounded-xl p-6">
           <DialogHeader>
@@ -279,10 +300,10 @@ const CheckOut = () => {
 
           <textarea
             placeholder="Write your note here..."
-            value={note}
             rows={4}
+            value={note}
             onChange={(e) => setNote(e.target.value)}
-            className="mt-3 resize-none border border-gray-300 rounded-md "
+            className="mt-3 resize-none border border-gray-300 rounded-md w-full p-2"
           ></textarea>
 
           <DialogFooter className="mt-6 flex justify-end gap-3">
@@ -296,7 +317,8 @@ const CheckOut = () => {
             >
               {loadingsubmit ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Requesting...
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                  Requesting...
                 </>
               ) : (
                 "Submit"
@@ -306,7 +328,7 @@ const CheckOut = () => {
         </DialogContent>
       </Dialog>
 
-      {/* ✅ Sales Work Summary Dialog */}
+      {/* ✅ Sales Work Summary Modal */}
       <Dialog open={workModal} onOpenChange={setWorkModal}>
         <DialogContent className="h-screen overflow-y-auto rounded-2xl p-6 bg-white dark:bg-gray-900 dark:text-gray-100">
           <DialogHeader>
@@ -318,8 +340,8 @@ const CheckOut = () => {
             </p>
           </DialogHeader>
 
-          {/* Sales Work Summary Form */}
           <div className="space-y-4 mt-4 p-2">
+            {/* Form Fields */}
             <div>
               <label className="block text-sm mb-1">Total Calls Dialed</label>
               <input
@@ -331,6 +353,7 @@ const CheckOut = () => {
                 className="w-full border border-gray-300 p-2 rounded-lg"
               />
             </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm mb-1">Follow-ups Done</label>
@@ -344,7 +367,9 @@ const CheckOut = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm mb-1">New Leads Generated</label>
+                <label className="block text-sm mb-1">
+                  New Leads Generated
+                </label>
                 <input
                   type="number"
                   value={workData.newLeads}
@@ -408,6 +433,19 @@ const CheckOut = () => {
                 className="w-full border border-gray-300 p-2 rounded-lg"
               />
             </div>
+            {shownote && (
+              <div>
+                <label className="block text-sm mb-1">
+                  Late or Early Check out Notes
+                </label>
+                <textarea
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  rows={3}
+                  className="w-full border border-gray-300 p-2 rounded-lg"
+                />
+              </div>
+            )}
 
             <div>
               <label className="block text-sm mb-1">Work Satisfaction</label>
@@ -422,9 +460,7 @@ const CheckOut = () => {
                 <option value="Excellent">Excellent</option>
                 <option value="Good">Good</option>
                 <option value="Average">Average</option>
-                <option value="Needs Improvement">
-                  Needs Improvement
-                </option>
+                <option value="Needs Improvement">Needs Improvement</option>
               </select>
             </div>
 
@@ -447,7 +483,8 @@ const CheckOut = () => {
             >
               {loadingsubmit ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                  Submitting...
                 </>
               ) : (
                 "✅ Submit Work Summary"

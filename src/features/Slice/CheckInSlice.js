@@ -22,7 +22,6 @@ const checkInSlice = createSlice({
       state.checkInTime = "";
       state.checkInDate = "";
     },
-
     setattendanceid:(state , action) => {
       
       state.attendenceid = action.payload

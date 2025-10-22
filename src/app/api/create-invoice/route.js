@@ -27,6 +27,7 @@ export async function POST(req) {
       user_id,
       invoiceAmount,
       Description,
+      type
     } = body;
 
     if (!clientId || !invoiceNumber || !companySlug) {
@@ -55,7 +56,7 @@ export async function POST(req) {
     const companyName = companyData.name;
 
     const invoiceId = uuidv4();
-    const invoiceLink = `${process.env.NEXT_PUBLIC_BASE_URL}/admin/company/${companySlug}/invoices/${invoiceId}`;
+    const invoiceLink = `${process.env.NEXT_PUBLIC_BASE_URL}/invoice/${companySlug}/details/${invoiceId}`;
 
     await setDoc(doc(db, "invoices", invoiceId), {
       invoiceId,

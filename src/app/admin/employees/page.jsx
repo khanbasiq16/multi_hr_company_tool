@@ -40,9 +40,7 @@ const page = () => {
       } catch (error) {
         console.error("Error fetching companies:", error);
         setCompanies([]);
-      } finally {
-        setLoading(false);
-      }
+      } 
     };
 
     fetchCompanies();

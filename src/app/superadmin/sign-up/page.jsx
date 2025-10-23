@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { Loader2, Eye, EyeOff } from 'lucide-react'
+import { Loader2, Eye, EyeOff, KeyRound } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 
@@ -25,11 +25,21 @@ export default function Page() {
     setErrors({ ...errors, [e.target.id]: "" })
   }
 
+  const generatePassword = () => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+    let password = "";
+    for (let i = 0; i < 10; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setFormData({ ...formData, password });
+    
+  };
+
   const validateForm = () => {
     let valid = true
     let newErrors = { email: "", password: "" }
 
- const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(formData.email)) {
       newErrors.email = "Please enter a valid email address"
       valid = false
@@ -53,15 +63,12 @@ export default function Page() {
     setLoading(true)
     try {
       const response = await axios.post("/api/admin/signup", formData , {
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         withCredentials: true
       })
 
       if (response.data.success) {
         toast.success(response.data.message)
-        
         setFormData({ name: "", email: "", password: "" })
       }
 
@@ -76,7 +83,7 @@ export default function Page() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Hr Admin Consultation Tool</CardTitle>
+          <CardTitle>HR Admin Consultation Tool</CardTitle>
           <CardDescription>Enter your details to sign in</CardDescription>
         </CardHeader>
 
@@ -95,7 +102,7 @@ export default function Page() {
 
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <div className="relative">
+              <div className="relative flex items-center">
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
@@ -105,10 +112,18 @@ export default function Page() {
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                  className="absolute right-10 flex items-center text-gray-500 hover:text-gray-700"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
+                <button
+                  type="button"
+                  className="absolute right-2 text-gray-500 hover:text-gray-700"
+                  onClick={generatePassword}
+                  title="Generate Password"
+                >
+                  <KeyRound className="h-5 w-5" />
                 </button>
               </div>
               {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}

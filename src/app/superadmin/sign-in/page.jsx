@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation"
 import { useDispatch } from "react-redux"
 import { loginSuccess } from "@/features/Slice/UserSlice"
 
-const page = () => {
+export default function Page() {
     const router = useRouter()
 
     const dispatch = useDispatch();
@@ -125,4 +125,4 @@ const page = () => {
   )
 }
 
-export default page
+// export default page

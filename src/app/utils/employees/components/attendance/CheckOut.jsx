@@ -154,13 +154,10 @@ const CheckOut = () => {
 
       if (res.data?.success) {
         handleCheckoutSuccess(time);
-      } else {
-        toast.error(res.data?.message || "Something went wrong!");
-        setLoadingsubmit(false);
-      }
+      } 
     } catch (error) {
       console.error("Checkout Error:", error);
-      toast.error(error.response?.data?.message || "Server error");
+      toast.error(error.response?.data?.error || "Server error");
       setLoadingsubmit(false);
     }
   };
@@ -188,13 +185,10 @@ const CheckOut = () => {
 
       if (res.data?.success) {
         handleCheckoutSuccess(time);
-      } else {
-        toast.error(res.data?.message || "Something went wrong!");
-        setLoadingsubmit(false);
-      }
+      } 
     } catch (error) {
       console.error("Checkout Error:", error);
-      toast.error(error.response?.data?.message || "Server error");
+      toast.error(error.response?.data?.error || "Server error");
       setLoadingsubmit(false);
     }
   };
@@ -236,7 +230,7 @@ const CheckOut = () => {
       }
     } catch (error) {
       console.error("Checkout Error:", error);
-      toast.error(error.response?.data?.message || "Server error");
+      toast.error(error.response?.data?.error || "Server error");
       setLoadingsubmit(false);
     }
   };

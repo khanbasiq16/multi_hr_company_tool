@@ -125,7 +125,7 @@ const Checkin = () => {
     } catch (error) {
       console.error("Check-in Error:", error);
       toast.error(
-        error.response?.data?.message || error.message || "Server error"
+        error.response?.data?.error || error.message || "Server error"
       );
     }
   };
@@ -155,14 +155,11 @@ const Checkin = () => {
 
         setLoadingsubmit(false);
         setNoteModal(false);
-      } else {
-        toast.error(res.data?.message || "Something went wrong!");
-        setLoadingsubmit(false);
-      }
+      } 
     } catch (error) {
       console.error("Check-in Error:", error);
       toast.error(
-        error.response?.data?.message || error.message || "Server error"
+        error.response?.data?.error || error.message || "Server error"
       );
       setLoadingsubmit(false);
     }

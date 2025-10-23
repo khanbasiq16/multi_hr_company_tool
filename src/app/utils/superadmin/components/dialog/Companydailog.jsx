@@ -186,8 +186,8 @@ const Companydailog = () => {
               <Input className="mt-2" id="companyEmailhost" name="companyemailhost" placeholder="Enter Email Host" />
             </div>
              <div>
-              <Label htmlFor="companySmtphost">Company SMTP HOST</Label>
-              <Input className="mt-2" id="companySmtphost" name="companysmtphost" placeholder="Enter SMTP Host" />
+              <Label htmlFor="companySmtphost">Company SMTP PORT</Label>
+              <Input className="mt-2" id="companySmtphost" name="companysmtphost" placeholder="Enter SMTP PORT" />
             </div>
 
           

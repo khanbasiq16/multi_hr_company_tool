@@ -167,8 +167,8 @@ const columns = [
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter emails..."
-          value={table.getColumn("email")?.getFilterValue() ?? ""}
-          onChange={(event) => table.getColumn("email")?.setFilterValue(event.target.value)}
+          value={table.getColumn("employeeemail")?.getFilterValue() ?? ""}
+          onChange={(event) => table.getColumn("employeeemail")?.setFilterValue(event.target.value)}
           className="max-w-sm"
         />
         <DropdownMenu>

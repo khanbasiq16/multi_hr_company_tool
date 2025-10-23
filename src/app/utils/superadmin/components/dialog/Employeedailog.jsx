@@ -443,7 +443,7 @@ const Employeedailog = () => {
   const handleCompanySelect = (value) => {
     const selectedCompany = companies.find((c) => c.name === value);
     if (selectedCompany) {
-      setSelectedCompanies([selectedCompany.id]); // store as array with single id
+      setSelectedCompanies([selectedCompany.id]);
     } else {
       setSelectedCompanies([]);
     }
@@ -476,7 +476,7 @@ const Employeedailog = () => {
           <div className="space-y-4">
             {/* Employee Name */}
             <div>
-              <Label htmlFor="employeeName">Employee Name</Label>
+              <Label htmlFor="employeeName">Employee Name <span className="text-red-500">*</span></Label>
               <Input
                 id="employeeName"
                 name="employeeName"
@@ -487,7 +487,7 @@ const Employeedailog = () => {
 
           
             <div>
-              <Label htmlFor="department">Department</Label>
+              <Label htmlFor="department">Department <span className="text-red-500">*</span></Label>
               <Select
                 onValueChange={setSelectedDepartment}
                 value={selectedDepartment}
@@ -514,7 +514,7 @@ const Employeedailog = () => {
             {/* Sales Target */}
             {selectedDepartment === "Sales" && (
               <div>
-                <Label htmlFor="salesTarget">Sales Target</Label>
+                <Label htmlFor="salesTarget">Sales Target <span className="text-red-500">*</span></Label>
                 <Input
                   id="salesTarget"
                   name="salesTarget"
@@ -525,9 +525,9 @@ const Employeedailog = () => {
               </div>
             )}
 
-            {/* ✅ Single Company Select */}
+           
             <div>
-              <Label htmlFor="company">Company</Label>
+              <Label htmlFor="company">Company <span className="text-red-500">*</span></Label>
               <Select
                 onValueChange={handleCompanySelect}
                 value={
@@ -557,13 +557,13 @@ const Employeedailog = () => {
 
             {/* Email */}
             <div>
-              <Label htmlFor="employeeemail">Email</Label>
+              <Label htmlFor="employeeemail">Email <span className="text-red-500">*</span></Label>
               <Input id="employeeemail" name="employeeemail" placeholder="Enter Email" type="email" required />
             </div>
 
             {/* Password */}
             <div className="flex flex-col w-full max-w-sm mx-auto">
-              <Label htmlFor="employeepassword">Password</Label>
+              <Label htmlFor="employeepassword">Password <span className="text-red-500">*</span></Label>
               <div className="relative">
                 <Input
                   id="employeepassword"
@@ -587,11 +587,12 @@ const Employeedailog = () => {
             </div>
 
            <div>
-              <Label htmlFor="employeeCNIC">CNIC Number</Label>
+              <Label htmlFor="employeeCNIC">CNIC Number <span className="text-red-500">*</span></Label>
               <Input
                 id="employeeCNIC"
                 name="employeeCNIC"
                 placeholder="Enter CNIC number"
+                required
               />
             </div>
           </div>
@@ -599,18 +600,19 @@ const Employeedailog = () => {
           {/* Right column */}
           <div className="space-y-4">
             <div>
-              <Label htmlFor="employeeSalary">Salary</Label>
+              <Label htmlFor="employeeSalary">Salary <span className="text-red-500">*</span></Label>
               <Input
                 id="employeeSalary"
                 name="employeeSalary"
                 placeholder="Enter salary"
+                required
               />
             </div>
 
            
 
             <div>
-              <Label htmlFor="totalWorkingHours">Total Working Hours</Label>
+              <Label htmlFor="totalWorkingHours">Total Working Hours <span className="text-red-500">*</span></Label>
               <Input
                 id="totalWorkingHours"
                 name="totalWorkingHours"
@@ -619,7 +621,7 @@ const Employeedailog = () => {
             </div>
 
              <div>
-              <Label htmlFor="employeeAddress">Address</Label>
+              <Label htmlFor="employeeAddress">Address <span className="text-red-500">*</span></Label>
               <Input
                 id="employeeAddress"
                 name="employeeAddress"
@@ -628,7 +630,7 @@ const Employeedailog = () => {
             </div>
 
             <div>
-              <Label htmlFor="employeePhone">Phone Number</Label>
+              <Label htmlFor="employeePhone">Phone Number <span className="text-red-500">*</span></Label>
               <Input
                 id="employeePhone"
                 name="employeePhone"

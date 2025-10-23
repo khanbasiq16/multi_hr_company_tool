@@ -90,12 +90,14 @@ const Page = () => {
     expenses: 0,
   });
 
-    const recentEmployees = [
-    { name: "Ali Raza", role: "Developer", joinDate: "2025-10-10" },
-    { name: "Sara Khan", role: "Manager", joinDate: "2025-10-09" },
-    { name: "Usman Tariq", role: "Designer", joinDate: "2025-10-07" },
-    { name: "Hina Malik", role: "HR", joinDate: "2025-10-05" },
-  ];
+
+  const [recentEmployee, setrecentEmployee] = useState([])
+  //   const recentEmployees = [
+  //   { name: "Ali Raza", role: "Developer", joinDate: "2025-10-10" },
+  //   { name: "Sara Khan", role: "Manager", joinDate: "2025-10-09" },
+  //   { name: "Usman Tariq", role: "Designer", joinDate: "2025-10-07" },
+  //   { name: "Hina Malik", role: "HR", joinDate: "2025-10-05" },
+  // ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -125,6 +127,10 @@ const Page = () => {
           invoices: invoicesRes.data?.invoices.length || 0,
           expenses: expensesRes.data?.expenses.length || 0,
         });
+
+        setrecentEmployee(employeesRes?.data?.employees)
+
+
 
        
 
@@ -178,16 +184,16 @@ const Page = () => {
             <thead>
               <tr className="bg-gray-100 text-left">
                 <th className="p-3 border-b text-sm font-semibold">Name</th>
-                <th className="p-3 border-b text-sm font-semibold">Role</th>
+                <th className="p-3 border-b text-sm font-semibold">Status</th>
                 <th className="p-3 border-b text-sm font-semibold">Joining Date</th>
               </tr>
             </thead>
             <tbody>
-              {recentEmployees.map((emp, index) => (
+              {recentEmployee.map((emp, index) => (
                 <tr key={index} className="hover:bg-gray-50">
-                  <td className="p-3 border-b">{emp.name}</td>
-                  <td className="p-3 border-b">{emp.role}</td>
-                  <td className="p-3 border-b">{emp.createdAt?.slice(0,10)}</td>
+                  <td className="p-3 border-b">{emp.employeeName}</td>
+                  <td className="p-3 border-b">{emp.status}</td>
+                  <td className="p-3 border-b">{emp.dateOfJoining}</td>
                 </tr>
               ))}
             </tbody>

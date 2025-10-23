@@ -136,7 +136,7 @@ export const InvoiceTable = ({ invoices, slug , companyslug }) => {
 
               <DropdownMenuItem>
                 <Link
-                  href={`/employee/${slug}/company/${companyslug}/invoices/${invoice?.invoiceId}/invoice-details`}
+                  href={`/employee/${companyslug}/company/${slug}/invoices/${invoice?.invoiceId}/invoice-details`}
                 >
                   View Details
                 </Link>
@@ -173,9 +173,9 @@ export const InvoiceTable = ({ invoices, slug , companyslug }) => {
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter emails..."
-          value={table.getColumn("email")?.getFilterValue() ?? ""}
+          value={table.getColumn("totalAmount")?.getFilterValue() ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("totalAmount")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />

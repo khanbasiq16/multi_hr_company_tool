@@ -300,12 +300,12 @@ const formHandler = async (e) => {
             </div>
 
             <div>
-              <Label htmlFor="companySmtpHost">Company SMTP HOST</Label>
+              <Label htmlFor="companySmtpHost">Company SMTP PORT</Label>
               <Input
                 className="mt-2"
                 id="companySmtpHost"
                 name="companySmtpHost"
-                placeholder="Enter SMTP Host"
+                placeholder="Enter SMTP PORT"
                 value={formData.companySmtpHost}
                 onChange={handleChange}
               />

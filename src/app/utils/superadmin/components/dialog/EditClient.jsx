@@ -15,64 +15,59 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useParams } from "next/navigation";
 import { getallclients } from "@/features/Slice/ClientSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { Pencil } from "lucide-react";
 
-const Clientdialog = () => {
-  const [loading, setLoading] = useState(false);
+const EditClient = ({ client  , setClient}) => {
   const [open, setOpen] = useState(false);
-  const { user } = useSelector((state) => state.User);
+  const [loading, setLoading] = useState(false);
 
-  const dispatch = useDispatch();
-
+ 
   const { id } = useParams();
+
   const capitalizedCompanyName = id
     ? id.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
     : "";
 
+  // ✅ Pre-fill client data
+  const [formData, setFormData] = useState({
+    clientName: client?.clientName || "",
+    clientAddress: client?.clientAddress || "",
+    clientEmail: client?.clientEmail || "",
+    clientPhone: client?.clientPhone || "",
+    projectsDetails: client?.projectsDetails || "",
+    packageDetails: client?.packageDetails || "",
+    clientWebsite: client?.clientWebsite || "",
+  });
+
+  // ✅ Handle input changes
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  
   const formHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const formData = new FormData();
-
-      if (
-        e.target.clientName.value == "" ||
-        e.target.clientEmail.value == "" ||
-        e.target.clientPhone.value == ""
-      ) {
-        toast.error("Please Enter Required Fields");
-        return;
-      }
-
-      formData.append("companyName", id);
-      formData.append("clientName", e.target.clientName.value);
-      formData.append("clientAddress", e.target.clientAddress.value);
-      formData.append("clientEmail", e.target.clientEmail.value);
-      formData.append("clientPhone", e.target.clientPhone.value);
-      formData.append("projectsDetails", e.target.projectsDetails.value);
-      formData.append("packageDetails", e.target.packageDetails.value);
-      formData.append("clientWebsite", e.target.clientWebsite.value);
-      formData.append("employeeid", user.employeeId);
-
-      const res = await axios.post("/api/employee/create-client", formData, {
-        headers: { "Content-Type": "application/json" },
+      const res = await axios.post(`/api/update-client/${client?.id}`, {
+        companyName: id,
+        ...formData,
       });
 
       const data = res.data;
 
       if (data.success) {
-        toast.success("Client Created Successfully");
-        e.target.reset();
-
-        dispatch(getallclients(data?.allclients));
+        toast.success("Client Updated Successfully ✅");
+        setClient(data.client)
         setOpen(false);
       } else {
-        toast.error(data.error || "Failed to create client");
+        toast.error(data.error || "Failed to update client ❌");
       }
     } catch (error) {
       console.error(error);
-      toast.error("Error creating client");
+      toast.error("Error updating client ❌");
     } finally {
       setLoading(false);
     }
@@ -81,12 +76,12 @@ const Clientdialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-[#5965AB] text-white">+ Create Client</Button>
+        <Button className="bg-[#5965AB] text-white"><Pencil /> Edit Client</Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[700px]">
         <DialogHeader>
-          <DialogTitle>Create New Client</DialogTitle>
+          <DialogTitle>Edit Client Details</DialogTitle>
           {capitalizedCompanyName && (
             <p className="text-sm text-gray-500 mt-1">
               Company:{" "}
@@ -102,13 +97,12 @@ const Clientdialog = () => {
           {/* Left Column */}
           <div className="space-y-4">
             <div>
-              <Label htmlFor="clientName">
-                Client Name <span className="text-red-500">*</span>
-              </Label>
+              <Label htmlFor="clientName">Client Name</Label>
               <Input
                 id="clientName"
                 name="clientName"
-                placeholder="Enter client name"
+                value={formData.clientName}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -118,19 +112,20 @@ const Clientdialog = () => {
               <Input
                 id="clientAddress"
                 name="clientAddress"
-                placeholder="Enter address"
+                value={formData.clientAddress}
+                onChange={handleChange}
+                required
               />
             </div>
 
             <div>
-              <Label htmlFor="clientEmail">
-                Email <span className="text-red-500">*</span>
-              </Label>
+              <Label htmlFor="clientEmail">Email</Label>
               <Input
                 id="clientEmail"
                 name="clientEmail"
                 type="email"
-                placeholder="Enter email"
+                value={formData.clientEmail}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -139,35 +134,36 @@ const Clientdialog = () => {
           {/* Right Column */}
           <div className="space-y-4">
             <div>
-              <Label htmlFor="clientWebsite">Website </Label>
+              <Label htmlFor="clientWebsite">Website</Label>
               <Input
                 id="clientWebsite"
                 name="clientWebsite"
-                placeholder="Enter client website"
+                value={formData.clientWebsite}
+                onChange={handleChange}
               />
             </div>
 
             <div>
-              <Label htmlFor="clientPhone">
-                Phone Number <span className="text-red-500">*</span>
-              </Label>
+              <Label htmlFor="clientPhone">Phone Number</Label>
               <Input
                 id="clientPhone"
                 name="clientPhone"
-                placeholder="Enter phone number"
+                value={formData.clientPhone}
+                onChange={handleChange}
                 required
               />
             </div>
           </div>
 
-          {/* Full-width description fields */}
+          {/* Full-width Fields */}
           <div className="col-span-2 space-y-4">
             <div>
               <Label htmlFor="projectsDetails">Projects Details</Label>
               <textarea
                 id="projectsDetails"
                 name="projectsDetails"
-                placeholder="Enter project details"
+                value={formData.projectsDetails}
+                onChange={handleChange}
                 rows={4}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md resize-none"
               />
@@ -178,7 +174,8 @@ const Clientdialog = () => {
               <textarea
                 id="packageDetails"
                 name="packageDetails"
-                placeholder="Enter package details"
+                value={formData.packageDetails}
+                onChange={handleChange}
                 rows={4}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md resize-none"
               />
@@ -192,7 +189,7 @@ const Clientdialog = () => {
               className="bg-[#5965AB] text-white font-semibold px-6 py-2"
               disabled={loading}
             >
-              {loading ? "Saving..." : "Save"}
+              {loading ? "Updating..." : "Update"}
             </Button>
           </DialogFooter>
         </form>
@@ -201,4 +198,4 @@ const Clientdialog = () => {
   );
 };
 
-export default Clientdialog;
+export default EditClient;

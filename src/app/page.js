@@ -1,80 +1,84 @@
-"use client"
+"use client";
 
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
-import { Loader2, Eye, EyeOff } from 'lucide-react'
-import axios from 'axios'
-import React, { useState } from 'react'
-import toast from "react-hot-toast"
-import { useRouter } from "next/navigation"
-import { useDispatch } from "react-redux"
-import { loginSuccess } from "@/features/Slice/UserSlice"
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Loader2, Eye, EyeOff } from "lucide-react";
+import axios from "axios";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "@/features/Slice/UserSlice";
 
 const page = () => {
-  const router = useRouter()
+  const router = useRouter();
   const dispatch = useDispatch();
 
-  const [formData, setFormData] = useState({ email: "", password: "" })
-  const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState({ email: "", password: "" })
-  const [showPassword, setShowPassword] = useState(false)
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value })
-    setErrors({ ...errors, [e.target.id]: "" })
-  }
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+    setErrors({ ...errors, [e.target.id]: "" });
+  };
 
   const validateForm = () => {
-    let valid = true
-    let newErrors = { email: "", password: "" }
+    let valid = true;
+    let newErrors = { email: "", password: "" };
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address"
-      valid = false
+      newErrors.email = "Please enter a valid email address";
+      valid = false;
     }
 
     if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters long"
-      valid = false
+      newErrors.password = "Password must be at least 6 characters long";
+      valid = false;
     }
 
-    setErrors(newErrors)
-    return valid
-  }
+    setErrors(newErrors);
+    return valid;
+  };
 
-const handleSubmit = async (e) => {
-  e.preventDefault()
-  if (!validateForm()) return
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
 
-  setLoading(true)
-  try {
-   
-    const response = await axios.post("/api/check-in-sign-in", {
-      ...formData,
-    })
+    setLoading(true);
+    try {
+      const response = await axios.post("/api/check-in-sign-in", {
+        ...formData,
+      });
 
-    if (response.data.success) {
-      toast.success(response.data.message)
+      if (response.data.success) {
+        toast.success(response.data.message);
 
-      console.log(response.data.user)
-      dispatch(loginSuccess(response.data.user))
-      const slug = response.data.user.employeeName.trim().replace(/\s+/g, "-").toLowerCase();
-      router.push(`/employee/${slug}`)
-    } else {
-      toast.error(response.data.error || "Login failed")
+        dispatch(loginSuccess(response.data.user));
+        const slug = response.data.user.employeeName
+          .trim()
+          .replace(/\s+/g, "-")
+          .toLowerCase();
+          
+        router.push(`/employee/${slug}`);
+      }
+    } catch (error) {
+      toast.error(error?.response.data.error);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.log(error)
-    toast.error(error.message || "Something went wrong")
-  } finally {
-    setLoading(false)
-  }
-}
-
-
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
@@ -95,7 +99,9 @@ const handleSubmit = async (e) => {
                 value={formData.email}
                 onChange={handleChange}
               />
-              {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email}</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -113,29 +119,39 @@ const handleSubmit = async (e) => {
                   className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
                 </button>
               </div>
-              {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
+              {errors.password && (
+                <p className="text-sm text-red-500">{errors.password}</p>
+              )}
             </div>
-
-
-            
-            
-
-
           </CardContent>
 
           <CardFooter className="flex justify-end mt-3 gap-2">
-          
-            <Button type="submit" disabled={loading} className="flex items-center gap-2">
-              {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Verifying your identity...</> : "login"}
+            <Button
+              type="submit"
+              disabled={loading}
+              className="flex items-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" /> Verifying your
+                  identity...
+                </>
+              ) : (
+                "login"
+              )}
             </Button>
           </CardFooter>
         </form>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default page;

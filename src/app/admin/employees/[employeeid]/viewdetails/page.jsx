@@ -31,7 +31,6 @@ const page = () => {
         console.log(res.data.companies)
 
 
-
       } catch (error) {
         console.error("Error fetching employees:", error);
       }   

@@ -32,76 +32,30 @@ export async function POST(req) {
     const userDoc = await getDoc(userRef);
 
     let userData = null;
-    let userType = "user";
 
-    if (userDoc.exists()) {
-      userData = userDoc.data();
-    } else {
-      const empRef = doc(db, "employees", user.uid);
-      const empDoc = await getDoc(empRef);
-
-      if (empDoc.exists()) {
-        userData = empDoc.data();
-        userType = "employee";
-
-        const checkInTime = userData.checkInTime || "9:00 PM"; 
-        const graceTime = userData.graceTime || "9:30 PM"; 
-
-        const now = new Date();
-
-        function convertToDate(timeString) {
-          return new Date(`1970-01-01 ${timeString}`);
-        }
-
-        const graceDate = convertToDate(graceTime);
-        const currentDate = convertToDate(
-          now.toLocaleString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-            hour12: true,
-          })
-        );
-
-        let attendanceStatus =
-          currentDate <= graceDate ? "Present" : "Late";
-
-        const attendanceData = {
-          userId: user.uid,
-          checkInAt: now.toLocaleString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-            hour12: true,
-          }),
-          status: attendanceStatus,
-          date: new Date().toISOString().split("T")[0],
-          
-        };
-
-        await updateDoc(empRef, {
-          Attendence: [...(userData.Attendence || []), attendanceData],
-        });
-      }
-    }
+    userData = userDoc.data();
 
     if (!userData) {
       return NextResponse.json(
-        { error: "User not found in users or employees" },
+        { error: "Invalid User" },
         { status: 404 }
       );
     }
 
+ 
+
     const token = signToken({
       id: user.uid,
       email: user.email,
-      role: userData.role || userType || "user",
+      role: userData.role,
+     
     });
 
     const response = NextResponse.json({
-      message: `Login successful (${userType == "employee" ? "Employee" : "Admin"})`,
+      message: `Login successfully (Admin)`,
       user: userData,
       token,
       success: true,
-      userType,
     });
 
     response.cookies.set("token", token, {

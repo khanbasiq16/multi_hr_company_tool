@@ -14,6 +14,7 @@ import {
   CardSim,
   NotepadTextDashed,
   Settings,
+  ArrowBigLeft,
 } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
 import toast from "react-hot-toast"
@@ -33,12 +34,15 @@ const Sidebar = () => {
     { href: "/admin/companies", label: "Companies", icon: <Calendar className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
     { href: "/admin/employees", label: "Employees", icon: <Users className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
     { href: "/admin/expense", label: "Expenses", icon: <BanknoteArrowDown className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
-    { href: "/admin/account-manager", label: "Account Manager", icon: <HandCoins className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
+    // { href: "/admin/account-manager", label: "Account Manager", icon: <HandCoins className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
   ]
 
   // ✅ Extract companyId safely
   const parts = pathname.split("/")
   const companyId = parts[3] || null
+
+  
+  const shouldShow = pathname.startsWith(`/admin/company`);
 
   const companyDetailsLinks = companyId
     ? [
@@ -144,6 +148,14 @@ const Sidebar = () => {
 
         {/* Bottom Section */}
         <div className="flex flex-col gap-2 text-xs 2xl:text-lg">
+           {shouldShow && (
+            <Link
+              href={`/admin`}
+              className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100"
+            >
+              <ArrowBigLeft className="2xl:w-5 w-4 2xl:h-5 h-4" /> Back
+            </Link>
+          )}
           <Link
             href="/admin/settings"
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100"

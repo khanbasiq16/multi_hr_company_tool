@@ -1,13 +1,15 @@
-'use client'
-import Companybreadcumbs from '@/app/utils/superadmin/components/breadcrumbs/Companybreadcumbs';
-import Invoicedetails from '@/app/utils/superadmin/components/Details/Invoicedetails';
-import SuperAdminlayout from '@/app/utils/superadmin/layout/SuperAdmin';
-import axios from 'axios';
-import { useParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+"use client"
+import Employeebreadcrumb from '@/app/utils/employees/components/breadcrumbs/Employeebreadcrumb'
+import Invoicedetails from '@/app/utils/employees/components/Details/Invoicedetails'
+import Employeelayout from '@/app/utils/employees/layout/Employeelayout'
+import axios from 'axios'
+import { useParams } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
 
-const Page = () => {
-  const { invoiceid } = useParams();
+const page = () => {
+ const {slug , id , invoiceid } = useParams()
+
+
   const [client, setClient] = useState(null);
   const [invoice, setInvoice] = useState(null);
 
@@ -34,15 +36,17 @@ const Page = () => {
     if (invoiceid) fetchInvoiceDetails();
   }, [invoiceid]);
 
-  return (
-    <SuperAdminlayout>
-      <section className="w-full">
-        <Companybreadcumbs path={"Invoice Details"} />
-        <Invoicedetails invoice={invoice} client={client} setInvoice={setInvoice} />
-       </section>
-       
-    </SuperAdminlayout>
-  );
-};
 
-export default Page;
+  return (
+    <>
+    <Employeelayout>
+        <section className="w-full">
+       <Employeebreadcrumb slug={slug} path={id} path2={"Invoice details"} />
+        <Invoicedetails invoice={invoice} client={client} setInvoice={setInvoice} />
+        </section>
+    </Employeelayout>
+    </>
+  )
+}
+
+export default page

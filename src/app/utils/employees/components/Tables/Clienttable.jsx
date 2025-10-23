@@ -134,13 +134,13 @@ const columns = [
               Copy Email
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            {/* <DropdownMenuItem>
+            <DropdownMenuItem>
               <Link
                   href={`/employee/${slug}/company/${companyslug}/clients/${client?.id}/client-details`}
                 >
                   View Details
                 </Link>
-              </DropdownMenuItem> */}
+              </DropdownMenuItem>
             {/* <DropdownMenuItem>Edit Client</DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>

@@ -34,7 +34,7 @@ export async function POST(req) {
 
     if (!userDoc.exists()) {
       return NextResponse.json(
-        { success: false, error: "User not found in Firestore." },
+        { success: false, error: "Acount not found. Please Try Again" },
         { status: 404 }
       );
     }
@@ -47,8 +47,7 @@ export async function POST(req) {
       const deptQuery = query(deptRef, where("departmentName", "==", userData.department));
       const deptSnapshot = await getDocs(deptQuery);
 
-      console.log()
-
+    
       if (!deptSnapshot.empty) {
         departmentData = { id: deptSnapshot.docs[0].id, ...deptSnapshot.docs[0].data() };
       }
@@ -66,10 +65,14 @@ export async function POST(req) {
       }));
     }
 
+       let slug = userData?.employeeName.trim().replace(/\s+/g, "-").toLowerCase()
+
+
     const token = signToken({
       id: loggedInUser.uid,
       email: loggedInUser.email,
       role: "employee",
+      slug : slug 
     });
 
     const response = NextResponse.json({

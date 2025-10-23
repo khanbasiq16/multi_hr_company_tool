@@ -13,8 +13,9 @@ import {
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
-const stripePromise = loadStripe("pk_test_51P7YcnIE9AYOfBDmB8Pt3nR5BMw3nVkAUBXOD234JbvrOcCI7P8ckvEklsEbO9L8cgITMDIph2KGvVS8u2iHHUCc00Q5sYyz3L");
+const stripePromise = loadStripe(process.env.NEXT_STRIPE_PUBLICABLE_KEY);
 
 const VIP_CARD_STYLE = {
     style: {
@@ -71,7 +72,7 @@ const CheckoutForm = ({ clientSecret, amount , invoiceid }) => {
         });
 
         if (error) {
-            // Handle error from Stripe side
+            
             toast.error(error.message || "Payment failed");
         } else if (paymentIntent?.status === "succeeded") {
             
@@ -165,10 +166,13 @@ const page = () => {
  
     const invoiceid = params?.invoiceid; 
 
+    const slug = params?.slug
+    
     const [clientSecret, setClientSecret] = useState(null);
     const [amount, setAmount] = useState(null);
     const [loading, setLoading] = useState(true);
     const [InvoiceNumber, setInvoicenumber] = useState(null);
+    const [company, setCompany] = useState(null);
 
     useEffect(() => {
         if (!invoiceid) {
@@ -181,6 +185,16 @@ const page = () => {
                 const res = await axios.get(`/api/get-invoice/${invoiceid}`);
                 const invoice = res.data?.invoice;
                 setInvoicenumber(invoice?.invoiceNumber || "N/A");
+
+                
+                
+                const compres = await axios.get(`/api/get-company/${slug}`);
+                const company = compres.data?.company;
+
+                
+                setCompany(company);
+
+
                 
                 const amt = invoice?.totalAmount;
                 if (!amt) {
@@ -223,6 +237,17 @@ const page = () => {
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-800 flex flex-col items-center justify-center p-4">
             <div className="text-center mb-3">
+              {company?.companyLogo && (
+        <div className="flex justify-center mb-3">
+          <Image
+            src={company?.companyLogo}
+            alt="Company Logo"
+            width={35}
+            height={35}
+            className=" object-cover"
+          />
+        </div>
+      )}
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Invoice Payment </h1>
                 <p className="text-lg text-gray-600 dark:text-gray-400">Invoice ID: <span className="font-mono bg-gray-200 dark:bg-gray-700 p-1 rounded text-blue-500">{InvoiceNumber}</span></p>
             </div>

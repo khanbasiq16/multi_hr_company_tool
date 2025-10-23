@@ -29,15 +29,32 @@ export async function POST(req) {
     }
 
     const whitelist = whitelistSnap.data()?.whitelist || [];
-    const isAllowed = whitelist.some((item) => item.ip === ip);
+    // const isAllowed = whitelist.some((item) => item.ip === ip);
 
-    if (!isAllowed) {
-      console.log("❌ Blocked IP:", ip);
-      return NextResponse.json(
-        { success: false, error: "Unauthorized IP address." },
+    // if (!isAllowed) {
+    //   console.log("❌ Blocked IP:", ip);
+    //   return NextResponse.json(
+    //     { success: false, error: "Unauthorized IP address." },
+    //     { status: 403 }
+    //   );
+    // }
+
+    const partialIp = ip.split(".").slice(0, 3).join(".");
+
+        const isAllowed = whitelist.some((item) => {
+          const partialWhitelistIp = item.ip.split(".").slice(0, 3).join(".");
+          return partialIp === partialWhitelistIp;
+        });
+        if (!isAllowed) {
+          console.log("❌ Blocked IP:", ip);
+
+           return NextResponse.json(
+        { success: false, error: "Check Out Failed . Please Connect With the Office Network" },
         { status: 403 }
       );
-    }
+        } 
+
+
 
     // 2️⃣ Check if employee exists
     if (!employeeId) {

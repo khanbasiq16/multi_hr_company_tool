@@ -2,17 +2,15 @@
 import React from "react";
 import EditClient from "../dialog/EditClient";
 
-const ClientDetails = ({ client , setClient }) => {
+const ClientDetails = ({ client , setClient}) => {
   if (!client) return null;
 
   return (
     <div className="mx-auto bg-white shadow-sm rounded-2xl p-8 border border-gray-200">
       <div className="space-y-6">
 
-
-
- <div className="flex items-center justify-between border-b pb-4">
-      {/* Left Section — Client Name + ID */}
+        
+       <div className="flex items-center justify-between border-b pb-4">
       <div className="flex flex-col items-start">
         <h2 className="text-2xl font-semibold text-gray-800">
           {client.clientName}
@@ -25,10 +23,11 @@ const ClientDetails = ({ client , setClient }) => {
       {/* Right Section — Edit Button */}
       <EditClient client={client} setClient={setClient} />
     </div>
-        {/* Info Grid */}
+
+       
         <div className="grid grid-cols-2 gap-6 text-gray-700">
 
-          {/* Column 1 */}
+         
           <div className="space-y-3">
             <Info label="Email" value={client.clientEmail} />
             <Info label="Phone" value={client.clientPhone} />

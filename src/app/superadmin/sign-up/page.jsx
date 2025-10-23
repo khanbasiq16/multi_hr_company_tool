@@ -66,7 +66,7 @@ export default function Page() {
       }
 
     } catch (error) {
-      setMessage(error.response?.data?.message || "Something went wrong")
+      setMessage(error.response?.data?.error || "Something went wrong")
     } finally {
       setLoading(false)
     }

@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Check, Copy } from "lucide-react";
-import EmailDialog from "../dialog/EmailDailog";
 import toast from "react-hot-toast";
+import EmailDialog from "@/app/utils/superadmin/components/dialog/EmailDailog";
 
 const Invoicedetails = ({ invoice, client, setInvoice }) => {
   if (!invoice || !client) {
@@ -29,7 +29,7 @@ const Invoicedetails = ({ invoice, client, setInvoice }) => {
         message: data.message,
         invoiceLink: invoice.invoiceLink,
         invoiceid: invoice?.invoiceId,
-        slug:invoice?.companySlug
+        slug:invoice.companySlug,
       });
 
       if (res.data?.success) {
@@ -94,7 +94,7 @@ const Invoicedetails = ({ invoice, client, setInvoice }) => {
           </div>
         </div>
 
-       
+        {/* Invoice Info */}
         <div>
           <h3 className="text-lg font-semibold text-gray-800 mb-2">
             Invoice Details
@@ -109,7 +109,7 @@ const Invoicedetails = ({ invoice, client, setInvoice }) => {
       </div>
 
       <div className="flex justify-end gap-4 border-t pt-6">
-     {invoice.status == "Draft"  && (
+        {invoice.status == "Draft"  && (
             <>
               <div className="flex items-center bg-gray-100 border border-gray-300 rounded-lg overflow-hidden w-full max-w-md">
                 <input

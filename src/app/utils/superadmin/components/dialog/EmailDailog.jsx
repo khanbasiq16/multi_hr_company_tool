@@ -44,7 +44,7 @@ const EmailDialog = ({ open, setOpen, onSubmit , client  }) => {
       : "";
 
     onSubmit({ toEmail, subject, message });
-    setOpen(false);
+    
   };
 
   return (

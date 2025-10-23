@@ -51,13 +51,6 @@ const EmployeesDetails = ({ employee, assigncompanies }) => {
             <Info label="Working Hours" value={`${employee.totalWorkingHours} hrs`} />
           </div>
 
-          {/* Shift Info */}
-          <div className="col-span-2 mt-4 border-t pt-4 grid grid-cols-3 gap-4">
-            <Info label="Check-In" value={employee.checkInTime} />
-            <Info label="Check-Out" value={employee.checkOutTime} />
-            <Info label="Grace Time" value={employee.graceTime} />
-          </div>
-
           {/* Company Details */}
           <div className="col-span-2 border-t pt-4 mt-4">
             <p className="font-medium text-gray-800 mb-2">Assigned Companies:</p>

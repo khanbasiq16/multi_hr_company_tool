@@ -47,8 +47,14 @@ const DepartmentDialog = ({ open, setOpen }) => {
       }
 
 
+        const departmentName = formData.get("departmentName")
+    .split(" ")
+    .filter(Boolean)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+
       const formattedData = {
-        departmentName: formData.get("departmentName"),
+        departmentName: departmentName,
         description: formData.get("description"),
         checkInTime: convertTo12HourFormat(formData.get("checkInTime")),
         checkOutTime: convertTo12HourFormat(formData.get("checkOutTime")),

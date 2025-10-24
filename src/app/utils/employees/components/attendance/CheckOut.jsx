@@ -204,7 +204,7 @@ const CheckOut = () => {
         : elapsedTime;
       const formattedStopwatchTime = formatElapsedTime(totalElapsedSeconds);
 
-      console.log(note);
+     
 
       const res = await axios.post("/api/check-out", {
         ip,
@@ -213,7 +213,7 @@ const CheckOut = () => {
         note:note,
         stopwatchTime: formattedStopwatchTime,
         attendenceid,
-        earlycheckout: true,
+        earlycheckout: null,
       });
 
       if (res.data?.success) {

@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/select";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { createtemplate } from "@/features/Slice/TemplateSlice";
 
 const TemplateDialog = () => {
   const [loading, setLoading] = useState(false);
@@ -26,6 +28,7 @@ const TemplateDialog = () => {
   const [role, setRole] = useState("Employee");
   const [company, setCompany] = useState("");
   const [allCompanies, setAllCompanies] = useState([]);
+  const dispatch = useDispatch()
 
 
   useEffect(() => {
@@ -59,7 +62,9 @@ const TemplateDialog = () => {
       const res = await axios.post("/api/templates/create", formData);
 
       if (res.data.success) {
-        toast.success("Template created successfully!");
+        toast.success(res.data.message); 
+        dispatch(createtemplate(res.data.templates))
+        
         setOpen(false);
         setRole("");
         setCompany("");

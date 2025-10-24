@@ -42,21 +42,38 @@ const ListTemplates = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {templates.map((template) => (
-              <div
-                key={template.id}
-                onClick={() => router.push(`/template-editor/${template.id}`)}
-                className="p-4 border border-gray-200 rounded-lg hover:shadow-md cursor-pointer transition-all"
-              >
-                <h3 className="font-semibold text-lg text-gray-800">
-                  {template.role} Template
-                </h3>
-                {template.company && (
-                  <p className="text-sm text-gray-500">
-                    Company: {template.company}
-                  </p>
-                )}
-              </div>
-            ))}
+    <div
+      key={template.id}
+      onClick={() => router.push(`/template-editor/${template.id}`)}
+      className="group bg-white dark:bg-gray-900 p-5 border border-gray-200 dark:border-gray-700 rounded-2xl  transition-all cursor-pointer "
+    >
+      {/* Company Logo */}
+      <div className="flex justify-center mb-4">
+        <img
+          src={template.company.companyLogo || "/placeholder-logo.png"}
+          alt={`${template.company.name} logo`}
+          className="w-16 h-16    transition-transform duration-300"
+        />
+      </div>
+
+      {/* Template Title */}
+      <h3 className="font-semibold text-lg text-center text-gray-800 dark:text-gray-100 mb-2">
+        {template.company.name} Template
+      </h3>
+
+      {/* Company Info */}
+      <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-3">
+        Company: <span className="font-medium text-gray-700 dark:text-gray-300">{template.company.name}</span>
+      </p>
+
+      {/* Footer Buttons or Tags */}
+      <div className="flex justify-center">
+        <span className="text-xs px-3 py-1 bg-blue-100 text-blue-600 rounded-full font-medium">
+          {template.role || "General"}
+        </span>
+      </div>
+    </div>
+  ))}
           </div>
         )}
       </div>

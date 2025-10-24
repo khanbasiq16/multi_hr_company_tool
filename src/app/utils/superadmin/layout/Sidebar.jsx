@@ -33,7 +33,7 @@ const Sidebar = () => {
     { href: "/admin", label: "Dashboard", icon: <Home className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
     { href: "/admin/companies", label: "Companies", icon: <Calendar className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
     { href: "/admin/employees", label: "Employees", icon: <Users className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
-    { href: "/admin/templates", label: "Templates", icon: <NotepadTextDashed className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
+    // { href: "/admin/templates", label: "Templates", icon: <NotepadTextDashed className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
     { href: "/admin/expense", label: "Expenses", icon: <BanknoteArrowDown className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
     // { href: "/admin/account-manager", label: "Account Manager", icon: <HandCoins className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
   ]
@@ -51,7 +51,7 @@ const Sidebar = () => {
         { href: `/admin/company/${companyId}/clients`, label: "Clients", icon: <PersonStanding className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
         { href: `/admin/company/${companyId}/invoices`, label: "Invoice", icon: <CardSim className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
         { href: `/admin/company/${companyId}/contracts`, label: "Contracts", icon: <CardSim className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
-        // { href: `/admin/company/${companyId}/templates`, label: "Templates", icon: <NotepadTextDashed className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
+        { href: `/admin/company/${companyId}/templates`, label: "Templates", icon: <NotepadTextDashed className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
       ]
     : []
 

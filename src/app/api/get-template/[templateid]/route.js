@@ -19,7 +19,7 @@ export async function GET(req , {params}) {
 
     const template = docSnap.data()
 
-    console.log(template)
+ 
 
     return NextResponse.json(
       {

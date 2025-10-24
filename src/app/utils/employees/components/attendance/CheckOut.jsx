@@ -180,7 +180,7 @@ const CheckOut = () => {
         note: note || "",
         stopwatchTime: formattedStopwatchTime,
         attendenceid,
-        earlycheckout: false,
+        earlycheckout: true,
       });
 
       if (res.data?.success) {
@@ -213,7 +213,7 @@ const CheckOut = () => {
         note:note,
         stopwatchTime: formattedStopwatchTime,
         attendenceid,
-        earlycheckout: null,
+        earlycheckout: false,
       });
 
       if (res.data?.success) {

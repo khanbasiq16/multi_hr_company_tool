@@ -41,8 +41,6 @@ export function EmployeeTable({employees}) {
   const [columnVisibility, setColumnVisibility] = React.useState({})
   const [rowSelection, setRowSelection] = React.useState({})
 
-  
-
 
 const columns = [
   {

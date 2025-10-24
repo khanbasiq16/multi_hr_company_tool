@@ -1,6 +1,6 @@
-
 "use client";
 import React from "react";
+import axios from "axios";
 import {
   flexRender,
   getCoreRowModel,
@@ -30,12 +30,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { useParams } from "next/navigation";
 
-
-// ✅ Status Badge Component (Fixed with background + dark mode)
+// ✅ Status Badge Component
 const StatusBadge = ({ status }) => {
   let colorClasses = "";
-
   switch (status) {
     case "On Time":
       colorClasses =
@@ -72,17 +80,18 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-
-// ✅ Main Table Component
-const CheckInTable = ({ data = [] }) => {
+const CheckInTable = ({ data = [] , setemployee }) => {
   const [sorting, setSorting] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [searchDate, setSearchDate] = React.useState("");
   const [searchMonth, setSearchMonth] = React.useState("");
   const [searchYear, setSearchYear] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
-  // ✅ Process Data
+  const { user } = useSelector((state) => state.User);
+  const {employeeid} = useParams()
+
   const processedData = React.useMemo(() => {
     return data.map((item, index) => {
       let dateObj;
@@ -100,7 +109,7 @@ const CheckInTable = ({ data = [] }) => {
         "N/A";
 
       return {
-        id: item.id || index,
+        id: item.id || item._id || index,
         ip: item.ip || item.checkin?.ip || "N/A",
         time: item.time || item.checkin?.time || "N/A",
         status,
@@ -113,7 +122,6 @@ const CheckInTable = ({ data = [] }) => {
     });
   }, [data]);
 
-  // ✅ Filters
   const filteredData = React.useMemo(() => {
     return processedData.filter((item) => {
       const matchDate = searchDate
@@ -127,7 +135,6 @@ const CheckInTable = ({ data = [] }) => {
     });
   }, [processedData, searchDate, searchMonth, searchYear]);
 
-  // ✅ Columns
   const columns = React.useMemo(
     () => [
       {
@@ -205,7 +212,6 @@ const CheckInTable = ({ data = [] }) => {
     []
   );
 
-  // ✅ React Table Config
   const table = useReactTable({
     data: filteredData,
     columns,
@@ -219,10 +225,44 @@ const CheckInTable = ({ data = [] }) => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  // ✅ Render Table
+  
+  const handleStatusUpdate = async (newStatus) => {
+    const selectedRows = table.getSelectedRowModel().rows;
+
+    if (!selectedRows.length) {
+      toast.error("Please select at least one row to update status");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const ids = selectedRows.map((row) => row.original.id);
+      
+
+      const res = await axios.post("/api/attendance/updatestatuscheckin", {
+        ids,
+        status: newStatus,
+        employeeid
+      });
+
+      if (res.data.success) {
+        toast.success(`Updated ${ids.length} record(s) to "${newStatus}"`);
+        setemployee(res.data.employee)
+        console.log(res.data.employee)
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update status");
+    } finally {
+      setLoading(false);
+      table.resetRowSelection();
+    }
+  };
+
   return (
     <div className="w-full">
-      {/* 🔍 Filters */}
+      {/* 🔍 Filters + SuperAdmin Dropdown */}
       <div className="flex flex-wrap gap-2 items-center py-4">
         <Input
           type="date"
@@ -242,6 +282,24 @@ const CheckInTable = ({ data = [] }) => {
           onChange={(e) => setSearchYear(e.target.value)}
           className="max-w-[150px]"
         />
+
+        {user?.role === "superAdmin" && (
+          <Select
+            onValueChange={(value) => handleStatusUpdate(value)}
+            disabled={loading}
+          >
+            <SelectTrigger className="w-[150px]">
+              <SelectValue placeholder={loading ? "Updating..." : "Change Status"} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="On Time">On Time</SelectItem>
+              <SelectItem value="Late">Late</SelectItem>
+              <SelectItem value="Short Day">Short Day</SelectItem>
+              <SelectItem value="Half Day">Half Day</SelectItem>
+              <SelectItem value="Absent">Absent</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -306,10 +364,7 @@ const CheckInTable = ({ data = [] }) => {
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results found.
                 </TableCell>
               </TableRow>
@@ -318,7 +373,7 @@ const CheckInTable = ({ data = [] }) => {
         </Table>
       </div>
 
-      {/* ⏩ Pagination */}
+      {/* Pagination */}
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="text-muted-foreground flex-1 text-sm">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
@@ -348,3 +403,5 @@ const CheckInTable = ({ data = [] }) => {
 };
 
 export default CheckInTable;
+
+

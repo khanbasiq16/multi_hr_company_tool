@@ -63,7 +63,7 @@ const page = () => {
       <div className='w-full'>
 
        <Superbreadcrumb path={"Employee"} path2={`${employee?.employeeName}`}/> 
-       <EmployeesDetails employee={employee} assigncompanies={assigncompanies} />
+       <EmployeesDetails employee={employee} assigncompanies={assigncompanies} setemployee={setemployee} />
       </div>
     </SuperAdminlayout>
     </>

@@ -14,6 +14,7 @@ import IpwhiteReducer from "../features/Slice/IpwhiteSlice";
 import CheckinReducer from "../features/Slice/CheckInSlice";
 import CheckOutReducer from "../features/Slice/CheckOutSlice";
 import StopwatchReducer from "../features/Slice/StopwatchSlice";
+import TemplatesReducer from "../features/Slice/TemplateSlice";
 
 const rootReducer = combineReducers({
   User: UserReducer,
@@ -26,7 +27,8 @@ const rootReducer = combineReducers({
   Ipwhitelist:IpwhiteReducer,
   Checkin:CheckinReducer,
   Checkout:CheckOutReducer,
-  Stopwatch:StopwatchReducer
+  Stopwatch:StopwatchReducer,
+  Templates:TemplatesReducer
   
 });
 

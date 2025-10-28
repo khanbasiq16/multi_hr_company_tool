@@ -45,7 +45,7 @@ const CheckOut = () => {
     satisfaction: "",
   });
 
-  // Convert ISO to 12-hour format
+ 
   const isoTo12Hour = (isoString) => {
     const date = new Date(isoString);
     let hours = date.getHours();
@@ -132,7 +132,7 @@ const CheckOut = () => {
     });
   };
 
-  // 🔹 Normal checkout
+  
   const normalcheckout = async () => {
     try {
       setLoadingsubmit(true);
@@ -238,7 +238,7 @@ const CheckOut = () => {
 
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
-      {/* ✅ Main Checkout Button */}
+    
       <button
         disabled={!isCheckedIn || isCheckedOut || !canCheckOut}
         onClick={() => {
@@ -269,7 +269,7 @@ const CheckOut = () => {
               if (user?.department?.departmentName === "Sales") {
                 setWorkModal(true);
                 setShowNote(true);
-                setStatuscheck(false)
+                setStatuscheck(false);
               } else {
                 setNoteModal(true);
               }

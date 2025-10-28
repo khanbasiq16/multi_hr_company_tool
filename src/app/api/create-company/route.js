@@ -23,25 +23,12 @@ export async function POST(req) {
 
     if (!name) {
       return NextResponse.json(
-        { error: "Company name required hai" },
+        { meesage: "Company name required hai" },
         { status: 400 }
       );
     }
 
-    try {
-      const companiesCollection = collection(db, "companies");
-      const q = query(companiesCollection, where("companyPhoneNumber", "==", companyPhoneNumber));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        return NextResponse.json(
-          { meesage: "Company email already exists" },
-          { status: 400 }
-        );
-      }
-    } catch (err) {
-      console.log("Collection 'companies' does not exist yet, continuing...");
-    }
+   
 
     let logoUrl = "";
     if (file) {

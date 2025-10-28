@@ -74,13 +74,11 @@ const Companydailog = () => {
       setFile(null);
       setPreview(null);
       dispatch(createcompany(data.companies));
-    } else {
-      alert("❌ " + data.error);
-    }
+    } 
 
 
   } catch (error) {
-    toast.error(error.message);
+    toast.error(error.resposne.data.message);
      setFile(null);
       setPreview(null);
   } finally {

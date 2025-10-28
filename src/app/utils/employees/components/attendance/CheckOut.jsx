@@ -24,6 +24,7 @@ const CheckOut = () => {
   const [note, setNote] = useState("");
   const [shownote, setShowNote] = useState(false);
   const [canCheckOut, setCanCheckOut] = useState(false);
+  const [statuscheck, setStatuscheck] = useState(false);
 
   const { isCheckedIn, attendenceid } = useSelector((state) => state.Checkin);
   const { isCheckedOut } = useSelector((state) => state.Checkout);
@@ -213,7 +214,7 @@ const CheckOut = () => {
         note:note,
         stopwatchTime: formattedStopwatchTime,
         attendenceid,
-        earlycheckout: false,
+        earlycheckout: statuscheck ? 'On Time Check Out' : 'Early Check Out',
       });
 
       if (res.data?.success) {
@@ -247,6 +248,7 @@ const CheckOut = () => {
           ) {
             setWorkModal(true);
             setShowNote(false);
+            setStatuscheck(true)
           } else {
             normalcheckout();
           }
@@ -267,6 +269,7 @@ const CheckOut = () => {
               if (user?.department?.departmentName === "Sales") {
                 setWorkModal(true);
                 setShowNote(true);
+                setStatuscheck(false)
               } else {
                 setNoteModal(true);
               }
@@ -279,7 +282,7 @@ const CheckOut = () => {
             }`}
           >
             {user?.department?.departmentName === "Sales"
-              ? "Submit Today's Work Summary"
+              ? "Add Note & Submit Today's Work Summary"
               : "Add Note & Send Check-Out Request"}
           </button>
         </div>

@@ -87,22 +87,14 @@ const columns = [
       <div className="whitespace-nowrap">{row.getValue("clientPhone")}</div>
     ),
   },
-  {
-    accessorKey: "clientAddress",
-    header: "Address",
-    cell: ({ row }) => (
-      <div className="whitespace-nowrap overflow-hidden text-ellipsis">
-        {row.getValue("clientAddress")}
-      </div>
-    ),
-  },
+
   {
     accessorKey: "clientWebsite",
     header: "Website",
     cell: ({ row }) => (
       <div className="whitespace-nowrap overflow-hidden text-ellipsis">
         <a href={row.getValue("clientWebsite")} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-          {row.getValue("clientWebsite")}
+          {row.getValue("clientWebsite").replace(/(^\w+:|^)\/\//, '').replace(/\/$/, '')}
         </a>
       </div>
     ),

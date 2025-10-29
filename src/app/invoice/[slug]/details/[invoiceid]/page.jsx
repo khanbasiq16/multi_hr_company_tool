@@ -62,7 +62,6 @@ const CheckoutForm = ({ clientSecret, amount , invoiceid }) => {
         setSuccess(false);
 
 
-
         const cardNumberElement = elements.getElement(CardNumberElement);
 
         const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
@@ -239,12 +238,11 @@ const page = () => {
             <div className="text-center mb-3">
               {company?.companyLogo && (
         <div className="flex justify-center mb-3">
-          <Image
+          <img
             src={company?.companyLogo}
             alt="Company Logo"
-            width={35}
-            height={35}
-            className=" object-cover"
+           
+            className=" h-20 object-cover"
           />
         </div>
       )}

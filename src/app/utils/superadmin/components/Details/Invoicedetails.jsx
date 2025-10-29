@@ -89,7 +89,7 @@ const Invoicedetails = ({ invoice, client, setInvoice }) => {
               rel="noopener noreferrer"
               className="text-blue-500 underline"
             >
-              {client.clientWebsite}
+              {client.clientWebsite.replace(/(^\w+:|^)\/\//, '').replace(/\/$/, '')}
             </a>
           </div>
         </div>

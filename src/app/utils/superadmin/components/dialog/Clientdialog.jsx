@@ -57,12 +57,10 @@ const Clientdialog = () => {
 
         dispatch(getallclients(data?.allclients));
         setOpen(false);
-      } else {
-        toast.error(data.error || "Failed to create client");
-      }
+      } 
     } catch (error) {
       console.error(error);
-      toast.error("Error creating client");
+      toast.error(error.response.data.error);
     } finally {
       setLoading(false);
     }

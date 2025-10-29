@@ -46,7 +46,7 @@ const ClientDetails = ({ client , setClient }) => {
               target="_blank"
               className="text-sm text-blue-600 underline"
             >
-              {client.clientWebsite}
+              {client.clientWebsite.replace(/(^\w+:|^)\/\//, '').replace(/\/$/, '')}
             </a>
           </div>
         </div>

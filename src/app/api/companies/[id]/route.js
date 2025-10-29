@@ -21,7 +21,7 @@ export async function POST(req, { params }) {
     const companyemail = formData.get("companyEmail") || "";
     const companyemailpassword = formData.get("companyEmailPassword") || "";
     const companyemailHost = formData.get("companyEmailHost") || "";
-    const companysmtphost = formData.get("companysmtphost") || "";
+    const companysmtphost = formData.get("companySmtpHost") || "";
     const file = formData.get("file");
 
         
@@ -67,10 +67,10 @@ export async function POST(req, { params }) {
       companyPhoneNumber,
       companyLogo: logoUrl,
       companyWebsite,
-      companyemail,
-      companyemailpassword,
-      companysmtphost,
-      companyemailHost,
+      companyemail:companyemail,
+      companyemailpassword:companyemailpassword,
+      companysmtphost:companysmtphost,
+      companyemailhost:companyemailHost,
       companyFacebook,
       companyInstagram,
       companyLinkedin,

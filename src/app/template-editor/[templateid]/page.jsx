@@ -361,7 +361,7 @@ const TemplateEditorPage = () => {
                     rel="noopener noreferrer"
                     className="underline text-blue-500"
                   >
-                    {template.company.companyWebsite}
+                    {template.company.companyWebsite.replace(/(^\w+:|^)\/\//, '').replace(/\/$/, '')}
                   </a>
                 </span>
               )}

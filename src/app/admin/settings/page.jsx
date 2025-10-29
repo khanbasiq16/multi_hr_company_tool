@@ -4,7 +4,9 @@ import EditDepartment from "@/app/utils/superadmin/components/dialog/EditDepartm
 import Ipwhitelistdialog from "@/app/utils/superadmin/components/dialog/Ipwhitelistdialog";
 import SuperAdminlayout from "@/app/utils/superadmin/layout/SuperAdmin";
 import { Button } from "@/components/ui/button";
+import { createcompany } from "@/features/Slice/CompanySlice";
 import { createdepartment } from "@/features/Slice/DepartmentSlice";
+import { createemployees } from "@/features/Slice/EmployeeSlice";
 import { getallipwhitelist } from "@/features/Slice/IpwhiteSlice";
 import axios from "axios";
 import Link from "next/link";
@@ -19,6 +21,8 @@ const page = () => {
   const dispatch = useDispatch();
   const { department } = useSelector((state) => state.Department);
   const { ipwhitelist } = useSelector((state) => state.Ipwhitelist);
+  const { employees } = useSelector((state) => state.Employee);
+  const { companies } = useSelector((state) => state.Company);
 
   useEffect(() => {
     const getAllDepartment = async () => {
@@ -32,6 +36,35 @@ const page = () => {
 
     getAllDepartment();
   }, []);
+
+  useEffect(() => {
+    const getAllEmployement = async () => {
+      try {
+        const res = await axios.get("/api/get-all-employees");
+        dispatch(createemployees(res.data.employees));
+      } catch (error) {
+        console.error("API Error:", error);
+      }
+    };
+
+    getAllEmployement();
+  }, []);
+
+
+  useEffect(() => {
+    const getAllEmployement = async () => {
+      try {
+        const res = await axios.get("/api/get-all-companies");
+        dispatch(createcompany(res.data.companies));
+      } catch (error) {
+        console.error("API Error:", error);
+      }
+    };
+
+    getAllEmployement();
+  }, []);
+
+
 
   useEffect(() => {
     const getAllnetworks = async () => {
@@ -58,7 +91,7 @@ const page = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-white shadow rounded-lg p-5">
             <h3 className="text-gray-600 text-sm">Total Employees</h3>
-            <p className="text-2xl font-bold mt-2">120</p>
+            <p className="text-2xl font-bold mt-2">{employees?.length}</p>
           </div>
 
           <div className="bg-white shadow rounded-lg p-5">
@@ -68,7 +101,7 @@ const page = () => {
 
           <div className="bg-white shadow rounded-lg p-5">
             <h3 className="text-gray-600 text-sm">Companies</h3>
-            <p className="text-2xl font-bold mt-2">15</p>
+            <p className="text-2xl font-bold mt-2">{companies?.length}</p>
           </div>
 
           <div className="bg-white shadow rounded-lg p-5">
@@ -144,18 +177,25 @@ const page = () => {
               </tr>
             </thead>
             <tbody>
-              <tr className="border-b">
-                <td className="p-3">John Doe</td>
-                <td className="p-3">IT</td>
-                <td className="p-3">TechCorp</td>
-                <td className="p-3">Active</td>
-              </tr>
-              <tr className="border-b">
-                <td className="p-3">Sarah Khan</td>
-                <td className="p-3">HR</td>
-                <td className="p-3">BizSoft</td>
-                <td className="p-3">Active</td>
-              </tr>
+
+             {employees?.map((emp) => (
+    <tr key={emp.employeeId} className="border-b hover:bg-gray-50 transition">
+      <td className="p-3">{emp.employeeName}</td>
+      <td className="p-3">{emp.department}</td>
+      <td className="p-3">{emp.employeeAddress}</td>
+      <td className="p-3">
+        <span
+          className={`px-3 py-1 text-sm font-medium rounded-full ${
+            emp.status.toLowerCase() === "active"
+              ? "bg-green-100 text-green-700"
+              : "bg-red-100 text-red-700"
+          }`}
+        >
+          {emp.status}
+        </span>
+      </td>
+    </tr>
+  ))}
             </tbody>
           </table>
         </div>

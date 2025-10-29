@@ -131,7 +131,7 @@ const VIPCard = ({ title, value, isLink }) => (
         target="_blank"
         className="text-blue-600 underline text-lg"
       >
-        {value}
+        {value.replace(/(^\w+:|^)\/\//, '').replace(/\/$/, '')}
       </a>
     ) : (
       <p className="text-gray-800 text-lg font-medium break-words">

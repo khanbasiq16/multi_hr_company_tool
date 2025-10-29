@@ -51,7 +51,7 @@ const EditCompanyDialog = ({ company, open, setOpen }) => {
         companyWebsite: company.companyWebsite || "",
         companyEmail: company.companyemail || "",
         companyEmailPassword: company.companyemailpassword || "",
-        companyEmailHost: company.companyemailHost || "",
+        companyEmailHost: company.companyemailhost || "",
         companySmtpHost: company.companysmtphost || "",
       });
 

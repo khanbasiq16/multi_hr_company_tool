@@ -15,7 +15,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Image from "next/image";
 
-const stripePromise = loadStripe(process.env.NEXT_STRIPE_PUBLICABLE_KEY);
+const stripePromise = loadStripe("pk_live_51Mm44XEts5VgGUFiVnj7A232J1ADSX2W3K1wX88vwYkg8CsqfYaEjJxeWMwK1tnZcqWfvVWUd2Q39uht1og02xaa00fpsDekcf");
 
 const VIP_CARD_STYLE = {
     style: {

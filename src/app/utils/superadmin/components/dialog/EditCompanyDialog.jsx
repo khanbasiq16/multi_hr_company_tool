@@ -21,6 +21,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import { useSelector } from "react-redux";
 
 const EditCompanyDialog = ({ company, open, setOpen }) => {
   const [formData, setFormData] = useState({
@@ -42,8 +43,10 @@ const EditCompanyDialog = ({ company, open, setOpen }) => {
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [timeZones, setTimeZones] = useState([]);
-  const [loadingZones, setLoadingZones] = useState(true);
+
+
+     const {timeZone} = useSelector((state)=>state.TimeZone)
+  
 
   useEffect(() => {
     if (company) {
@@ -66,32 +69,6 @@ const EditCompanyDialog = ({ company, open, setOpen }) => {
   }, [company]);
 
 
-  useEffect(() => {
-    const fetchTimeZones = async () => {
-      try {
-        setLoadingZones(true);
-        const res = await fetch("https://timeapi.io/api/TimeZone/AvailableTimeZones");
-        if (!res.ok) throw new Error("Failed to fetch timezones");
-        const data = await res.json();
-        setTimeZones(data);
-      } catch (error) {
-        console.error("Error fetching time zones:", error);
-        toast.error("Failed to load time zones, using default list");
-        setTimeZones([
-          "Asia/Karachi",
-          "Asia/Dubai",
-          "Asia/Kolkata",
-          "Europe/London",
-          "America/New_York",
-          "America/Los_Angeles",
-          "Australia/Sydney",
-        ]);
-      } finally {
-        setLoadingZones(false);
-      }
-    };
-    fetchTimeZones();
-  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -233,14 +210,9 @@ const EditCompanyDialog = ({ company, open, setOpen }) => {
               />
             </div>
 
-            {/* ✅ TIME ZONE DROPDOWN */}
             <div>
               <Label htmlFor="companyTimeZone">Company Time Zone</Label>
-              {loadingZones ? (
-                <p className="text-sm text-gray-500 mt-2">
-                  Loading time zones...
-                </p>
-              ) : (
+            
                 <Select
                   onValueChange={(value) =>
                     setFormData((prev) => ({ ...prev, timezone: value }))
@@ -251,14 +223,14 @@ const EditCompanyDialog = ({ company, open, setOpen }) => {
                     <SelectValue placeholder="Select your time zone" />
                   </SelectTrigger>
                   <SelectContent className="max-h-60 overflow-y-auto">
-                    {timeZones.map((zone) => (
+                    {timeZone.map((zone) => (
                       <SelectItem key={zone} value={zone}>
                         {zone.replace("_", " ")}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-              )}
+              
             </div>
           </div>
 

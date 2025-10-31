@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import AssignCompanydIalog from "../dialog/AssignCompanydIalog";
 import Listattendance from "../Listelements/LIstattendance";
+import { Pencil } from "lucide-react";
+import EditEmployeeDialog from "../dialog/EditEmployeeDialog";
 
 const EmployeesDetails = ({ employee, assigncompanies  , setemployee}) => {
   if (!employee) return null;
@@ -18,13 +20,20 @@ const EmployeesDetails = ({ employee, assigncompanies  , setemployee}) => {
     <div className="mx-auto bg-white shadow-sm rounded-2xl p-8 border border-gray-200">
       <div className=" space-y-6">
         {/* Header */}
-        <div className="flex flex-col items-start justify-between border-b pb-4">
+        <div className="flex flex items-center justify-between border-b pb-4">
+          <div className="flex flex-col items-start justify-between">
+
           <h2 className="text-2xl font-semibold text-gray-800">
             {employee.employeeName}
           </h2>
           <span className="text-sm bg-gray-100 px-3 py-1 rounded-full text-gray-600">
             ID: {employee.employeeId}
           </span>
+          </div>
+
+          <div>
+            <EditEmployeeDialog employee={employee} setemployee={setemployee}/>
+          </div>
         </div>
 
         {/* Info Grid */}

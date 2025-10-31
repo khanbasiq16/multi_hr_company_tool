@@ -146,7 +146,7 @@ const VIPCard = ({ title, value, isLink }) => (
       </a>
     ) : (
       <p className="text-gray-800 text-lg font-medium break-words">
-        {value || "N/A"}
+        {value || "-"}
       </p>
     )}
   </div>

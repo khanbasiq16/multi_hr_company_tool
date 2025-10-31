@@ -19,6 +19,7 @@ export async function POST(req) {
     const companyemailpassword = formData.get("companyemailpassword") || "";
     const companysmtphost = formData.get("companysmtphost") || "";
     const companyemailhost = formData.get("companyemailhost") || "";
+    const timezone = formData.get("timezone") || "";
     const file = formData.get("file");
 
     if (!name) {
@@ -71,6 +72,7 @@ export async function POST(req) {
       ContactTemplates: [],
       createdAt: new Date().toISOString(),
       status: "active",
+      timezone
     });
 
     

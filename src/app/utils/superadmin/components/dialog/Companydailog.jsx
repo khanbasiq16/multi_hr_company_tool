@@ -1,8 +1,9 @@
+
 "use client";
 
 import axios from "axios";
 import toast from "react-hot-toast";
-import React, { useState } from 'react'
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,78 +15,72 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useDispatch } from "react-redux";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+import { useDispatch, useSelector } from "react-redux";
 import { createcompany } from "@/features/Slice/CompanySlice";
 
-const Companydailog = () => {
-
+const CompanyDialog = () => {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [timeZones, setTimeZones] = useState([]);
+  const [selectedZone, setSelectedZone] = useState("");
   const dispatch = useDispatch();
-  
 
+  const {timeZone} = useSelector((state)=>state.TimeZone)
+
+  // ✅ File preview
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
     if (selectedFile) {
-      setPreview(URL.createObjectURL(selectedFile)); 
+      setPreview(URL.createObjectURL(selectedFile));
     } else {
       setPreview(null);
     }
   };
 
+ 
   const formHandler = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    const formData = new FormData(e.target);
+    try {
+      const formData = new FormData(e.target);
+      if (file) formData.append("file", file);
+      if (selectedZone) formData.append("timezone", selectedZone);
 
-    for (let [key, value] of formData.entries()) {
-      console.log(key+" : "+value);
-    }
+      const res = await axios.post("/api/create-company", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-    if (
-      !formData.get("name") ||
-      !formData.get("companyPhoneNumber") ||
-      !formData.get("companyAddress") ||
-      !formData.get("companywebsite")
-    ) {
-      toast.error("All fields are required");
+      const data = res.data;
+
+      if (data.success) {
+        toast.success("Company Created Successfully");
+        e.target.reset();
+        setFile(null);
+        setPreview(null);
+        setSelectedZone("");
+        dispatch(createcompany(data.companies));
+      } else {
+        toast.error(data.message || "Failed to create company");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    } finally {
       setLoading(false);
-      return;
+      setOpen(false);
     }
-
-    if (file) {
-      formData.append("file", file);
-    }
-
-    const res = await axios.post("/api/create-company", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-
-    const data = res.data;
-
-    if (data.success) {
-      toast.success("Company Created Successfully");
-      e.target.reset();
-      setFile(null);
-      setPreview(null);
-      dispatch(createcompany(data.companies));
-    } 
-
-
-  } catch (error) {
-    toast.error(error.resposne.data.message);
-     setFile(null);
-      setPreview(null);
-  } finally {
-    setLoading(false);
-    setOpen(false);
-  }
-};
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -105,54 +100,98 @@ const Companydailog = () => {
           {/* Left Column */}
           <div className="space-y-4">
             <div>
-              <Label htmlFor="name">Company Name <span className="text-red-500">*</span></Label>
-              <Input className="mt-2" id="name" name="name" placeholder="Enter company name" required />
+              <Label htmlFor="name">Company Name *</Label>
+              <Input className="mt-2" id="name" name="name" 
+              placeholder="ABC Name"
+              required />
             </div>
 
             <div>
-              <Label htmlFor="companyAddress">Company Address <span className="text-red-500">*</span></Label>
-              <Input className="mt-2" id="companyAddress" name="companyAddress" placeholder="Enter company address" required/>
+              <Label htmlFor="companyAddress">Company Address *</Label>
+              <Input
+                className="mt-2"
+                id="companyAddress"
+                name="companyAddress"
+                placeholder="ABC Street 123"
+                required
+              />
             </div>
 
             <div>
-              <Label htmlFor="companyphoneNumber">Company Phone <span className="text-red-500">*</span></Label>
-              <Input className="mt-2" id="companyphoneNumber" name="companyPhoneNumber" placeholder="Enter phone number" required/>
-            </div>
-
-              <div>
-              <Label htmlFor="companyfacebook">Company Facebook Account</Label>
-              <Input className="mt-2" id="companyfacebook" name="companyFacebook" placeholder="https://www.facebook.com/" />
-            </div>
-
-            <div>
-              <Label htmlFor="companylinkedin">Company Linkedin Account</Label>
-              <Input className="mt-2" id="companylinkedin" name="companyLinkedin" placeholder="https://www.linkedin.com/" />
+              <Label htmlFor="companyPhoneNumber">Company Phone *</Label>
+              <Input
+                className="mt-2"
+                id="companyPhoneNumber"
+                name="companyPhoneNumber"
+                placeholder="+92 xxx-xxxx-xxx"
+                required
+              />
             </div>
 
             <div>
-              <Label htmlFor="companyinstagram">Company Instagram Account</Label>
-              <Input className="mt-2" id="companyinstagram" name="companyInstagram" placeholder="https://www.instagram.com/" />
+              <Label htmlFor="companyFacebook">Company Facebook</Label>
+              <Input
+                className="mt-2"
+                id="companyFacebook"
+                name="companyFacebook"
+                placeholder="https://www.facebook.com/"
+              />
             </div>
 
-          
-           
+            <div>
+              <Label htmlFor="companyLinkedin">Company Linkedin</Label>
+              <Input
+                className="mt-2"
+                id="companyLinkedin"
+                name="companyLinkedin"
+                placeholder="https://www.linkedin.com/"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="companyInstagram">Company Instagram</Label>
+              <Input
+                className="mt-2"
+                id="companyInstagram"
+                name="companyInstagram"
+                placeholder="https://www.instagram.com/"
+              />
+            </div>
+
+            <div>
+              <Label>Company Time Zone</Label>
+             
+                <Select
+                  onValueChange={(val) => setSelectedZone(val)}
+                  value={selectedZone}
+                >
+                  <SelectTrigger className="mt-2 w-full">
+                    <SelectValue placeholder="Select time zone" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60 overflow-y-auto">
+                    {timeZone.map((zone) => (
+                      <SelectItem key={zone} value={zone}>
+                        {zone.replace("_", " ")}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              
+            </div>
           </div>
 
           {/* Right Column */}
           <div className="space-y-4">
             <div>
-              <Label htmlFor="file">Company Logo <span className="text-red-500">*</span></Label>
+              <Label htmlFor="file">Company Logo *</Label>
               <Input
                 type="file"
                 className="mt-2"
                 id="file"
                 accept="image/*"
                 onChange={handleFileChange}
-
                 required
               />
-
-              {/* ✅ Image Preview */}
               {preview && (
                 <img
                   src={preview}
@@ -162,44 +201,70 @@ const Companydailog = () => {
               )}
             </div>
 
-
-            
             <div>
-              <Label htmlFor="companyWebsite">Company Website <span className="text-red-500">*</span></Label>
-              <Input className="mt-2" id="companyWebsite" name="companywebsite" placeholder="https://example.com/" required/>
+              <Label htmlFor="companyWebsite">Company Website *</Label>
+              <Input
+                className="mt-2"
+                id="companyWebsite"
+                name="companywebsite"
+                placeholder="https://example.com/"
+                required
+              />
             </div>
 
-  <div>
+            <div>
               <Label htmlFor="companyEmail">Company Email</Label>
-              <Input className="mt-2" id="companyEmail" name="companyemail" placeholder="Enter Email" />
+              <Input
+                className="mt-2"
+                id="companyEmail"
+                name="companyemail"
+                type="email"
+              />
             </div>
+
             <div>
-              <Label htmlFor="companyEmailpassword">Company Email Password</Label>
-              <Input className="mt-2" type="password" id="companyEmailpassword" name="companyemailpassword" placeholder="Enter Password" />
-            </div>
-          
-
-             <div>
-              <Label htmlFor="companyEmailhost">Company Email HOST</Label>
-              <Input className="mt-2" id="companyEmailhost" name="companyemailhost" placeholder="Enter Email Host" />
-            </div>
-             <div>
-              <Label htmlFor="companySmtphost">Company SMTP PORT</Label>
-              <Input className="mt-2" id="companySmtphost" name="companysmtphost" placeholder="Enter SMTP PORT" />
+              <Label htmlFor="companyEmailPassword">Company Email Password</Label>
+              <Input
+                className="mt-2"
+                id="companyEmailPassword"
+                name="companyemailpassword"
+                type="password"
+              />
             </div>
 
-          
+            <div>
+              <Label htmlFor="companyEmailHost">Company Email HOST</Label>
+              <Input
+                className="mt-2"
+                id="companyEmailHost"
+                name="companyemailhost"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="companySmtpHost">Company SMTP PORT</Label>
+              <Input
+                className="mt-2"
+                id="companySmtpHost"
+                name="companysmtphost"
+              />
+            </div>
           </div>
 
+          {/* Footer */}
           <DialogFooter className="col-span-2 flex justify-end gap-3 mt-4">
-            <Button type="submit" className="bg-[#5965AB] text-white" disabled={loading}>
+            <Button
+              type="submit"
+              className="bg-[#5965AB] text-white"
+              disabled={loading}
+            >
               {loading ? "Saving..." : "Save"}
             </Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
-export default Companydailog
+export default CompanyDialog;

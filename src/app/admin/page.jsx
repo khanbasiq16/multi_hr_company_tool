@@ -1,84 +1,10 @@
-// "use client";
-// import React from "react";
-// import SuperAdminlayout from "../utils/superadmin/layout/SuperAdmin";
-// import { Building2, Users, ClipboardList, Layers, UserCog, FileText } from "lucide-react";
-
-// const Page = () => {
-//   const stats = [
-//     { title: "Companies", count: 12, icon: <Building2 size={34} /> },
-//     { title: "Employees", count: 58, icon: <Users size={34} /> },
-//     { title: "Exams", count: 7, icon: <ClipboardList size={34} /> },
-//     { title: "Departments", count: 9, icon: <Layers size={34} /> },
-//     { title: "Managers", count: 5, icon: <UserCog size={34} /> },
-//     { title: "Contracts", count: 14, icon: <FileText size={34} /> },
-//   ];
-
-
-  
-
-//   const recentEmployees = [
-//     { name: "Ali Raza", role: "Developer", joinDate: "2025-10-10" },
-//     { name: "Sara Khan", role: "Manager", joinDate: "2025-10-09" },
-//     { name: "Usman Tariq", role: "Designer", joinDate: "2025-10-07" },
-//     { name: "Hina Malik", role: "HR", joinDate: "2025-10-05" },
-//   ];
-
-//   return (
-//     <SuperAdminlayout>
-//       <section className="w-full p-6">
-        
-//         {/* Top Grid Section with Icons */}
-//         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-//           {stats.map((item, index) => (
-//             <div
-//               key={index}
-//               className="rounded-2xl p-6 bg-white border shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center justify-between"
-//             >
-//               <div>
-//                 <h2 className="text-lg font-semibold text-gray-700">{item.title}</h2>
-//                 <p className="text-3xl font-bold text-gray-900 mt-2">{item.count}</p>
-//               </div>
-//               <div className="text-gray-500">{item.icon}</div>
-//             </div>
-//           ))}
-//         </div>
-
-//         {/* Recent Employees Table */}
-//         <div className="bg-white shadow-xl rounded-2xl p-6 border">
-//           <h2 className="text-2xl font-bold text-gray-800 mb-5">
-//             Recent Employees
-//           </h2>
-//           <table className="w-full border-collapse">
-//             <thead>
-//               <tr className="bg-gray-100 text-left">
-//                 <th className="p-3 border-b text-sm font-semibold">Name</th>
-//                 <th className="p-3 border-b text-sm font-semibold">Role</th>
-//                 <th className="p-3 border-b text-sm font-semibold">Joining Date</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {recentEmployees.map((emp, index) => (
-//                 <tr key={index} className="hover:bg-gray-50">
-//                   <td className="p-3 border-b">{emp.name}</td>
-//                   <td className="p-3 border-b">{emp.role}</td>
-//                   <td className="p-3 border-b">{emp.joinDate}</td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-//         </div>
-//       </section>
-//     </SuperAdminlayout>
-//   );
-// };
-
-// export default Page;
-
 "use client";
 import React, { useEffect, useEffectEvent, useState } from "react";
 import SuperAdminlayout from "../utils/superadmin/layout/SuperAdmin";
 import axios from "axios";
 import { Building2, Users, ClipboardList, Layers, UserCog, FileText } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { getallzones } from "@/features/Slice/TimeZoneSlice";
 
 const Page = () => {
   const [counts, setCounts] = useState({
@@ -92,12 +18,37 @@ const Page = () => {
 
 
   const [recentEmployee, setrecentEmployee] = useState([])
-  //   const recentEmployees = [
-  //   { name: "Ali Raza", role: "Developer", joinDate: "2025-10-10" },
-  //   { name: "Sara Khan", role: "Manager", joinDate: "2025-10-09" },
-  //   { name: "Usman Tariq", role: "Designer", joinDate: "2025-10-07" },
-  //   { name: "Hina Malik", role: "HR", joinDate: "2025-10-05" },
-  // ];
+  const [loadingzone, setLoadingZones] = useState(false)
+  const dispatch = useDispatch()
+
+
+    useEffect(() => {
+    const fetchTimeZones = async () => {
+      try {
+        setLoadingZones(true);
+        const res = await fetch("https://timeapi.io/api/TimeZone/AvailableTimeZones");
+        if (!res.ok) throw new Error("Failed to fetch timezones");
+        const data = await res.json();
+       
+        dispatch(getallzones(data))
+      } catch (error) {
+        getallzones([
+          "Asia/Karachi",
+          "Asia/Dubai",
+          "Asia/Kolkata",
+          "Europe/London",
+          "America/New_York",
+          "America/Los_Angeles",
+          "Australia/Sydney",
+        ]);
+      } finally {
+        setLoadingZones(false);
+      }
+    };
+    fetchTimeZones();
+  }, []);
+
+
 
   useEffect(() => {
     const fetchData = async () => {

@@ -22,6 +22,7 @@ export async function POST(req, { params }) {
     const companyemailpassword = formData.get("companyEmailPassword") || "";
     const companyemailHost = formData.get("companyEmailHost") || "";
     const companysmtphost = formData.get("companySmtpHost") || "";
+    const timezone = formData.get("timezone") || "";
     const file = formData.get("file");
 
         
@@ -74,6 +75,7 @@ export async function POST(req, { params }) {
       companyFacebook,
       companyInstagram,
       companyLinkedin,
+      timezone:timezone,
       companyslug: name.toLowerCase().replace(/\s+/g, "-"),
       updatedAt: new Date().toISOString(),
     };

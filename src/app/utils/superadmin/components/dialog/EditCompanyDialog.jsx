@@ -53,6 +53,7 @@ const EditCompanyDialog = ({ company, open, setOpen }) => {
         companyEmailPassword: company.companyemailpassword || "",
         companyEmailHost: company.companyemailhost || "",
         companySmtpHost: company.companysmtphost || "",
+        timezone: company.timezone || "",
       });
 
 
@@ -205,6 +206,18 @@ const formHandler = async (e) => {
                 name="companyInstagram"
                 placeholder="https://www.instagram.com/"
                 value={formData.companyInstagram}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="companyInstagram">Company Time Zone</Label>
+              <Input
+                className="mt-2"
+                id="companyTimeZone"
+                name="companyTimeZone"
+                placeholder="https://www.instagram.com/"
+                value={formData.timezone}
                 onChange={handleChange}
               />
             </div>

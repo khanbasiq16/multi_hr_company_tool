@@ -306,9 +306,9 @@ const Sidebar = () => {
       const response = await axios.get("/api/logout");
       if (response.data.success) {
         dispatch(logout());
-        dispatch(resetTimer());
-        dispatch(resetCheckIn());
-        dispatch(resetCheckOut());
+        // dispatch(resetTimer());
+        // dispatch(resetCheckIn());
+        // dispatch(resetCheckOut());
         router.push("/");
         toast.success("Logged out successfully");
       }
@@ -383,6 +383,14 @@ const Sidebar = () => {
               <ArrowBigLeft className="2xl:w-5 w-4 2xl:h-5 h-4" /> Back
             </Link>
           )}
+
+           <Link
+                      href={`/employee/${employeeSlug}/settings`}
+
+                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100"
+                    >
+                      <Settings className="2xl:w-5 w-4 2xl:h-5 h-4" /> Settings
+                    </Link>
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-red-500 hover:bg-red-100"

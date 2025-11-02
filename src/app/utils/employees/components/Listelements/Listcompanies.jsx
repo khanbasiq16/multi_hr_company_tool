@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
-import { Building2, MapPin, Phone } from "lucide-react";
+import { Building2, Eye, MapPin, Phone } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { createcompany } from "@/features/Slice/CompanySlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,7 +28,6 @@ const Listcompanies = () => {
         dispatch(createcompany(res.data?.companies || []));
       } catch (error) {
         console.error("Error fetching companies:", error);
-        setCompanies([]);
       } finally {
         setLoading(false);
       }
@@ -40,12 +39,12 @@ const Listcompanies = () => {
   return (
     <div className="bg-white p-6 rounded-xl shadow-md flex flex-col h-[64vh] overflow-auto">
 
-      {/* Loading State */}
+      
       {loading ? (
         <p className="text-center text-gray-500">Loading companies...</p>
       ) : companies.length === 0 ? (
         <div className="flex h-full justify-center items-center">
-          No COmapanies Assigned
+          No Comapany Assigned
         </div>
       ) : (
        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -87,14 +86,23 @@ const Listcompanies = () => {
 
       {/* Footer Button */}
       <CardFooter>
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full"
-          onClick={() => router.push(`/employee/${slug}/company/${company.companyslug}`)}
-        >
-          View Details
-        </Button>
+         <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full flex items-center gap-2"
+                  onClick={() =>
+                    router.push(`/admin/company/${company.companyslug}`)
+                  }
+                  disabled={company.status?.toLowerCase() === "deactive"}
+                  title={
+                    company.status?.toLowerCase() === "deactive"
+                      ? "Company is deactivated"
+                      : "View company details"
+                  }
+                >
+                  <Eye className="w-4 h-4" />
+                  View Details
+                </Button>
       </CardFooter>
     </Card>
   ))}

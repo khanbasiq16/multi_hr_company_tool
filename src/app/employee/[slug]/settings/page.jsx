@@ -51,7 +51,6 @@ const generateRandomPassword = (length = 16) => {
   }
   return password;
 };
-// ------------------------------------------------
 
 const EmployeeSettings = () => {
   const [activeTab, setActiveTab] = useState("profile");
@@ -60,7 +59,6 @@ const EmployeeSettings = () => {
   const { user } = useSelector((state) => state.User);
   const dispatch = useDispatch();
 
-  // Employee profile form data
   const [profileData, setProfileData] = useState({
     employeeName: user?.employeeName || "",
     employeeemail: user?.employeeemail || "",
@@ -70,21 +68,18 @@ const EmployeeSettings = () => {
     dateOfJoining: user?.dateOfJoining || "",
   });
 
-  // Password form data
   const [passwordData, setPasswordData] = useState({
     oldPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
 
-  // State to manage password visibility for each field
   const [showPassword, setShowPassword] = useState({
     old: false,
     new: false,
     confirm: false,
   });
 
-  // Handle profile update (unchanged)
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     try {
@@ -106,7 +101,6 @@ const EmployeeSettings = () => {
     }
   };
 
-  // Handle password update (unchanged logic)
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     if (passwordData.newPassword !== passwordData.confirmPassword) {

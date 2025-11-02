@@ -20,43 +20,73 @@ export async function POST(req) {
     try {
       userCredential = await signInWithEmailAndPassword(auth, email, password);
     } catch (err) {
+      console.error("Firebase Auth error:", err.code);
+
+     
+      if (err.code === "auth/user-disabled") {
+        return NextResponse.json(
+
+          {
+            success: false,
+            error: "Your account is currently deactive. Contact admin.",
+          },
+          { status: 403 }
+        );
+      }
+
+      // 🔹 Handle invalid credentials
+      if (err.code === "auth/invalid-credential" || err.code === "auth/invalid-login-credentials") {
+        return NextResponse.json(
+          { success: false, error: "Invalid email or password." },
+          { status: 401 }
+        );
+      }
+
+      // 🔹 Any other Firebase error
       return NextResponse.json(
-        { success: false, 
-          error: "Invalid email or password" },
-        { status: 401 }
+        { success: false, error: "Unable to sign in. Please try again later." },
+        { status: 500 }
       );
     }
 
     const loggedInUser = userCredential.user;
 
+    // 🔹 Get Firestore user data
     const userRef = doc(db, "employees", loggedInUser.uid);
     const userDoc = await getDoc(userRef);
 
     if (!userDoc.exists()) {
       return NextResponse.json(
-        { success: false, error: "Acount not found. Please Try Again" },
+        { success: false, error: "Account not found. Please try again." },
         { status: 404 }
       );
     }
 
     const userData = userDoc.data();
 
+    // 🔹 Fetch department info
     let departmentData = null;
     if (userData.department) {
       const deptRef = collection(db, "departments");
       const deptQuery = query(deptRef, where("departmentName", "==", userData.department));
       const deptSnapshot = await getDocs(deptQuery);
 
-    
       if (!deptSnapshot.empty) {
-        departmentData = { id: deptSnapshot.docs[0].id, ...deptSnapshot.docs[0].data() };
+        departmentData = {
+          id: deptSnapshot.docs[0].id,
+          ...deptSnapshot.docs[0].data(),
+        };
       }
     }
 
+    // 🔹 Fetch associated companies
     let companiesData = [];
     if (Array.isArray(userData.companyIds) && userData.companyIds.length > 0) {
       const companiesRef = collection(db, "companies");
-      const companiesQuery = query(companiesRef, where("companyId", "in", userData.companyIds));
+      const companiesQuery = query(
+        companiesRef,
+        where("companyId", "in", userData.companyIds)
+      );
       const companiesSnapshot = await getDocs(companiesQuery);
 
       companiesData = companiesSnapshot.docs.map((doc) => ({
@@ -65,14 +95,15 @@ export async function POST(req) {
       }));
     }
 
-       let slug = userData?.employeeName.trim().replace(/\s+/g, "-").toLowerCase()
+    // 🔹 Create slug
+    const slug = userData?.employeeName?.trim()?.replace(/\s+/g, "-")?.toLowerCase();
 
-
+    // 🔹 Create JWT token
     const token = signToken({
       id: loggedInUser.uid,
       email: loggedInUser.email,
       role: "employee",
-      slug : slug 
+      slug,
     });
 
     const response = NextResponse.json({
@@ -90,7 +121,7 @@ export async function POST(req) {
     response.cookies.set("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 7 * 24 * 60 * 60,
+      maxAge: 7 * 24 * 60 * 60, // 7 days
       path: "/",
     });
 

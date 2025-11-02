@@ -513,11 +513,9 @@ const Employeedailog = () => {
         setSelectedCompanies([]);
         setPassword("");
         setOpen(false);
-      } else {
-        toast.error(res.data.error || "Failed to create employee");
-      }
+      } 
     } catch (error) {
-      console.error(error);
+      console.error(error.response.data.error);
       toast.error("Error creating employee");
     } finally {
       setLoading(false);

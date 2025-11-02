@@ -23,7 +23,6 @@ export async function POST(req, { params }) {
       );
     }
 
-    // Step 1: Fetch employee from Firestore using ID
     const employeeRef = doc(db, "employees", id);
     const employeeSnap = await getDoc(employeeRef);
 
@@ -35,7 +34,7 @@ export async function POST(req, { params }) {
     }
 
     const employeeData = employeeSnap.data();
-    const employeeemail = employeeData.email;
+    const employeeemail = employeeData.employeeemail;
 
     if (!employeeemail) {
       return NextResponse.json(
@@ -63,7 +62,7 @@ export async function POST(req, { params }) {
         <p>Your password was updated successfully.</p>
         <p>If this wasn’t you, please contact support immediately.</p>
         <br/>
-        <p>Best regards,<br/><strong>HR Management Team</strong></p>
+        <p>Best regards,<br/><strong>Brintor Management Team</strong></p>
       </div>
     `;
 

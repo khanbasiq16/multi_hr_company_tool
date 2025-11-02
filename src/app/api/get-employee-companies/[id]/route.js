@@ -1,5 +1,12 @@
 import { db } from "@/lib/firebase";
-import { doc, getDoc, collection, getDocs, query, where } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  collection,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
@@ -35,15 +42,19 @@ export async function GET(req, { params }) {
     }
 
     const companiesRef = collection(db, "companies");
-
     let companyDocs = [];
 
     for (let i = 0; i < companyIds.length; i += 10) {
       const batch = companyIds.slice(i, i + 10);
       const q = query(companiesRef, where("__name__", "in", batch));
       const querySnapshot = await getDocs(q);
+
       querySnapshot.forEach((doc) => {
-        companyDocs.push({ id: doc.id, ...doc.data() });
+        const data = doc.data();
+
+        if (data.status?.toLowerCase() === "active") {
+          companyDocs.push({ id: doc.id, ...data });
+        }
       });
     }
 
@@ -52,7 +63,6 @@ export async function GET(req, { params }) {
       employee: { id: empSnap.id, ...employeeData },
       companies: companyDocs,
     });
-
   } catch (error) {
     console.error("Error fetching employee and companies:", error);
     return NextResponse.json(

@@ -1,201 +1,3 @@
-// "use client";
-
-// import React from "react";
-// import { useSortable } from "@dnd-kit/sortable";
-// import { CSS } from "@dnd-kit/utilities";
-// import { GripVertical, Trash2 } from "lucide-react";
-// import { Input } from "@/components/ui/input";
-// import { Textarea } from "@/components/ui/textarea";
-// import { Button } from "@/components/ui/button";
-
-// const SortableField = ({ field, onDelete }) => {
-//   const { attributes, listeners, setNodeRef, transform, transition } =
-//     useSortable({ id: field.id });
-
-//   const style = {
-//     transform: CSS.Transform.toString(transform),
-//     transition,
-//   };
-
-//   return (
-//     <div
-//       ref={setNodeRef}
-//       style={style}
-//       className="relative bg-white shadow-sm border border-gray-200 rounded-lg p-4 mb-4 hover:shadow-md transition-all"
-//     >
-//       {/* Drag Handle + Delete */}
-//       <div className="flex justify-between items-center mb-2">
-//         <div
-//           {...attributes}
-//           {...listeners}
-//           className="cursor-grab text-gray-400 hover:text-gray-600 flex items-center gap-1"
-//         >
-//           <GripVertical size={16} /> Drag
-//         </div>
-//         <button
-//           onClick={() => onDelete(field.id)}
-//           className="text-red-500 hover:text-red-700 transition-colors"
-//         >
-//           <Trash2 size={18} />
-//         </button>
-//       </div>
-
-//       {/* Field Content */}
-//       <div className="space-y-2">
-//         <label className="text-sm font-medium text-gray-700">
-//           {field.label || "Untitled Field"}
-//         </label>
-
-//         {field.type === "text" && (
-//           <Input
-//             placeholder="Text input"
-//             className="border-gray-300"
-            
-//           />
-//         )}
-
-//         {field.type === "textarea" && (
-//           <Textarea
-//             placeholder="Paragraph text"
-//             className="border-gray-300"
-            
-//           />
-//         )}
-
-//         {field.type === "signature" && (
-//           <div className="border border-dashed border-gray-400 rounded-md h-20 flex items-center justify-center text-gray-400 text-sm italic">
-//             Signature Field
-//           </div>
-//         )}
-
-//         {field.type === "button" && (
-//           <Button variant="outline" disabled className="w-fit">
-//             Click Me
-//           </Button>
-//         )}
-
-//         {field.type === "multiple_choice" && (
-//           <div className="space-y-1">
-//             <label className="flex items-center gap-2">
-//               <input type="radio" disabled /> Option 1
-//             </label>
-//             <label className="flex items-center gap-2">
-//               <input type="radio" disabled /> Option 2
-//             </label>
-//           </div>
-//         )}
-
-//         {field.type === "checkboxes" && (
-//           <div className="space-y-1">
-//             <label className="flex items-center gap-2">
-//               <input type="checkbox" disabled /> Option 1
-//             </label>
-//             <label className="flex items-center gap-2">
-//               <input type="checkbox" disabled /> Option 2
-//             </label>
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default SortableField;
-
-
-// "use client";
-// import React, { useRef } from "react";
-// import { useSortable } from "@dnd-kit/sortable";
-// import { CSS } from "@dnd-kit/utilities";
-// import { GripVertical, Trash2, Copy } from "lucide-react";
-// import { Input } from "@/components/ui/input";
-// import { Textarea } from "@/components/ui/textarea";
-// import { Button } from "@/components/ui/button";
-// import SignaturePad from "react-signature-canvas";
-
-// const SortableField = ({ field, onDelete, onUpdate }) => {
-//   const sigRef = useRef();
-//   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: field.id });
-//   const style = { transform: CSS.Transform.toString(transform), transition };
-
-//   const addOption = () => {
-//     onUpdate(field.id, { options: [...field.options, `Option ${field.options.length + 1}`] });
-//   };
-
-//   const updateOption = (index, value) => {
-//     const newOptions = [...field.options];
-//     newOptions[index] = value;
-//     onUpdate(field.id, { options: newOptions });
-//   };
-
-//   const removeOption = (index) => {
-//     const newOptions = field.options.filter((_, i) => i !== index);
-//     onUpdate(field.id, { options: newOptions });
-//   };
-
-//   return (
-//     <div ref={setNodeRef} style={style} className="bg-white border rounded-lg shadow-sm p-4 mb-4">
-//       <div className="flex justify-between items-center mb-2">
-//         <div {...attributes} {...listeners} className="cursor-grab text-gray-400 flex items-center gap-1">
-//           <GripVertical size={16} /> Drag
-//         </div>
-//         <div className="flex items-center gap-2">
-//           <button onClick={() => onDelete(field.id)} className="text-red-500 hover:text-red-700">
-//             <Trash2 size={18} />
-//           </button>
-//         </div>
-//       </div>
-
-//       <Input
-//         className="mb-2"
-//         value={field.question}
-//         onChange={(e) => onUpdate(field.id, { question: e.target.value })}
-//         placeholder="Question title"
-//       />
-//       <Textarea
-//         className="mb-3"
-//         value={field.description}
-//         onChange={(e) => onUpdate(field.id, { description: e.target.value })}
-//         placeholder="Description (optional)"
-//       />
-
-//       {/* Render field type */}
-//       {field.type === "short_answer" && <Input disabled placeholder="Short answer text" />}
-//       {field.type === "paragraph" && <Textarea disabled placeholder="Long answer text" />}
-//       {["multiple_choice", "checkboxes", "dropdown"].includes(field.type) && (
-//         <div className="space-y-2">
-//           {field.options.map((opt, i) => (
-//             <div key={i} className="flex items-center gap-2">
-//               {field.type === "multiple_choice" && <input type="radio" disabled />}
-//               {field.type === "checkboxes" && <input type="checkbox" disabled />}
-//               <Input value={opt} onChange={(e) => updateOption(i, e.target.value)} className="w-full" />
-//               <Button variant="ghost" size="sm" onClick={() => removeOption(i)}>🗑️</Button>
-//             </div>
-//           ))}
-//           <Button size="sm" variant="outline" onClick={addOption}>
-//             + Add option
-//           </Button>
-//         </div>
-//       )}
-//       {field.type === "date" && <Input type="date" disabled />}
-//       {field.type === "file_upload" && <Input type="file" disabled />}
-//       {field.type === "signature" && (
-//         <div className="border border-dashed rounded-md p-2">
-//           <SignaturePad
-//             ref={sigRef}
-//             penColor="black"
-//             canvasProps={{ width: 400, height: 150, className: "sigCanvas" }}
-//           />
-//           <Button variant="outline" size="sm" onClick={() => sigRef.current.clear()}>
-//             Clear
-//           </Button>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default SortableField;
 
 
 "use client";
@@ -207,36 +9,40 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import SignaturePad from "react-signature-canvas";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
-const SortableField = ({ field, onDelete, onUpdate, onDuplicate }) => {
+const SortableField = ({ field, onDelete, onUpdate, onDuplicate, isPreview }) => {
   const sigRef = useRef();
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: field.id });
   const style = { transform: CSS.Transform.toString(transform), transition };
 
+  // ✅ Company Info Block
   if (field.type === "company_info_block") {
     return (
-      <div
-        ref={setNodeRef}
-        style={style}
-        className="bg-white border rounded-lg shadow-sm p-4 mb-4"
-      >
+      <div ref={setNodeRef} style={style} className="bg-white border rounded-lg shadow-sm p-4 mb-4">
         <h3 className="text-lg font-semibold mb-2">🏢 Company Information</h3>
         <div className="flex justify-between items-start">
           <div>
             <img
-              src={field?.companyLogo || "/placeholder.png"}
+              src={field?.company?.companyLogo || "/icons/icon-144x144.png"}
               alt="Logo"
               className="w-16 h-16 object-contain mb-2"
             />
-            <p className="font-bold text-gray-700">{field?.companyName || "Company Name"}</p>
+            <p className="font-bold text-gray-700">{field?.company?.companyName || "Company Name"}</p>
           </div>
           <div className="text-right text-sm text-gray-600">
-            <p>{field?.companyAddress || "Company Address"}</p>
-            <p>📞 {field?.companyPhone || "Company Phone"}</p>
+            <p>{field?.company?.companyAddress || "Company Address"}</p>
+            <p>📞 {field?.company?.companyPhone || "Company Phone"}</p>
             <p>
               🌐{" "}
               <a href="#" className="text-blue-500 underline">
-                {field?.companyWebsite?.replace(/(^\w+:|^)\/\//, "").replace(/\/$/, "") ||
+                {field?.company?.companyWebsite?.replace(/(^\w+:|^)\/\//, "").replace(/\/$/, "") ||
                   "company.com"}
               </a>
             </p>
@@ -248,36 +54,138 @@ const SortableField = ({ field, onDelete, onUpdate, onDuplicate }) => {
 
   return (
     <div ref={setNodeRef} style={style} className="bg-white border rounded-lg shadow-sm p-4 mb-4">
-      <div className="flex justify-between items-center mb-2">
-        <div {...attributes} {...listeners} className="cursor-grab text-gray-400 flex items-center gap-1">
-          <GripVertical size={16} /> Drag
+      {/* Header controls */}
+      {!isPreview && (
+        <div className="flex justify-between items-center mb-2">
+          <div {...attributes} {...listeners} className="cursor-grab text-gray-400 flex items-center gap-1">
+            <GripVertical size={16} /> Drag
+          </div>
+          <div className="flex items-center gap-2">
+            <button onClick={() => onDuplicate(field)} className="text-blue-500 hover:text-blue-700">
+              <Copy size={18} />
+            </button>
+            <button onClick={() => onDelete(field.id)} className="text-red-500 hover:text-red-700">
+              <Trash2 size={18} />
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => onDuplicate(field)} className="text-blue-500 hover:text-blue-700">
-            <Copy size={18} />
-          </button>
-          <button onClick={() => onDelete(field.id)} className="text-red-500 hover:text-red-700">
-            <Trash2 size={18} />
-          </button>
-        </div>
-      </div>
+      )}
 
+      {/* Question title */}
       <Input
         className="mb-2"
         value={field.question}
-        onChange={(e) => onUpdate(field.id, { question: e.target.value })}
+        onChange={(e) => !isPreview && onUpdate(field.id, { question: e.target.value })}
         placeholder="Question title"
-      />
-      <Textarea
-        className="mb-3"
-        value={field.description}
-        onChange={(e) => onUpdate(field.id, { description: e.target.value })}
-        placeholder="Description (optional)"
+        disabled={isPreview}
       />
 
-      {field.type === "short_answer" && <Input disabled placeholder="Short answer text" />}
-      {field.type === "paragraph" && <Textarea disabled placeholder="Long answer text" />}
+      {/* Optional description */}
+      {!isPreview && field.description && (
+        <Textarea
+          className="mb-3"
+          value={field.description}
+          onChange={(e) => onUpdate(field.id, { description: e.target.value })}
+          placeholder="Add description (optional)"
+        />
+      )}
 
+      {/* ✅ Editable Field Types */}
+      {/* Short Answer with Formatting */}
+      {field.type === "short_answer" && (
+        <div className="space-y-2">
+          {!isPreview && (
+            <div className="flex gap-2 mb-1">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => onUpdate(field.id, { bold: !field.bold })}
+                className={field.bold ? "bg-gray-200" : ""}
+              >
+                <b>B</b>
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => onUpdate(field.id, { italic: !field.italic })}
+                className={field.italic ? "bg-gray-200" : ""}
+              >
+                <i>I</i>
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => onUpdate(field.id, { underline: !field.underline })}
+                className={field.underline ? "bg-gray-200" : ""}
+              >
+                <u>U</u>
+              </Button>
+            </div>
+          )}
+
+          <Input
+            placeholder="Enter short answer"
+            value={field.answer || ""}
+            onChange={(e) => !isPreview && onUpdate(field.id, { answer: e.target.value })}
+            disabled={isPreview}
+            className={`w-full ${field.bold ? "font-bold" : ""} ${field.italic ? "italic" : ""} ${
+              field.underline ? "underline" : ""
+            }`}
+          />
+        </div>
+      )}
+
+      {/* Paragraph with Formatting */}
+      {field.type === "paragraph" && (
+        <div className="space-y-2">
+          {!isPreview && (
+            <div className="flex gap-2 mb-1">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => onUpdate(field.id, { bold: !field.bold })}
+                className={field.bold ? "bg-gray-200" : ""}
+              >
+                <b>B</b>
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => onUpdate(field.id, { italic: !field.italic })}
+                className={field.italic ? "bg-gray-200" : ""}
+              >
+                <i>I</i>
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => onUpdate(field.id, { underline: !field.underline })}
+                className={field.underline ? "bg-gray-200" : ""}
+              >
+                <u>U</u>
+              </Button>
+            </div>
+          )}
+
+          <Textarea
+            placeholder="Enter long answer"
+            value={field.answer || ""}
+            onChange={(e) => !isPreview && onUpdate(field.id, { answer: e.target.value })}
+            disabled={isPreview}
+            className={`w-full ${field.bold ? "font-bold" : ""} ${field.italic ? "italic" : ""} ${
+              field.underline ? "underline" : ""
+            }`}
+          />
+        </div>
+      )}
+
+      {/* Multiple choice / checkboxes / dropdown */}
       {["multiple_choice", "checkboxes", "dropdown"].includes(field.type) && (
         <div className="space-y-2">
           {field.options.map((opt, i) => (
@@ -287,39 +195,165 @@ const SortableField = ({ field, onDelete, onUpdate, onDuplicate }) => {
               <Input
                 value={opt}
                 onChange={(e) => {
-                  const updated = [...field.options];
-                  updated[i] = e.target.value;
-                  onUpdate(field.id, { options: updated });
+                  if (!isPreview) {
+                    const updated = [...field.options];
+                    updated[i] = e.target.value;
+                    onUpdate(field.id, { options: updated });
+                  }
                 }}
+                disabled={isPreview}
                 className="w-full"
               />
-              <Button variant="ghost" size="sm" onClick={() => {
-                onUpdate(field.id, { options: field.options.filter((_, index) => index !== i) });
-              }}>🗑️</Button>
+              {!isPreview && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() =>
+                    onUpdate(field.id, {
+                      options: field.options.filter((_, index) => index !== i),
+                    })
+                  }
+                >
+                  🗑️
+                </Button>
+              )}
             </div>
           ))}
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => onUpdate(field.id, { options: [...field.options, `Option ${field.options.length + 1}`] })}
-          >
-            + Add option
-          </Button>
+          {!isPreview && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() =>
+                onUpdate(field.id, {
+                  options: [...field.options, `Option ${field.options.length + 1}`],
+                })
+              }
+            >
+              + Add option
+            </Button>
+          )}
         </div>
       )}
 
-      {field.type === "date" && <Input type="date" disabled />}
-      {field.type === "file_upload" && <Input type="file" disabled />}
+      {field.type === "date" && (
+        <Input
+          type="date"
+          value={field.answer || ""}
+          onChange={(e) => !isPreview && onUpdate(field.id, { answer: e.target.value })}
+          disabled={isPreview}
+        />
+      )}
+
+      {field.type === "file_upload" && <Input type="file" disabled={isPreview} />}
+
+      {/* Signature Field */}
       {field.type === "signature" && (
-        <div className="border border-dashed rounded-md p-2">
-          <SignaturePad
-            ref={sigRef}
-            penColor="black"
-            canvasProps={{ width: 400, height: 150, className: "sigCanvas" }}
-          />
-          <Button variant="outline" size="sm" onClick={() => sigRef.current.clear()}>
-            Clear
-          </Button>
+        <div className="border border-dashed rounded-md p-4 space-y-3">
+          {/* Mode Selector */}
+          {!isPreview && (
+            <div className="flex gap-4 items-center">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name={`sigType-${field.id}`}
+                  value="pad"
+                  checked={field.signatureType === "pad"}
+                  onChange={() => onUpdate(field.id, { signatureType: "pad" })}
+                />
+                Signature Pad
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name={`sigType-${field.id}`}
+                  value="typed"
+                  checked={field.signatureType === "typed"}
+                  onChange={() => onUpdate(field.id, { signatureType: "typed" })}
+                />
+                Typed Signature
+              </label>
+            </div>
+          )}
+
+          {/* Signature Pad */}
+          {field.signatureType === "pad" && (
+            <div className="border rounded-md p-2">
+              <SignaturePad
+                ref={sigRef}
+                penColor="black"
+                canvasProps={{ width: 400, height: 150, className: "sigCanvas" }}
+              />
+              {!isPreview && (
+                <Button variant="outline" size="sm" className="mt-2" onClick={() => sigRef.current.clear()}>
+                  Clear
+                </Button>
+              )}
+            </div>
+          )}
+
+          {/* Typed Signature */}
+          {field.signatureType === "typed" && (
+            <div className="space-y-3">
+              <Input
+                placeholder="Enter your name"
+                value={field.typedSignature || ""}
+                onChange={(e) => onUpdate(field.id, { typedSignature: e.target.value })}
+                disabled={isPreview}
+              />
+
+              {/* Font Picker */}
+              {!isPreview && (
+                <div className="w-full">
+                  <Select
+                    value={field.fontFamily || "Allura"}
+                    onValueChange={(value) => onUpdate(field.id, { fontFamily: value })}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Signature Font" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Allura" style={{ fontFamily: "Allura" }}>
+                        Allura
+                      </SelectItem>
+                      <SelectItem value="Great Vibes" style={{ fontFamily: "Great Vibes" }}>
+                        Great Vibes
+                      </SelectItem>
+                      <SelectItem value="Dancing Script" style={{ fontFamily: "Dancing Script" }}>
+                        Dancing Script
+                      </SelectItem>
+                      <SelectItem value="Pacifico" style={{ fontFamily: "Pacifico" }}>
+                        Pacifico
+                      </SelectItem>
+                      <SelectItem value="Cedarville Cursive" style={{ fontFamily: "Cedarville Cursive" }}>
+                        Cedarville Cursive
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {/* Signature Preview */}
+              <div className="border rounded-md p-3 bg-gray-50">
+                <p
+                  className="text-3xl"
+                  style={{
+                    fontFamily:
+                      field.fontFamily === "Allura"
+                        ? "Allura"
+                        : field.fontFamily === "Great Vibes"
+                        ? "Great Vibes"
+                        : field.fontFamily === "Dancing Script"
+                        ? "Dancing Script"
+                        : field.fontFamily === "Pacifico"
+                        ? "Pacifico"
+                        : "Cedarville Cursive",
+                  }}
+                >
+                  {field.typedSignature || "Your signature will appear here"}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

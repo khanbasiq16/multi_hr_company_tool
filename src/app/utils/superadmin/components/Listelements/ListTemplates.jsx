@@ -69,7 +69,7 @@ const ListTemplates = () => {
       {/* Footer Buttons or Tags */}
       <div className="flex justify-center">
         <span className="text-xs px-3 py-1 bg-blue-100 text-blue-600 rounded-full font-medium">
-          {template.role || "General"}
+          {template.role ==="Admin" ? "Contracts" : "Employee letter"}
         </span>
       </div>
     </div>

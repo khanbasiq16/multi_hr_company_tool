@@ -19,14 +19,12 @@ export async function GET(req , {params}) {
 
     const template = docSnap.data()
 
- 
-
     return NextResponse.json(
       {
         success: true,
         template: template,
       },
-      { status: 200 }
+     
     );
     
   } catch (error) {

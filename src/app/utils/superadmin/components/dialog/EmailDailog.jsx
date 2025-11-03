@@ -7,8 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
+import { Loader2 } from "lucide-react";
 
-const EmailDialog = ({ open, setOpen, onSubmit , client  }) => {
+const EmailDialog = ({ open, setOpen, onSubmit , client , loading , setloading  }) => {
   const [toEmail, setToEmail] = useState(client.clientEmail);
   const [subject, setSubject] = useState("");
   const editorRef = useRef(null);
@@ -38,12 +39,21 @@ const EmailDialog = ({ open, setOpen, onSubmit , client  }) => {
   }
 }, [open]);
 
-  const handleSend = () => {
-    const message = quillInstance.current
-      ? quillInstance.current.root.innerHTML
-      : "";
+  const handleSend = async () => {
+     try {
+      setloading(true);
 
-    onSubmit({ toEmail, subject, message });
+      const message = quillInstance.current
+        ? quillInstance.current.root.innerHTML
+        : "";
+
+      await onSubmit({ toEmail, subject, message });
+
+    } catch (error) {
+      console.error("Failed to send email:", error);
+    } finally {
+      setloading(false);
+    }
     
   };
 
@@ -89,8 +99,17 @@ const EmailDialog = ({ open, setOpen, onSubmit , client  }) => {
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSend} className="bg-blue-600 text-white">
-              Send
+            <Button onClick={handleSend}
+            disabled={loading}
+            className="bg-[#5965AB] text-white">
+            {loading ? (
+        <>
+          <Loader2 className="w-4 h-4 animate-spin" />
+          Sending...
+        </>
+      ) : (
+        "Send"
+      )}
             </Button>
           </div>
 

@@ -11,6 +11,7 @@ const Invoicedetails = ({ invoice, client, setInvoice }) => {
   }
 
   const [copied, setCopied] = useState(false);
+    const [loading, setloading] = useState(false);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(invoice.invoiceLink);
@@ -132,7 +133,7 @@ const Invoicedetails = ({ invoice, client, setInvoice }) => {
 
               <button
                 onClick={() => setOpenDialog(true)}
-                className="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+                className="px-5 py-2 rounded-lg bg-[#5965AB] text-white hover:bg-[#4f5ca9] transition"
               >
                 Send Invoice
               </button>
@@ -144,6 +145,8 @@ const Invoicedetails = ({ invoice, client, setInvoice }) => {
           setOpen={setOpenDialog}
           onSubmit={handleSendEmail}
           client={client}
+          loading={loading}
+          setloading={setloading}
         />
       </div>
     </div>

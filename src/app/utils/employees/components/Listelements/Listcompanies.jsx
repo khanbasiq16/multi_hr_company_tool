@@ -16,7 +16,7 @@ const Listcompanies = () => {
   const dispatch = useDispatch();
   const { companies } = useSelector((state) => state.Company);
   const {user} = useSelector((state) => state.User)
-  const {slug} = useParams()
+  const {slug } = useParams()
 
 
   useEffect(() => {
@@ -91,7 +91,7 @@ const Listcompanies = () => {
                   size="sm"
                   className="w-full flex items-center gap-2"
                   onClick={() =>
-                    router.push(`/admin/company/${company.companyslug}`)
+                    router.push(`/employee/${slug}/company/${company.companyslug}`)
                   }
                   disabled={company.status?.toLowerCase() === "deactive"}
                   title={

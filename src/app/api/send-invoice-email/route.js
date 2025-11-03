@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase";
 import { collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 
+
 export async function POST(req) {
   try {
     const { to, subject, message, invoiceLink, invoiceid , slug } = await req.json();
@@ -33,56 +34,116 @@ export async function POST(req) {
         const docSnap = querySnapshot.docs[0];
         const companyData = { id: docSnap.id, ...docSnap.data() };
 
+        console.log(companyData)
 
+
+
+       
 
 
     const html = `
       <div style="
-        font-family: 'Segoe UI', Arial, sans-serif;
-        background: white;
-        padding: 30px;
-        border-radius: 16px;
-        max-width: 650px;
-        margin: auto;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-        border: 1px solid #e6e6e6;
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  background-color: #f5f6fa;
+  padding: 40px 0;
+  display: flex;
+  justify-content: center;
+">
+  <div style="
+    background: #ffffff;
+    border-radius: 12px;
+    max-width: 650px;
+    width: 100%;
+    padding: 36px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    border: 1px solid #e5e8ec;
+  ">
+
+    <div style="text-align: center; margin-bottom: 28px;">
+    
+      <h2 style="
+        color: #1f2937;
+        font-size: 22px;
+        margin: 0;
+        font-weight: 700;
       ">
-        <p style="
-          font-size: 16px; 
-          color: #444; 
-          line-height: 1.7; 
-          margin: 0 0 20px 0;
-        ">
-          ${message}
-        </p>
+        Invoice Details
+      </h2>
+      <p style="color: #6b7280; font-size: 14px; margin-top: 6px;">
+        Thank you for your continued trust.
+      </p>
+    </div>
 
-        <div style="text-align: center;">
-          <a href="${invoiceLink}" style="
-            color: #fff; 
-            background: linear-gradient(90deg, #5965AB, #60B89E);
-            text-decoration: none; 
-            padding: 12px 28px; 
-            border-radius: 50px; 
-            font-size: 16px;
-            font-weight: 500;
-            display: inline-block;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-          ">
-            View Invoice
-          </a>
-        </div>
+    <div style="
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      padding: 18px 22px;
+      border-radius: 10px;
+      color: #374151;
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    ">
+      ${message}
+    </div>
 
-        <p style="
-          font-size: 13px; 
-          color: #777; 
-          line-height: 1.4; 
-          text-align: center; 
-          margin-top: 25px;
-        ">
-          If the button doesn't work, copy & paste this link into your browser:<br>
-          <span style="color: #0070f3;">${invoiceLink}</span>
-        </p>
-      </div>
+    <div style="
+      text-align: center;
+      padding: 10px 0 25px;
+      color: #111827;
+    ">
+      <h3 style="margin: 0; font-size: 19px; font-weight: 600;">
+        Invoice Summary
+      </h3>
+      <p style="margin: 6px 0 0; font-size: 14px; color: #6b7280;">
+        Issued securely by ${companyData?.name || "Our Company"}
+      </p>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 25px;">
+      <a href="${invoiceLink}" style="
+        color: #ffffff;
+        background-color: #5965AB;
+        text-decoration: none;
+        padding: 13px 36px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        display: inline-block;
+        box-shadow: 0 3px 8px rgba(79,70,229,0.15);
+        transition: background 0.3s ease;
+      " 
+   >
+        View Invoice
+      </a>
+    </div>
+
+    <p style="
+      font-size: 13px; 
+      color: #6b7280; 
+      line-height: 1.6; 
+      text-align: center;
+      margin-top: 15px;
+    ">
+      If the button doesn't work, copy and paste this link into your browser:
+      <br>
+      <a href="${invoiceLink}" style="color: #4f46e5; text-decoration: none;">
+       Your Invoice Link
+      </a>
+    </p>
+
+    <p style="
+      text-align: center;
+      color: #9ca3af;
+      font-size: 12px;
+      line-height: 1.5;
+    ">
+      © ${new Date().getFullYear()} ${companyData?.name || "Your Company"}. All rights reserved.<br>
+      This is an automated message — please do not reply.
+    </p>
+
+  </div>
+</div>
     `;
 
    let  EMAIL_HOST=companyData?.companyemailhost

@@ -148,7 +148,7 @@ const EmployeeFormPage = () => {
         <CardHeader >
           <CardTitle className="flex items-center text-3xl font-extrabold text-[#5965AB]">
             <UserPlus className="w-8 h-8 mr-3" />
-            Create New Employee
+            Registered Your Account
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-6">

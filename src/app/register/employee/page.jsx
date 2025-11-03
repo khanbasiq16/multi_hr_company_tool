@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,14 +10,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Assuming you have a Card component
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { createemployees } from "@/features/Slice/EmployeeSlice";
-import { Eye, EyeOff, KeyRound, UserPlus, Briefcase, Lock, Calendar } from "lucide-react";
+import { Eye, EyeOff, KeyRound, UserPlus, Briefcase, Lock } from "lucide-react";
+import { createcompany } from "@/features/Slice/CompanySlice";
+import { createdepartment } from "@/features/Slice/DepartmentSlice";
+import { useRouter } from "next/navigation";
 
-// Helper component for Date Input
+// ---------- Helper Components ----------
 const DateInput = ({ label, name, required = false }) => (
   <div>
     <Label htmlFor={name}>
@@ -27,7 +30,6 @@ const DateInput = ({ label, name, required = false }) => (
   </div>
 );
 
-// Helper component for Form Field
 const FormField = ({ id, name, label, placeholder, type = "text", required = true, children }) => (
   <div>
     <Label htmlFor={id}>
@@ -52,12 +54,14 @@ const EmployeeFormPage = () => {
   const [passwordError, setPasswordError] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedCompanies, setSelectedCompanies] = useState([]);
+  const [dataLoading, setDataLoading] = useState(true);
+
+  const router = useRouter()
 
   const dispatch = useDispatch();
   const { department } = useSelector((state) => state.Department);
   const { companies } = useSelector((state) => state.Company);
 
-  // Password validation
   const validatePassword = (value) => {
     if (value.length < 6) {
       setPasswordError("Password must be at least 6 characters.");
@@ -67,6 +71,34 @@ const EmployeeFormPage = () => {
       setPasswordError("");
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setDataLoading(true);
+
+        const [companiesRes, departmentRes] = await Promise.all([
+          axios.get("/api/get-all-companies"),
+          axios.get("/api/get-all-department"),
+        ]);
+
+        if (companiesRes.data?.companies) {
+          dispatch(createcompany(companiesRes.data.companies));
+        }
+        if (departmentRes.data?.departments) {
+          dispatch(createdepartment(departmentRes.data.departments));
+        }
+
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to fetch companies or departments");
+      } finally {
+        setDataLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [dispatch]);
 
   const handleCompanySelect = (value) => {
     const selectedCompany = companies.find((c) => c.name === value);
@@ -119,17 +151,16 @@ const EmployeeFormPage = () => {
       if (selectedDepartment === "Sales" && e.target.salesTarget) {
         formData.append("salesTarget", e.target.salesTarget.value);
       }
-      
-    
+
       const res = await axios.post("/api/create-employee", formData);
 
       if (res.data.success) {
-        toast.success("Employee Created Successfully");
+        toast.success("Your Registerd Please Login");
         e.target.reset();
-        dispatch(createemployees(res.data.employees));
         setSelectedDepartment("");
         setSelectedCompanies([]);
         setPassword("");
+        router.push("/")
       } else {
         toast.error(res.data.error || "Failed to create employee");
       }
@@ -141,21 +172,28 @@ const EmployeeFormPage = () => {
     }
   };
 
+  // ---------- Loader while fetching companies/departments ----------
+  if (dataLoading) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <p className="text-gray-500 text-lg">Loading form data...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-2 md:p-8 ">
+    <div className="p-2 md:p-8">
       <Card className="bg-transparent border-none">
-        <CardHeader >
+        <CardHeader>
           <CardTitle className="flex items-center text-3xl font-extrabold text-[#5965AB]">
             <UserPlus className="w-8 h-8 mr-3" />
-            Registered Your Account
+            Register New Employee
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-6">
           <form onSubmit={formHandler} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              
-              {/* --- Personal Information Card --- */}
+              {/* Personal Details */}
               <Card className="col-span-1 md:col-span-2 lg:col-span-1">
                 <CardHeader>
                   <CardTitle className="text-xl flex items-center text-gray-700">
@@ -164,41 +202,15 @@ const EmployeeFormPage = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <FormField 
-                    id="employeeName" 
-                    name="employeeName" 
-                    label="Employee Name" 
-                    placeholder="e.g., Jane Doe" 
-                  />
-                  <FormField 
-                    id="employeeemail" 
-                    name="employeeemail" 
-                    label="Email Address" 
-                    placeholder="e.g., jane.doe@company.com" 
-                    type="email" 
-                  />
-                  <FormField 
-                    id="employeePhone" 
-                    name="employeePhone" 
-                    label="Phone Number" 
-                    placeholder="e.g., +92 3XX-XXXXXXX" 
-                  />
-                  <FormField 
-                    id="employeeCNIC" 
-                    name="employeeCNIC" 
-                    label="CNIC Number" 
-                    placeholder="e.g., XXXXX-XXXXXXX-X" 
-                  />
-                  <FormField 
-                    id="employeeAddress" 
-                    name="employeeAddress" 
-                    label="Address" 
-                    placeholder="e.g., 123 Main St, City" 
-                  />
+                  <FormField id="employeeName" name="employeeName" label="Employee Name" placeholder="Jane Doe" />
+                  <FormField id="employeeemail" name="employeeemail" label="Email Address" placeholder="jane.doe@company.com" type="email" />
+                  <FormField id="employeePhone" name="employeePhone" label="Phone Number" placeholder="+92 3XX-XXXXXXX" />
+                  <FormField id="employeeCNIC" name="employeeCNIC" label="CNIC Number" placeholder="XXXXX-XXXXXXX-X" />
+                  <FormField id="employeeAddress" name="employeeAddress" label="Address" placeholder="123 Main St, City" />
                 </CardContent>
               </Card>
 
-              {/* --- Employment Details Card --- */}
+              {/* Employment Details */}
               <Card className="col-span-1 md:col-span-2 lg:col-span-1">
                 <CardHeader>
                   <CardTitle className="text-xl flex items-center text-gray-700">
@@ -207,105 +219,59 @@ const EmployeeFormPage = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* Department Select */}
-                  <FormField 
-                    id="department" 
-                    label="Department" 
-                    required={true}
-                  >
-                    <Select
-                      onValueChange={setSelectedDepartment}
-                      value={selectedDepartment}
-                    >
+                  {/* Department */}
+                  <FormField id="department" label="Department" required>
+                    <Select onValueChange={setSelectedDepartment} value={selectedDepartment}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Department" />
                       </SelectTrigger>
                       <SelectContent>
                         {department?.length > 0 ? (
                           department.map((dep) => (
-                            <SelectItem
-                              key={dep._id || dep.id}
-                              value={dep.departmentName}
-                            >
+                            <SelectItem key={dep._id || dep.id} value={dep.departmentName}>
                               {dep.departmentName}
                             </SelectItem>
                           ))
                         ) : (
-                          <SelectItem value="none" disabled>
-                            No departments available
-                          </SelectItem>
+                          <SelectItem value="none" disabled>No departments available</SelectItem>
                         )}
                       </SelectContent>
                     </Select>
                   </FormField>
 
-                  {/* Sales Target - Conditional Field */}
+                  {/* Sales Target */}
                   {selectedDepartment === "Sales" && (
-                    <FormField
-                      id="salesTarget"
-                      name="salesTarget"
-                      label="Monthly Sales Target"
-                      placeholder="Enter target amount (e.g., 50000)"
-                      type="number"
-                    />
+                    <FormField id="salesTarget" name="salesTarget" label="Monthly Sales Target" placeholder="50000" type="number" />
                   )}
 
-                  {/* Company Select */}
-                  <FormField 
-                    id="company" 
-                    label="Company" 
-                    required={true}
-                  >
-                    <Select
-                      onValueChange={handleCompanySelect}
-                      value={
-                        companies.find((comp) => selectedCompanies[0] === comp.id)
-                          ?.name || ""
-                      }
-                    >
+                  {/* Company */}
+                  <FormField id="company" label="Company" required>
+                    <Select onValueChange={handleCompanySelect} value={companies.find((c) => selectedCompanies[0] === c.id)?.name || ""}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Company" />
                       </SelectTrigger>
                       <SelectContent>
                         {companies?.length > 0 ? (
-                          companies.map((comp) => (
-                            <SelectItem key={comp.id} value={comp.name}>
-                              {comp.name}
-                            </SelectItem>
-                          ))
+                          companies.map((comp) => <SelectItem key={comp.id} value={comp.name}>{comp.name}</SelectItem>)
                         ) : (
-                          <SelectItem value="none" disabled>
-                            No companies available
-                          </SelectItem>
+                          <SelectItem value="none" disabled>No companies available</SelectItem>
                         )}
                       </SelectContent>
                     </Select>
                   </FormField>
 
-                  {/* Salary and Working Hours */}
+                  {/* Salary & Working Hours */}
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      id="employeeSalary"
-                      name="employeeSalary"
-                      label="Salary"
-                      placeholder="e.g., 50000"
-                      type="number"
-                    />
-                    <FormField
-                      id="totalWorkingHours"
-                      name="totalWorkingHours"
-                      label="Working Hours"
-                      placeholder="e.g., 8"
-                      type="number"
-                    />
+                    <FormField id="employeeSalary" name="employeeSalary" label="Salary" placeholder="50000" type="number" />
+                    <FormField id="totalWorkingHours" name="totalWorkingHours" label="Working Hours" placeholder="8" type="number" />
                   </div>
 
                   {/* Date of Joining */}
-                  <DateInput label="Date of Joining" name="dateOfJoining" required={true} />
+                  <DateInput label="Date of Joining" name="dateOfJoining" required />
                 </CardContent>
               </Card>
 
-              {/* --- Security Card (Password) --- */}
+              {/* Security */}
               <Card className="col-span-1 md:col-span-2 lg:col-span-1">
                 <CardHeader>
                   <CardTitle className="text-xl flex items-center text-gray-700">
@@ -314,65 +280,55 @@ const EmployeeFormPage = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="space-y-1">
+                  <div className="space-y-1 relative">
                     <Label htmlFor="employeepassword">
                       Password <span className="text-red-500">*</span>
                     </Label>
-                    <div className="relative">
-                      <Input
-                        id="employeepassword"
-                        name="employeepassword"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Enter or generate password"
-                        value={password}
-                        onChange={(e) => {
-                          setPassword(e.target.value);
-                          validatePassword(e.target.value);
+                    <Input
+                      id="employeepassword"
+                      name="employeepassword"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter or generate password"
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        validatePassword(e.target.value);
+                      }}
+                      required
+                      className="pr-[90px]"
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 space-x-2">
+                      <span
+                        className="text-gray-500 cursor-pointer hover:text-gray-700"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </span>
+                      <span
+                        className="text-gray-500 cursor-pointer hover:text-red-600"
+                        onClick={() => {
+                          const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+                          let randomPass = "";
+                          for (let i = 0; i < 10; i++) {
+                            randomPass += chars.charAt(Math.floor(Math.random() * chars.length));
+                          }
+                          setPassword(randomPass);
+                          validatePassword(randomPass);
+                          navigator.clipboard.writeText(randomPass);
+                          toast.success("Password generated & copied!");
+                          setShowPassword(true);
                         }}
-                        required
-                        className="pr-[90px]" // Extra padding for the icons
-                      />
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-3 space-x-2">
-                          <span
-                              className="text-gray-500 cursor-pointer hover:text-gray-700"
-                              onClick={() => setShowPassword(!showPassword)}
-                              title={showPassword ? "Hide Password" : "Show Password"}
-                          >
-                              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                          </span>
-                          <span
-                              className="text-gray-500 cursor-pointer hover:text-red-600"
-                              onClick={() => {
-                                  const chars =
-                                      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
-                                  let randomPass = "";
-                                  for (let i = 0; i < 10; i++) {
-                                      randomPass += chars.charAt(
-                                          Math.floor(Math.random() * chars.length)
-                                      );
-                                  }
-                                  setPassword(randomPass);
-                                  validatePassword(randomPass);
-                                  navigator.clipboard.writeText(randomPass);
-                                  toast.success("Password generated & copied!");
-                                  setShowPassword(true);
-                              }}
-                              title="Generate Password"
-                          >
-                              <KeyRound size={18} />
-                          </span>
-                      </div>
+                      >
+                        <KeyRound size={18} />
+                      </span>
                     </div>
-                    {passwordError && (
-                      <p className="text-red-500 text-sm mt-1">{passwordError}</p>
-                    )}
+                    {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
                   </div>
                 </CardContent>
               </Card>
-
             </div>
 
-            {/* --- Submit Button Area --- */}
+            {/* Submit Button */}
             <div className="flex justify-center pt-8 border-t border-gray-100 mt-6">
               <Button
                 type="submit"

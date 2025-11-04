@@ -2,9 +2,33 @@
 import Superbreadcrumb from '@/app/utils/superadmin/components/breadcrumbs/Superbreadcrumb'
 import ListTemplates from '@/app/utils/superadmin/components/Listelements/ListTemplates'
 import SuperAdminlayout from '@/app/utils/superadmin/layout/SuperAdmin'
-import React from 'react'
+import { createtemplate } from '@/features/Slice/TemplateSlice'
+import axios from 'axios'
+import React, { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 
 const page = () => {
+  const dispatch = useDispatch()
+  
+
+   useEffect(() => {
+    const fetchTemplates = async () => {
+      try {
+        const res = await axios.get("/api/templates/get");
+        if (res.data.success) {
+          console.log(res?.data?.templates);
+          dispatch(createtemplate(res?.data?.templates || []));
+        }
+      } catch (error) {
+        console.error("Error fetching templates:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTemplates();
+  }, []);
+
   return (
     <>
     <SuperAdminlayout>

@@ -5,7 +5,7 @@ import { doc, updateDoc, getDoc } from "firebase/firestore";
 export async function POST(req, { params }) {
   try {
     const { id } = params;
-    const { templateName, fields , LinK , slug} = await req.json();
+    const { templateName, fields ,  slug} = await req.json();
 
     if (!templateName || !Array.isArray(fields)) {
       return NextResponse.json(
@@ -27,6 +27,7 @@ export async function POST(req, { params }) {
     await updateDoc(docRef, {
       templateName,
       fields,
+      slug,
       updatedAt: new Date().toISOString(),
     });
 

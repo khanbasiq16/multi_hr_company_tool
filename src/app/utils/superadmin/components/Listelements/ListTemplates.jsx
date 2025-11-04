@@ -6,29 +6,13 @@ import axios from "axios";
 import { createtemplate } from "@/features/Slice/TemplateSlice";
 import TemplateDialog from "../dialog/TemplateDialog";
 
-const ListTemplates = () => {
-  const [loading, setLoading] = useState(true);
+const ListTemplates = ({loading}) => {
+  
   const router = useRouter();
   const dispatch = useDispatch();
   const { templates } = useSelector((state) => state.Templates);
 
-  useEffect(() => {
-    const fetchTemplates = async () => {
-      try {
-        const res = await axios.get("/api/templates/get");
-        if (res.data.success) {
-          console.log(res?.data?.templates);
-          dispatch(createtemplate(res?.data?.templates || []));
-        }
-      } catch (error) {
-        console.error("Error fetching templates:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTemplates();
-  }, []);
+ 
 
   return (
     <>

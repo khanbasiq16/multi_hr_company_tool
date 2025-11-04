@@ -50,8 +50,8 @@ const Sidebar = () => {
         { href: `/admin/company/${companyId}`, label: "General", icon: <Home className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
         { href: `/admin/company/${companyId}/clients`, label: "Clients", icon: <PersonStanding className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
         { href: `/admin/company/${companyId}/invoices`, label: "Invoice", icon: <CardSim className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
-        { href: `/admin/company/${companyId}/contracts`, label: "Contracts", icon: <CardSim className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
         { href: `/admin/company/${companyId}/templates`, label: "Templates", icon: <NotepadTextDashed className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
+        { href: `/admin/company/${companyId}/contracts`, label: "Contracts", icon: <CardSim className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
       ]
     : []
 
@@ -98,23 +98,12 @@ const Sidebar = () => {
           <nav className="flex flex-col gap-2 text-xs 2xl:text-lg">
             {links.map((link) => {
               const isActive = pathname === link.href
- const isDevLink =
-    link.href.includes("/contracts") 
-
-  const handleClick = (e) => {
-    if (isDevLink) {
-      e.preventDefault()
-      
-      toast('This feature is in development', {
-  icon: '⚠️',
-});
-    }
-  };
+ 
               return (
                 <a
                   key={link.href}
                   href={link.href}
-                    onClick={handleClick}
+                   
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-colors
                     ${
                       isActive

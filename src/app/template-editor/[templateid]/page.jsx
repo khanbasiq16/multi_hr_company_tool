@@ -17,6 +17,7 @@ import {
   Save,
   Eye,
   EyeOff,
+  Loader2,
 } from "lucide-react";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
@@ -124,16 +125,16 @@ const TemplateEditorPage = () => {
   };
 
   const handleSave = async () => {
-    if (isPreview) return;
     setLoading(true);
     try {
       const slug = templateName.trim().toLowerCase().replace(/\s+/g, "_");
+
+      console.log(fields);
 
       const res = await axios.post(`/api/update-template/${templateid}`, {
         templateName,
         fields,
         slug,
-        Link: `/contracts/${slug}`,
       });
 
       if (res.data.success) {
@@ -223,7 +224,7 @@ const TemplateEditorPage = () => {
             disabled={loading}
             className={`w-full flex items-center justify-center gap-2 `}
           >
-            <Save size={16} /> {loading ? "Saving..." : "Save"}
+            <Save size={16} /> {loading ? <><Loader2 className="animate-spin"/> Saving...</> : "Save"}
           </Button>
           <Button
             onClick={() => setIsPreview((prev) => !prev)}

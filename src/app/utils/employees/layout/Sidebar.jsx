@@ -301,9 +301,9 @@ const Sidebar = () => {
       const response = await axios.get("/api/logout");
       if (response.data.success) {
         dispatch(logout());
-        dispatch(resetTimer());
-        dispatch(resetCheckIn());
-        dispatch(resetCheckOut());
+        // dispatch(resetTimer());
+        // dispatch(resetCheckIn());
+        // dispatch(resetCheckOut());
         router.push("/");
         toast.success("Logged out successfully");
       }

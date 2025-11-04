@@ -14,7 +14,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { createemployees } from "@/features/Slice/EmployeeSlice";
 import { Eye, EyeOff, KeyRound, UserPlus, Briefcase, Lock } from "lucide-react";
 import { createcompany } from "@/features/Slice/CompanySlice";
 import { createdepartment } from "@/features/Slice/DepartmentSlice";
@@ -152,7 +151,13 @@ const EmployeeFormPage = () => {
         formData.append("salesTarget", e.target.salesTarget.value);
       }
 
-      const res = await axios.post("/api/create-employee", formData);
+    
+
+
+      const res = await axios.post("/api/create-employee", formData ,   
+       {
+        headers: { "Content-Type": "application/json" },
+      });
 
       if (res.data.success) {
         toast.success("Your Registerd Please Login");
@@ -161,11 +166,10 @@ const EmployeeFormPage = () => {
         setSelectedCompanies([]);
         setPassword("");
         router.push("/")
-      } else {
-        toast.error(res.data.error || "Failed to create employee");
-      }
+      } 
     } catch (error) {
       console.error(error.response?.data?.error || error.message);
+      console.log(error)
       toast.error(error.response?.data?.error || "Error creating employee");
     } finally {
       setLoading(false);

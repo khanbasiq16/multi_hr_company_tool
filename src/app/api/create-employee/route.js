@@ -6,8 +6,8 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   try {
     
-    const body = await req.json();
 
+    const body =  await req.json();
     const {
       companyIds, 
       companyName,
@@ -22,7 +22,11 @@ export async function POST(req) {
       totalWorkingHours,
       dateOfJoining,
       salesTarget,
-    } = body;
+    } = body 
+
+
+
+
 
   
     if (!Array.isArray(companyIds) || companyIds.length === 0) {

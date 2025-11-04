@@ -291,7 +291,7 @@ export async function POST(req) {
     } else if (employeeDate > lateThreshold) {
       status = "Late Check Out";
     } else {
-      status = "On-Time Check Out";
+      status = "On Time Check Out";
     }
 
     // 7️⃣ Update Attendance Record

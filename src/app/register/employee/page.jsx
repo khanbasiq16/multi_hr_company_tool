@@ -78,7 +78,7 @@ const EmployeeFormPage = () => {
         setDataLoading(true);
 
         const [companiesRes, departmentRes] = await Promise.all([
-          axios.get("/api/get-all-companies"),
+          axios.get("/api/get-maincompanies"),
           axios.get("/api/get-all-department"),
         ]);
 

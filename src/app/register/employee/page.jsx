@@ -152,8 +152,6 @@ const EmployeeFormPage = () => {
       }
 
     
-
-
       const res = await axios.post("/api/create-employee", formData ,   
        {
         headers: { "Content-Type": "application/json" },

@@ -99,7 +99,7 @@ export async function POST(req) {
           console.log("❌ Blocked IP:", ip);
 
            return NextResponse.json(
-        { success: false, error: "Check In Failed. Please Connect With the Office Network" },
+        { success: false, error: "Check In Failed. Please Connect With the Office Network Use Local Internet 5G" },
         { status: 403 }
       );
         } 
@@ -134,8 +134,9 @@ export async function POST(req) {
       let status = "";
 
       if (adjustedCurrent >= absentLimit) {
-        status = "Absent";
-      } else if (adjustedCurrent <= graceLimit) {
+        status = "Late";
+      } 
+      else if (adjustedCurrent <= graceLimit) {
         status = "On Time";
       } else if (
         adjustedCurrent > graceLimit &&
@@ -150,7 +151,7 @@ export async function POST(req) {
       } else if (adjustedCurrent > halfDayLimit) {
         status = "Half Day";
       } else {
-        status = "Early Check-in (Before Shift)";
+        status = "On Time";
       }
 
       return status;

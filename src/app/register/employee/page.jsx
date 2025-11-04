@@ -174,7 +174,7 @@ const EmployeeFormPage = () => {
     }
   };
 
-  // ---------- Loader while fetching companies/departments ----------
+  
   if (dataLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">

@@ -289,11 +289,6 @@ const Sidebar = () => {
           label: "Contracts",
           icon: <CardSim className="2xl:w-5 w-4 2xl:h-5 h-4" />,
         },
-        {
-          href: `/employee/${employeeSlug}/company/${companyId}/templates`,
-          label: "Templates",
-          icon: <NotepadTextDashed className="2xl:w-5 w-4 2xl:h-5 h-4" />,
-        },
       ]
     : [];
 

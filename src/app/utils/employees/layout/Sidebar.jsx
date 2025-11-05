@@ -61,8 +61,6 @@
 
 //   const companyId = parts[4] || null;
 
-
-
 //     const shouldShow =
 //     pathname.startsWith(`/employee/${employeeSlug}/company`);
 //   const companyDetailsLinks = companyId
@@ -180,7 +178,7 @@
 //           href={`/employee/${employeeSlug}`}
 //           className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100"
 //         >
-//           <ArrowBigLeft className="2xl:w-5 w-4 2xl:h-5 h-4" /> back 
+//           <ArrowBigLeft className="2xl:w-5 w-4 2xl:h-5 h-4" /> back
 //         </Link>
 //       )}
 //           <button
@@ -196,7 +194,6 @@
 // };
 
 // export default Sidebar;
-
 
 "use client";
 import React, { useState } from "react";
@@ -234,11 +231,9 @@ const Sidebar = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.User);
 
-  // ✅ Extract slug from URL
   const segments = pathname.split("/");
   const employeeSlug = segments[2] || "";
 
-  // ✅ Dashboard Links
   let dashboardLinks = [
     {
       href: `/employee/${employeeSlug}`,
@@ -252,8 +247,10 @@ const Sidebar = () => {
     },
   ];
 
-  // ✅ Show "Companies" link only if user.department.departmentName === "Sales"
-  if (user?.department?.departmentName === "Sales") {
+  if (
+    user?.department?.departmentName === "Sales" ||
+    user?.department?.departmentName === "sales"
+  ) {
     dashboardLinks.splice(1, 0, {
       href: `/employee/${employeeSlug}/companies`,
       label: "Companies",
@@ -261,7 +258,6 @@ const Sidebar = () => {
     });
   }
 
-  // ✅ Extract companyId
   const parts = pathname.split("/");
   const companyId = parts[4] || null;
 
@@ -379,13 +375,19 @@ const Sidebar = () => {
             </Link>
           )}
 
-           <Link
-                      href={`/employee/${employeeSlug}/settings`}
+          <Link
+            href={`/employee/${employeeSlug}/mark-attendance`}
+            className="flex items-center bg-[#5965AB] px-3 py-2  rounded-lg text-white"
+          >
+            Mark Attendance
+          </Link>
 
-                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100"
-                    >
-                      <Settings className="2xl:w-5 w-4 2xl:h-5 h-4" /> Settings
-                    </Link>
+          <Link
+            href={`/employee/${employeeSlug}/settings`}
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100"
+          >
+            <Settings className="2xl:w-5 w-4 2xl:h-5 h-4" /> Settings
+          </Link>
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-red-500 hover:bg-red-100"

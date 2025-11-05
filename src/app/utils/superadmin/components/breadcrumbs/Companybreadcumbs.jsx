@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Clientdialog from "../dialog/Clientdialog";
 import Invoicedialog from "../dialog/Invoicedialog";
 import TemplateDialog from "../dialog/TemplateDialog";
+import ContractDialog from "../dialog/ContractsDialog";
 
 const Companybreadcumbs = ({ path }) => {
   const { id } = useParams();
@@ -21,14 +22,15 @@ const Companybreadcumbs = ({ path }) => {
         </p>
       </div>
 
-      
       {path === "Clients" ? (
         <Clientdialog />
       ) : path === "Invoices" ? (
         <Invoicedialog />
       ) : path === "Expense" ? (
         <Expensedailog />
-      ) :  null}
+      ) : path === "Contracts" ? (
+        <ContractDialog />
+      ) : null}
     </div>
   );
 };

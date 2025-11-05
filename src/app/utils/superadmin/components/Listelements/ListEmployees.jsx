@@ -14,7 +14,6 @@ const ListEmployees = () => {
 
 
 
-    console.log(employees)
 
      useEffect(() => {
     const fetchEmployees = async () => {

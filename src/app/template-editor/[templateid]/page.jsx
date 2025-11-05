@@ -138,7 +138,6 @@ const TemplateEditorPage = () => {
       });
 
       if (res.data.success) {
-        router.push("/admin/templates");
         toast.success(res?.data?.message);
       }
     } catch {
@@ -163,6 +162,12 @@ const TemplateEditorPage = () => {
       });
     }
   };
+
+
+  const handleexit = () => { 
+    
+    router.push("/admin/templates")
+   }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 bg-gray-100 min-h-screen">
@@ -215,10 +220,12 @@ const TemplateEditorPage = () => {
                 <Icon size={14} /> {label}
               </Button>
             ))}
+
+           
           </div>
         </div>
 
-        <div className="border-t pt-4 space-y-2">
+        <div className="border-t pt-4 space-y-2 ">
           <Button
             onClick={handleSave}
             disabled={loading}
@@ -234,6 +241,12 @@ const TemplateEditorPage = () => {
             {isPreview ? <EyeOff size={16} /> : <Eye size={16} />}{" "}
             {isPreview ? "Close Preview" : "Preview"}
           </Button>
+
+           <Button 
+             onClick={handleexit}
+           className={"bottom-0 mt-5 w-full "}>
+              Exit to Editor
+            </Button>
         </div>
       </div>
 

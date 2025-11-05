@@ -16,6 +16,7 @@ import CheckOutReducer from "../features/Slice/CheckOutSlice";
 import StopwatchReducer from "../features/Slice/StopwatchSlice";
 import TemplatesReducer from "../features/Slice/TemplateSlice";
 import TimeZoneReducer from "../features/Slice/TimeZoneSlice";
+import ContractReducer from "../features/Slice/ContractsSlice";
 
 const rootReducer = combineReducers({
   User: UserReducer,
@@ -31,6 +32,7 @@ const rootReducer = combineReducers({
   Stopwatch:StopwatchReducer,
   Templates:TemplatesReducer,
   TimeZone:TimeZoneReducer,
+  Contracts:ContractReducer
   
 });
 

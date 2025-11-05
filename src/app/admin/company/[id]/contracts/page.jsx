@@ -1,45 +1,46 @@
-"use client"
-import Companybreadcumbs from '@/app/utils/superadmin/components/breadcrumbs/Companybreadcumbs'
-import SuperAdminlayout from '@/app/utils/superadmin/layout/SuperAdmin'
-import { createtemplate } from '@/features/Slice/TemplateSlice'
-import axios from 'axios'
-import { useParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+"use client";
+import Companybreadcumbs from "@/app/utils/superadmin/components/breadcrumbs/Companybreadcumbs";
+import SuperAdminlayout from "@/app/utils/superadmin/layout/SuperAdmin";
+import { createtemplate } from "@/features/Slice/TemplateSlice";
+import axios from "axios";
+import { useParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 const page = () => {
-     const dispatch = useDispatch()
-    const {id} = useParams()
-    const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const { id } = useParams();
+  const [loading, setLoading] = useState(true);
 
-     useEffect(() => {
-        const fetchTemplates = async () => {
-          try {
-            const res = await axios.get(`/api/templates/${id}`);
-            if (res.data.success) {
-              console.log(res?.data?.templates);
-              dispatch(createtemplate(res?.data?.templates || []));
-            }
-          } catch (error) {
-            console.error("Error fetching templates:", error);
-          } finally {
-            setLoading(false);
-          }
-        };
-    
-        fetchTemplates();
-      }, []);
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      try {
+        const res = await axios.get(`/api/templates/${id}`);
+        if (res.data.success) {
+          console.log(res?.data?.templates);
+          dispatch(createtemplate(res?.data?.templates || []));
+        }
+      } catch (error) {
+        console.error("Error fetching templates:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchTemplates();
+  }, []);
+
+  
 
   return (
     <>
-     <SuperAdminlayout>
-<Companybreadcumbs path={"Contracts"} />
+      <SuperAdminlayout>
+        <Companybreadcumbs path={"Contracts"} />
 
-     </SuperAdminlayout>
-    
+        
+      </SuperAdminlayout>
     </>
-  )
-}
+  );
+};
 
-export default page
+export default page;

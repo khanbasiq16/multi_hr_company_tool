@@ -9,6 +9,16 @@ export async function GET() {
 
     const employeesSnap = await getDocs(collection(db, "employees"));
     const today = new Date();
+
+    const day = today.getDay();
+    if (day === 6 || day === 0) {
+      console.log("🛑 Weekend detected — No attendance marking today.");
+      return NextResponse.json({
+        success: false,
+        message: "Weekend detected — skipping marking",
+      });
+    }
+
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
     const yesterdayDateStr = yesterday.toLocaleDateString("en-GB");
@@ -22,8 +32,11 @@ export async function GET() {
 
       if (index !== -1) {
         const entry = attendance[index];
-        if (entry.checkin && Object.keys(entry.checkin).length > 0 && 
-            (!entry.checkout || Object.keys(entry.checkout).length === 0)) {
+        if (
+          entry.checkin &&
+          Object.keys(entry.checkin).length > 0 &&
+          (!entry.checkout || Object.keys(entry.checkout).length === 0)
+        ) {
           entry.checkout = {
             time: null,
             status: "Late Checkout",

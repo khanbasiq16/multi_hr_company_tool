@@ -60,6 +60,7 @@ const SortableField = ({ field, onDelete, onUpdate, onDuplicate, isPreview }) =>
           <div {...attributes} {...listeners} className="cursor-grab text-gray-400 flex items-center gap-1">
             <GripVertical size={16} /> Drag
           </div>
+           {field.type !== "appendix" && (
           <div className="flex items-center gap-2">
             <button onClick={() => onDuplicate(field)} className="text-blue-500 hover:text-blue-700">
               <Copy size={18} />
@@ -68,6 +69,7 @@ const SortableField = ({ field, onDelete, onUpdate, onDuplicate, isPreview }) =>
               <Trash2 size={18} />
             </button>
           </div>
+           )}
         </div>
       )}
 
@@ -90,8 +92,8 @@ const SortableField = ({ field, onDelete, onUpdate, onDuplicate, isPreview }) =>
         />
       )}
 
-      {/* ✅ Editable Field Types */}
-      {/* Short Answer with Formatting */}
+     
+    
       {field.type === "short_answer" && (
         <div className="space-y-2">
           {!isPreview && (
@@ -246,6 +248,56 @@ const SortableField = ({ field, onDelete, onUpdate, onDuplicate, isPreview }) =>
 
       {field.type === "file_upload" && <Input type="file" disabled={isPreview} />}
 
+
+      {field.type === "appendix" && (
+  <div className="space-y-2">
+
+    {/* Optional formatting buttons (if needed) */}
+    {!isPreview && (
+      <div className="flex gap-2 mb-1">
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={() => onUpdate(field.id, { bold: !field.bold })}
+          className={field.bold ? "bg-gray-200" : ""}
+        >
+          <b>B</b>
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={() => onUpdate(field.id, { italic: !field.italic })}
+          className={field.italic ? "bg-gray-200" : ""}
+        >
+          <i>I</i>
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={() => onUpdate(field.id, { underline: !field.underline })}
+          className={field.underline ? "bg-gray-200" : ""}
+        >
+          <u>U</u>
+        </Button>
+      </div>
+    )}
+
+    {/* Input area */}
+    <Textarea
+      placeholder="Enter appendix content..."
+      value={field.answer || ""}
+      onChange={(e) => !isPreview && onUpdate(field.id, { answer: e.target.value })}
+      disabled={isPreview}
+      className={`w-full ${field.bold ? "font-bold" : ""} ${field.italic ? "italic" : ""} ${
+        field.underline ? "underline" : ""
+      }`}
+    />
+  </div>
+)}
+
       {/* Signature Field */}
       {field.type === "signature" && (
         <div className="border border-dashed rounded-md p-4 space-y-3">
@@ -331,6 +383,8 @@ const SortableField = ({ field, onDelete, onUpdate, onDuplicate, isPreview }) =>
                   </Select>
                 </div>
               )}
+
+              
 
               {/* Signature Preview */}
               <div className="border rounded-md p-3 bg-gray-50">

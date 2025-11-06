@@ -1,46 +1,45 @@
 "use client";
-import Companybreadcumbs from "@/app/utils/superadmin/components/breadcrumbs/Companybreadcumbs";
-import SuperAdminlayout from "@/app/utils/superadmin/layout/SuperAdmin";
-import { createtemplate } from "@/features/Slice/TemplateSlice";
-import axios from "axios";
-import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "next/navigation";
 
-const page = () => {
+import SuperAdminlayout from "@/app/utils/superadmin/layout/SuperAdmin";
+import Companybreadcumbs from "@/app/utils/superadmin/components/breadcrumbs/Companybreadcumbs";
+import Listcontracts from "@/app/utils/superadmin/components/Listelements/Listcontracts";
+import { createtemplate } from "@/features/Slice/TemplateSlice";
+import { createcontracts } from "@/features/Slice/ContractsSlice";
+
+
+const Page = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
-  const [loading, setLoading] = useState(true);
+  
+
 
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
         const res = await axios.get(`/api/templates/${id}`);
         if (res.data.success) {
-          console.log(res?.data?.templates);
-          dispatch(createtemplate(res?.data?.templates || []));
+          dispatch(createtemplate(res.data.templates || []));
         }
       } catch (error) {
         console.error("Error fetching templates:", error);
-      } finally {
-        setLoading(false);
-      }
+      } 
     };
 
-    fetchTemplates();
-  }, []);
+    if (id) fetchTemplates();
+  }, [id, dispatch]);
 
-  
 
+ 
   return (
-    <>
-      <SuperAdminlayout>
-        <Companybreadcumbs path={"Contracts"} />
-
-        
-      </SuperAdminlayout>
-    </>
+    <SuperAdminlayout>
+      <Companybreadcumbs path="Contracts" />
+      <Listcontracts  />
+    </SuperAdminlayout>
   );
 };
 
-export default page;
+export default Page;

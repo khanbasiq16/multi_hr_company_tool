@@ -13,35 +13,32 @@ export async function GET(req, { params }) {
       );
     }
 
-   
-    const q = query(
-      collection(db, "contracts"),
-      where("companyid", "==", id) 
-    );
-
+    const q = query(collection(db, "contracts"), where("companyid", "==", id));
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
       return NextResponse.json(
-        { success: false, error: "Company not found" },
+        { success: false, error: "Contracts not found" },
         { status: 404 }
       );
     }
 
-   
-    const docSnap = querySnapshot.docs[0];
-    const companyData = { id: docSnap.id, ...docSnap.data() };
+    const contracts = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
+   
+    
     return NextResponse.json({
       success: true,
-      company: companyData,
+      contracts, 
     });
   } catch (error) {
-    console.error("Error fetching client:", error);
+    console.error("Error fetching contracts:", error);
     return NextResponse.json(
       { success: false, error: "Internal Server Error" },
       { status: 500 }
     );
   }
 }
-

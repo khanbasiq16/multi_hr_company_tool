@@ -37,6 +37,7 @@ const FIELD_TYPES = {
   DATE: "date",
   SIGNATURE: "signature",
   COMPANY_INFO_BLOCK: "company_info_block",
+  APPENDIX: "appendix",
 };
 
 const TemplateEditorPage = () => {
@@ -55,6 +56,8 @@ const TemplateEditorPage = () => {
         const res = await axios.get(`/api/get-template/${templateid}`);
         if (res.data.success) {
           const fetchedTemplate = res.data.template;
+
+          
 
           setCompany(fetchedTemplate.company || {});
           let initialFields = fetchedTemplate.fields || [];
@@ -87,7 +90,7 @@ const TemplateEditorPage = () => {
   }, [templateid]);
 
   const handleAddField = (type) => {
-    if (isPreview) return; // block in preview mode
+    if (isPreview) return; 
     const newField = {
       id: Date.now(),
       type,
@@ -209,6 +212,7 @@ const TemplateEditorPage = () => {
                 label: "Signature",
                 type: FIELD_TYPES.SIGNATURE,
               },
+              { icon: FileText, label: "Appendix", type: FIELD_TYPES.APPENDIX },
             ].map(({ icon: Icon, label, type }) => (
               <Button
                 key={type}
@@ -281,3 +285,4 @@ const TemplateEditorPage = () => {
 };
 
 export default TemplateEditorPage;
+

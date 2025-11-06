@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,8 +16,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useParams } from "next/navigation";
+import { createcontracts } from "@/features/Slice/ContractsSlice";
 
 const ContractDialog = () => {
+  const dispatch = useDispatch()
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(1); 
   const [contractName, setContractName] = useState("");
@@ -55,7 +57,8 @@ const ContractDialog = () => {
       const res = await axios.post("/api/create-contract", {
         contractName,
         templateId: selectedTemplate,
-        companyid:id
+        companyid:id,
+        status:"active"
       });
 
       const data = res.data;
@@ -63,6 +66,8 @@ const ContractDialog = () => {
         toast.success("Contract created successfully!");
         setContractName("");
         setSelectedTemplate(null);
+        dispatch(createcontracts(data?.contracts))
+        
         setOpen(false);
         setStep(1);
       } else {
@@ -85,7 +90,7 @@ const ContractDialog = () => {
       <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {step === 1 ? "Step 1: Contract Name" : "Step 2: Select Template"}
+            {step === 1 ? "Contract Name" : "Select Template"}
           </DialogTitle>
         </DialogHeader>
 
@@ -135,8 +140,7 @@ const ContractDialog = () => {
                         <div className="flex justify-center mb-4">
                           <img
                             src={
-                              template.company?.companyLogo ||
-                              "/placeholder-logo.png"
+                              template.company?.companyLogo 
                             }
                             alt={`${template.company?.name} logo`}
                             className="w-16 h-16 object-contain transition-transform duration-300"

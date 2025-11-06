@@ -10,6 +10,7 @@ import {
   Pacifico,
   Cedarville_Cursive,
 } from "next/font/google";
+import TimerWatcher from "./TimerWatcher";
 
 export const allura = Allura({
   subsets: ["latin"],
@@ -68,6 +69,8 @@ export default function RootLayout({ children }) {
       >
         <Providers>
           {children}
+          <TimerWatcher />
+
           <Toaster position="bottom-center" />
         </Providers>
       </body>

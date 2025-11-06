@@ -108,7 +108,7 @@ const TemplateDialog = () => {
             </Select>
           </div>
 
-          {/* Company Select (only if Admin) */}
+          
           {role === "Admin" && (
             <div className="flex flex-col space-y-2">
               <Label className="text-sm font-medium text-gray-700">

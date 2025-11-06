@@ -4,11 +4,13 @@ import ListTemplates from '@/app/utils/superadmin/components/Listelements/ListTe
 import SuperAdminlayout from '@/app/utils/superadmin/layout/SuperAdmin'
 import { createtemplate } from '@/features/Slice/TemplateSlice'
 import axios from 'axios'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 const page = () => {
   const dispatch = useDispatch()
+
+  const [loading , setLoading] = useState(false)
   
 
    useEffect(() => {
@@ -33,7 +35,7 @@ const page = () => {
     <>
     <SuperAdminlayout>
         <Superbreadcrumb path={"Templates"}/>
-        <ListTemplates />
+        <ListTemplates loading={loading}/>
 
     </SuperAdminlayout>
     </>

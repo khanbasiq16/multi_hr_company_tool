@@ -1,416 +1,155 @@
-// import { Button } from "@/components/ui/button";
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogFooter,
-//   DialogHeader,
-//   DialogTitle,
-// } from "@/components/ui/dialog";
-// import { Textarea } from "@/components/ui/textarea";
-// import {
-//   resetCheckIn,
-//   setattendanceid,
-//   setCheckIn,
-// } from "@/features/Slice/CheckInSlice";
-// import { resetCheckOut } from "@/features/Slice/CheckOutSlice";
-// import { resetTimer, startTimer } from "@/features/Slice/StopwatchSlice";
-// import axios from "axios";
-// import { CheckCircle, Loader2 } from "lucide-react";
-// import React, { useState, useEffect } from "react";
-// import toast from "react-hot-toast";
-// import { useDispatch, useSelector } from "react-redux";
-
-// const Checkin = () => {
-//   const [noteModal, setNoteModal] = useState(false);
-//   const [loadingsubmit, setLoadingsubmit] = useState(false);
-//   const [note, setNote] = useState("");
-//   const { isCheckedIn } = useSelector((state) => state.Checkin);
-//   const { user } = useSelector((state) => state.User);
-//   const dispatch = useDispatch();
-
-//   const [canCheckIn, setCanCheckIn] = useState(false);
-
-//   useEffect(() => {
-//     if (!user?.department?.checkInTime) return;
-
-//     const checkInStr = user.department.checkInTime;
-//     const graceMinutes = parseInt(user.department.graceTime || 30);
 
 
-    
-//     const officeCheckInTime = new Date();
-//     const is12HourFormat =
-//       checkInStr.toLowerCase().includes("am") ||
-//       checkInStr.toLowerCase().includes("pm");
-
-//     let hours, minutes;
-
-//     if (is12HourFormat) {
-      
-//       const [time, meridiem] = checkInStr.split(" ");
-//       const [h, m] = time.split(":");
-//       hours = parseInt(h);
-//       minutes = parseInt(m);
-
-//       if (meridiem.toLowerCase() === "pm" && hours < 12) hours += 12;
-//       if (meridiem.toLowerCase() === "am" && hours === 12) hours = 0;
-//     } else {
-      
-//       [hours, minutes] = checkInStr.split(":").map((v) => parseInt(v));
-//     }
-
-//     officeCheckInTime.setHours(hours, minutes, 0, 0);
-
-    
-//     const enableTime = new Date(officeCheckInTime.getTime() - 30 * 60000);
-    
-//     const disableTime = new Date(
-//       officeCheckInTime.getTime() + graceMinutes * 60000
-//     );
-
-//     const now = new Date();
-
-//     if (now >= enableTime) {
-//       dispatch(resetCheckOut());
-//     }
-
-//     setCanCheckIn(now >= enableTime && now <= disableTime);
-//   }, [user]);
-
-//   const getcurrentip = async () => {
-//     const ipResponse = await fetch("https://api.ipify.org?format=json");
-//     const { ip } = await ipResponse.json();
-
-//     return ip;
-//   };
-
-//   const isoTo12Hour = (isoString) => {
-//     const date = new Date(isoString);
-
-//     let hours = date.getHours();
-//     const minutes = date.getMinutes().toString().padStart(2, "0");
-//     const modifier = hours >= 12 ? "PM" : "AM";
-
-//     if (hours === 0) {
-//       hours = 12;
-//     } else if (hours > 12) {
-//       hours -= 12;
-//     }
-
-//     return `${hours}:${minutes} ${modifier}`;
-//   };
-
-//   const normalcheckin = async () => {
-//     try {
-//       const ip = await getcurrentip();
-
-  
-
-//        const now = new Date();
-// const timeInPakistan = now.toLocaleTimeString("en-US", {
-//   timeZone: "Asia/Karachi",
-//   hour: "numeric",
-//   minute: "numeric",
-//   hour12: true,
-// });
-
-//       // const time = isoTo12Hour(now.toISOString());
-//       const time = timeInPakistan;
-
-//       const res = await axios.post("/api/check-in", {
-//         ip,
-//         time,
-//         employeeId: user?.employeeId,
-//         note: null,
-//       });
-
-//       if (res.data?.success) {
-//         toast.success(res.data.message || "Check-in successful!");
-
-//         dispatch(startTimer(now.getTime()));
-//         dispatch(setCheckIn({ time }));
-//         dispatch(setattendanceid(res.data.attendanceid));
-
-//         setLoadingsubmit(false);
-//         setNoteModal(false);
-//       }
-//     } catch (error) {
-//       console.error("Check-in Error:", error);
-//       toast.error(
-//         error.response?.data?.error || error.message || "Server error"
-//       );
-//     }
-//   };
-
-//   const latecheckout = async () => {
-//     try {
-//       setLoadingsubmit(true);
-
-//       const ip = await getcurrentip();
-
-//       // const now = new Date();
-      
-
-//        const now = new Date();
-// const timeInPakistan = now.toLocaleTimeString("en-US", {
-//   timeZone: "Asia/Karachi",
-//   hour: "numeric",
-//   minute: "numeric",
-//   hour12: true,
-// });
-
-// // const time = isoTo12Hour(now.toISOString());
-// const time = timeInPakistan;
-
-//       const res = await axios.post("/api/check-in", {
-//         ip,
-//         time,
-//         employeeId: user?.employeeId,
-//         note: note || "",
-//       });
-
-//       if (res.data?.success) {
-//         toast.success(res.data.message || "Check-in successful!");
-
-//         dispatch(startTimer(now.getTime()));
-//         dispatch(setCheckIn({ time }));
-//         dispatch(setattendanceid(res.data.attendanceid));
-
-//         setLoadingsubmit(false);
-//         setNoteModal(false);
-//       } 
-//     } catch (error) {
-//       console.error("Check-in Error:", error);
-//       toast.error(
-//         error.response?.data?.error || error.message || "Server error"
-//       );
-//       setLoadingsubmit(false);
-//     }
-//   };
-
-//   return (
-//     <>
-//       <div className="min-h-[60vh] flex flex-col items-center justify-center  px-4">
-//         {isCheckedIn && (
-//           <div className="mb-6 text-lg font-medium text-green-600 flex items-center gap-2">
-//             <span className="text-2xl">✅</span> You’re already checked in
-//           </div>
-//         )}
-
-//         <button
-//           disabled={!canCheckIn || isCheckedIn}
-//           onClick={normalcheckin}
-//           className={`w-36 h-36 md:w-40 md:h-40 rounded-full flex items-center justify-center 
-//       shadow-xl transition-all duration-300 
-//       ${
-//         canCheckIn && !isCheckedIn
-//           ? "bg-[#5965AB] hover:bg-[#5766bc]"
-//           : "bg-gray-300 cursor-not-allowed"
-//       }`}
-//         >
-//           <CheckCircle size={80} color="white" />
-//         </button>
-
-//         {!canCheckIn && (
-//           <div className="mt-8 w-full flex justify-center">
-//             <button
-//               onClick={() => setNoteModal(true)}
-//               disabled={isCheckedIn}
-//               className={`px-6 py-3 rounded-lg font-medium shadow 
-//           transition-all duration-300
-//           ${
-//             !isCheckedIn
-//               ? "bg-[#5965AB] hover:bg-[#5766bc] text-white"
-//               : "bg-gray-300 cursor-not-allowed text-gray-500"
-//           }`}
-//             >
-//               Add Note & Send Check-In Request
-//             </button>
-//           </div>
-//         )}
-
-//         <Dialog open={noteModal} onOpenChange={setNoteModal}>
-//           <DialogContent className="sm:max-w-md rounded-xl p-6">
-//             <DialogHeader>
-//               <DialogTitle className="text-lg font-semibold">
-//                 Add Note for Late Check-In
-//               </DialogTitle>
-//             </DialogHeader>
-
-//             <textarea
-//               placeholder="Write your note here..."
-//               value={note}
-//               onChange={(e) => setNote(e.target.value)}
-//               className="mt-3 resize-none border border-gray-300 rounded-md "
-//             ></textarea>
-
-//             <DialogFooter className="mt-6 flex justify-end gap-3">
-//               <Button
-//                 variant="outline"
-//                 onClick={() => setNoteModal(false)}
-//                 className="px-4"
-//               >
-//                 Cancel
-//               </Button>
-//               <Button
-//                 onClick={latecheckout}
-//                 disabled={loadingsubmit}
-//                 className="bg-[#5965AB] hover:bg-[#5766bc] text-white px-5 flex items-center justify-center"
-//               >
-//                 {loadingsubmit ? (
-//                   <>
-//                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-//                     Requesting...
-//                   </>
-//                 ) : (
-//                   "Submit"
-//                 )}
-//               </Button>
-//             </DialogFooter>
-//           </DialogContent>
-//         </Dialog>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default Checkin;
-
-import { Button } from "@/components/ui/button";
+"use client";
+import { CheckCircle, Loader2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  resetCheckIn,
-  setattendanceid,
-  setCheckIn,
-} from "@/features/Slice/CheckInSlice";
-import { resetCheckOut } from "@/features/Slice/CheckOutSlice";
-import { resetTimer, startTimer } from "@/features/Slice/StopwatchSlice";
-import axios from "axios";
-import { CheckCircle, Loader2 } from "lucide-react";
-import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
+import { startTimer } from "@/features/Slice/StopwatchSlice";
+import { setattendanceid, setCheckIn } from "@/features/Slice/CheckInSlice";
+import axios from "axios";
+import { resetCheckOut } from "@/features/Slice/CheckOutSlice";
 
 const Checkin = () => {
-  const [noteModal, setNoteModal] = useState(false);
-  const [loadingsubmit, setLoadingsubmit] = useState(false);
-  const [note, setNote] = useState("");
-  const { isCheckedIn } = useSelector((state) => state.Checkin);
   const { user } = useSelector((state) => state.User);
-  const dispatch = useDispatch();
+  const { isCheckedIn } = useSelector((state) => state.Checkin);
 
   const [canCheckIn, setCanCheckIn] = useState(false);
+  const [noteModal, setNoteModal] = useState(false);
+  const [note, setNote] = useState("");
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
-  const getPakistanDate = () =>
-    new Date(
-      new Date().toLocaleString("en-GB", { timeZone: "Asia/Karachi" })
-    );
-
-  const getPakistanTimeString = () => {
-    const now = getPakistanDate();
-    return now.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
+const fetchKarachiTime = () => {
+  try {
+    const karachiDate = new Date().toLocaleString("en-US", {
       timeZone: "Asia/Karachi",
     });
+
+    const karachiTime = new Date(karachiDate);
+    console.log("✅ Karachi Time (local):", karachiTime);
+    return karachiTime;
+  } catch (error) {
+    console.error("Failed to get Karachi time:", error);
+    return new Date(); // fallback
+  }
+};
+
+
+  const getcurrentip = async () => {
+    const ipResponse = await fetch("https://api.ipify.org?format=json");
+    const { ip } = await ipResponse.json();
+
+    return ip;
+  };
+
+  const isoTo12Hour = (isoString) => {
+    const date = new Date(isoString);
+
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const modifier = hours >= 12 ? "PM" : "AM";
+
+    if (hours === 0) {
+      hours = 12;
+    } else if (hours > 12) {
+      hours -= 12;
+    }
+
+    return `${hours}:${minutes} ${modifier}`;
   };
 
   useEffect(() => {
     if (!user?.department?.checkInTime) return;
 
-    const checkInStr = user.department.checkInTime;
-    const graceMinutes = parseInt(user.department.graceTime || 30);
+    const checkWindow = async () => {
+      const checkInStr = user.department.checkInTime;
+      const currentTime =  fetchKarachiTime();
 
-    const officeCheckInTime = getPakistanDate();
-    const is12HourFormat =
-      checkInStr.toLowerCase().includes("am") ||
-      checkInStr.toLowerCase().includes("pm");
+      const is12HourFormat =
+        checkInStr.toLowerCase().includes("am") ||
+        checkInStr.toLowerCase().includes("pm");
 
-    let hours, minutes;
+      let hours, minutes;
+      if (is12HourFormat) {
+        const [time, meridiem] = checkInStr.split(" ");
+        const [h, m] = time.split(":");
+        hours = parseInt(h);
+        minutes = parseInt(m);
+        if (meridiem.toLowerCase() === "pm" && hours < 12) hours += 12;
+        if (meridiem.toLowerCase() === "am" && hours === 12) hours = 0;
+      } else {
+        [hours, minutes] = checkInStr.split(":").map((v) => parseInt(v));
+      }
 
-    if (is12HourFormat) {
-      const [time, meridiem] = checkInStr.split(" ");
-      const [h, m] = time.split(":");
-      hours = parseInt(h);
-      minutes = parseInt(m);
-      if (meridiem.toLowerCase() === "pm" && hours < 12) hours += 12;
-      if (meridiem.toLowerCase() === "am" && hours === 12) hours = 0;
-    } else {
-      [hours, minutes] = checkInStr.split(":").map((v) => parseInt(v));
-    }
+      const officeCheckInTime = new Date(currentTime);
+      officeCheckInTime.setHours(hours, minutes, 0, 0);
 
-    officeCheckInTime.setHours(hours, minutes, 0, 0);
+      const enableTime = new Date(officeCheckInTime.getTime() - 30 * 60000);
+      const disableTime = new Date(officeCheckInTime.getTime() + 30 * 60000);
 
-    const enableTime = new Date(officeCheckInTime.getTime() - 30 * 60000);
-    const disableTime = new Date(
-      officeCheckInTime.getTime() + graceMinutes * 60000
-    );
 
-    const now = getPakistanDate();
+      setCanCheckIn(currentTime >= enableTime && currentTime <= disableTime);
+    };
 
-    if (now >= enableTime) {
-      dispatch(resetCheckOut());
-    }
-
-    setCanCheckIn(now >= enableTime && now <= disableTime);
+    checkWindow();
+    const interval = setInterval(checkWindow, 60 * 1000);
+    return () => clearInterval(interval);
   }, [user]);
 
-  const getcurrentip = async () => {
-    const ipResponse = await fetch("https://api.ipify.org?format=json");
-    const { ip } = await ipResponse.json();
-    return ip;
-  };
+  const handlecheckin = async () => {
+    if (isCheckedIn) return;
+    if (!canCheckIn) {
+      setNoteModal(true);
+    } else {
+      try {
+        const ip = await getcurrentip();
+        let time =  fetchKarachiTime();
+        time = isoTo12Hour(time);
 
-  // ✅ Normal Check-In (Pakistan Time)
-  const normalcheckin = async () => {
-    try {
-      const ip = await getcurrentip();
-      // const now = getPakistanDate();
-      const now = new Date();
-      const time = getPakistanTimeString();
+        const res = await axios.post("/api/check-in", {
+          ip,
+          time,
+          employeeId: user?.employeeId,
+          note: note || "",
+        });
 
-      const res = await axios.post("/api/check-in", {
-        ip,
-        time,
-        employeeId: user?.employeeId,
-        note: null,
-      });
+        if (res.data.success) {
+          toast.success(res.data.message || "Check-in successful!");
+          const now = new Date();
 
-      if (res.data?.success) {
-        toast.success(res.data.message || "Check-in successful!");
-
-        dispatch(startTimer(now.getTime()));
-        dispatch(setCheckIn({ time }));
-        dispatch(setattendanceid(res.data.attendanceid));
-
-        setLoadingsubmit(false);
-        setNoteModal(false);
+          dispatch(startTimer(now.getTime()));
+          dispatch(setCheckIn({ time }));
+          dispatch(setattendanceid(res.data.attendanceid));
+              dispatch(resetCheckOut());
+        }
+      } catch (error) {
+        console.error(error.message);
+        toast.error(error.message);
       }
-    } catch (error) {
-      console.error("Check-in Error:", error);
-      toast.error(
-        error.response?.data?.error || error.message || "Server error"
-      );
     }
   };
 
-  // ✅ Late Check-In (Pakistan Time)
-  const latecheckout = async () => {
-    try {
-      setLoadingsubmit(true);
+  const handleLateCheckin = async () => {
+    setLoading(true);
 
+    try {
       const ip = await getcurrentip();
-      // const now = getPakistanDate();
-      const now = new Date();
-      const time = getPakistanTimeString();
+
+      let time =  fetchKarachiTime();
+
+      time = isoTo12Hour(time);
+
+      console.log(time)
 
       const res = await axios.post("/api/check-in", {
         ip,
@@ -419,106 +158,85 @@ const Checkin = () => {
         note: note || "",
       });
 
-      if (res.data?.success) {
+      if (res.data.success) {
         toast.success(res.data.message || "Check-in successful!");
+        const now = new Date();
 
         dispatch(startTimer(now.getTime()));
         dispatch(setCheckIn({ time }));
         dispatch(setattendanceid(res.data.attendanceid));
-
-        setLoadingsubmit(false);
-        setNoteModal(false);
+        dispatch(resetCheckOut());
+        setNoteModal(false)
+        setNote(false)
       }
     } catch (error) {
-      console.error("Check-in Error:", error);
-      toast.error(
-        error.response?.data?.error || error.message || "Server error"
-      );
-      setLoadingsubmit(false);
+      console.error(error.message);
     }
   };
 
   return (
     <>
       <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
-        {isCheckedIn && (
-          <div className="mb-6 text-lg font-medium text-green-600 flex items-center gap-2">
-            <span className="text-2xl">✅</span> You’re already checked in
-          </div>
-        )}
-
         <button
-          disabled={!canCheckIn || isCheckedIn}
-          onClick={normalcheckin}
+          onClick={handlecheckin}
+          disabled={isCheckedIn}
           className={`w-36 h-36 md:w-40 md:h-40 rounded-full flex items-center justify-center 
-          shadow-xl transition-all duration-300 
+          shadow-xl transition-all duration-300
           ${
-            canCheckIn && !isCheckedIn
-              ? "bg-[#5965AB] hover:bg-[#5766bc]"
-              : "bg-gray-300 cursor-not-allowed"
+            isCheckedIn
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-[#5965AB] hover:bg-[#5766bc]"
           }`}
         >
           <CheckCircle size={80} color="white" />
         </button>
 
-        {!canCheckIn && (
-          <div className="mt-8 w-full flex justify-center">
-            <button
-              onClick={() => setNoteModal(true)}
-              disabled={isCheckedIn}
-              className={`px-6 py-3 rounded-lg font-medium shadow transition-all duration-300
-              ${
-                !isCheckedIn
-                  ? "bg-[#5965AB] hover:bg-[#5766bc] text-white"
-                  : "bg-gray-300 cursor-not-allowed text-gray-500"
-              }`}
-            >
-              Add Note & Send Check-In Request
-            </button>
-          </div>
-        )}
-
-        <Dialog open={noteModal} onOpenChange={setNoteModal}>
-          <DialogContent className="sm:max-w-md rounded-xl p-6">
-            <DialogHeader>
-              <DialogTitle className="text-lg font-semibold">
-                Add Note for Late Check-In
-              </DialogTitle>
-            </DialogHeader>
-
-            <Textarea
-              placeholder="Write your note here..."
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              className="mt-3 resize-none border border-gray-300 rounded-md "
-            />
-
-            <DialogFooter className="mt-6 flex justify-end gap-3">
-              <Button
-                variant="outline"
-                onClick={() => setNoteModal(false)}
-                className="px-4"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={latecheckout}
-                disabled={loadingsubmit}
-                className="bg-[#5965AB] hover:bg-[#5766bc] text-white px-5 flex items-center justify-center"
-              >
-                {loadingsubmit ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Requesting...
-                  </>
-                ) : (
-                  "Submit"
-                )}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <p className="mt-4 text-gray-600 text-sm text-center">
+          {isCheckedIn
+            ? "✅ You have already checked in today."
+            : canCheckIn
+            ? "✅ You can check in now (Karachi Time verified)."
+            : "⏳ You're outside the allowed time — please provide a reason when checking in."}
+        </p>
       </div>
+
+      {/* ✅ Late Check-In Dialog */}
+      <Dialog open={noteModal} onOpenChange={setNoteModal}>
+        <DialogContent className="sm:max-w-md rounded-xl p-6">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold">
+              Reason for Late Check-In
+            </DialogTitle>
+          </DialogHeader>
+
+          <Textarea
+            placeholder="Write your reason here..."
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            className="mt-3 resize-none border border-gray-300 rounded-md"
+          />
+
+          <DialogFooter className="mt-6 flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setNoteModal(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleLateCheckin}
+              disabled={loading || !note.trim()}
+              className="bg-[#5965AB] hover:bg-[#5766bc] text-white px-5 flex items-center justify-center"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                "Submit"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

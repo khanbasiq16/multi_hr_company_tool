@@ -25,31 +25,40 @@ export async function POST(req) {
 
     const templateId = uuidv4();
 
+    const companyRef = doc(db, "companies", company);
+    const companySnap = await getDoc(companyRef);
 
-       const companyRef = doc(db, "companies", company);
-      const companySnap = await getDoc(companyRef);
+    if (!companySnap.exists()) {
+      return NextResponse.json({
+        success: false,
+        message: `Company '${company}' does not exist`,
+      });
+    }
 
-      const companydata = companySnap.data()
+    const companydata = companySnap.data();
 
-   
+    const defaultFields = [
+      {
+        id: "appendix-field",
+        type: "appendix",
+        label: "Appendix",
+        question:"Appendix",
+        answer: "",
+        isFixed: true,
+      },
+    ];
+
+    // Create template
     const templateRef = doc(db, "templates", templateId);
     await setDoc(templateRef, {
       templateId,
       role,
-      company:companydata,
+      company: companydata,
+      fields: defaultFields,
       createdAt: new Date(),
     });
 
     if (role === "Admin") {
-   
-
-      if (!companySnap.exists()) {
-        return NextResponse.json({
-          success: false,
-          message: `Company '${company}' does not exist`,
-        });
-      }
-
       await updateDoc(companyRef, {
         ContactTemplates: arrayUnion(templateId),
       });
@@ -64,11 +73,11 @@ export async function POST(req) {
 
     return NextResponse.json({
       success: true,
-      message: "Template created and company templates fetched successfully",
+      message: "Template created successfully ",
       templates,
     });
   } catch (error) {
-    console.error("Error creating or fetching templates:", error);
+    console.error("Error creating template:", error);
     return NextResponse.json({
       success: false,
       message: "Server error",

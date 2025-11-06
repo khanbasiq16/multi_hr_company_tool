@@ -77,16 +77,6 @@ export async function POST(req) {
 
     const whitelist = whitelistSnap.data()?.whitelist || [];
 
-    // const isAllowed = whitelist.some((item) => item.ip === ip);
-
-    // if (!isAllowed) {
-    //   console.log("❌ Blocked IP:", ip);
-    //   return NextResponse.json(
-    //     { success: false, error: "Unauthorized IP address. Please Connect With the Office Network" },
-    //     { status: 403 }
-    //   );
-    // }
-
 
       const partialIp = ip.split(".").slice(0, 3).join(".");
 

@@ -179,95 +179,31 @@ const FormPreview = ({ fields = [], company, onUpdate }) => {
                 <p className="text-gray-700">{field.answer || "—"}</p>
               )}
 
+
+
+              {field.type === "appendix" && (
+  <div className="space-y-2">
+    <p className="font-medium text-gray-800">{field.question}</p>
+    <textarea
+      className="w-full border border-gray-300 rounded p-2 text-gray-700 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+      placeholder="Type your Appendix here..."
+      value={field.answer || field.defaultText || ""}
+      onChange={(e) => onUpdate(field.id, { answer: e.target.value })}
+      rows={3}
+    />
+  </div>
+)}
+
               {/* ✅ Signature (Editable) */}
               {field.type === "signature" && (
                 <>
-                  {/* {field.signatureType === "pad" ? (
-                    <div className="space-y-3">
-                      <SignatureCanvas
-                        ref={(ref) => (sigCanvasRef.current[field.id] = ref)}
-                        penColor="black"
-                        canvasProps={{
-                          className:
-                            "border border-gray-300 rounded w-full h-40",
-                        }}
-                        onEnd={() => handleSave(field.id)}
-                      />
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleClear(field.id)}
-                          className="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300"
-                        >
-                          Clear
-                        </button>
-                        <button
-                          onClick={() => handleSave(field.id)}
-                          className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
-                        >
-                          Save
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      <input
-                        type="text"
-                        placeholder="Type your signature"
-                        value={field.typedSignature || ""}
-                        onChange={(e) =>
-                          onUpdate(field.id, { typedSignature: e.target.value })
-                        }
-                        className="w-full border rounded p-2"
-                      />
-
-                      <Select
-                        value={field.fontFamily || "Allura"}
-                        onValueChange={(value) =>
-                          onUpdate(field.id, { fontFamily: value })
-                        }
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select Font" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Allura">
-                            <span style={{ fontFamily: "Allura" }}>Allura</span>
-                          </SelectItem>
-                          <SelectItem value="Great Vibes">
-                            <span style={{ fontFamily: "Great Vibes" }}>
-                              Great Vibes
-                            </span>
-                          </SelectItem>
-                          <SelectItem value="Dancing Script">
-                            <span style={{ fontFamily: "Dancing Script" }}>
-                              Dancing Script
-                            </span>
-                          </SelectItem>
-                          <SelectItem value="Pacifico">
-                            <span style={{ fontFamily: "Pacifico" }}>
-                              Pacifico
-                            </span>
-                          </SelectItem>
-                          <SelectItem value="Cedarville Cursive">
-                            <span style={{ fontFamily: "Cedarville Cursive" }}>
-                              Cedarville Cursive
-                            </span>
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-
-                      <p
-                        className="text-3xl text-gray-700 mt-2"
-                        style={{ fontFamily: field.fontFamily || "Allura" }}
-                      >
-                        {field.typedSignature || "—"}
-                      </p>
-                    </div>
-                  )} */}
+             
 
 
                   {field.signatureType === "pad" ? (
   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+
+     <p className="font-medium text-gray-800">{field.question}</p>
     {/* Signature pad */}
     <SignatureCanvas
       ref={(ref) => (sigCanvasRef.current[field.id] = ref)}
@@ -297,6 +233,7 @@ const FormPreview = ({ fields = [], company, onUpdate }) => {
   </div>
 ) : (
   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+     <p className="font-medium text-gray-800">{field.question}</p>
     <div className="flex-1">
       <input
         type="text"

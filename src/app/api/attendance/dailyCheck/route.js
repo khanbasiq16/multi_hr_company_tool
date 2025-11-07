@@ -1,3 +1,6 @@
+
+
+
 import { db } from "@/lib/firebase";
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { NextResponse } from "next/server";
@@ -23,15 +26,18 @@ export async function GET() {
     yesterday.setDate(today.getDate() - 1);
     const yesterdayDateStr = yesterday.toLocaleDateString("en-GB");
 
+    const autoCheckouts = [];
+
     for (const empDoc of employeesSnap.docs) {
       const empData = empDoc.data();
       const empId = empDoc.id;
       let attendance = empData.Attendance || [];
 
-      const index = attendance.findIndex(a => a.date === yesterdayDateStr);
+      const index = attendance.findIndex((a) => a.date === yesterdayDateStr);
 
       if (index !== -1) {
         const entry = attendance[index];
+
         if (
           entry.checkin &&
           Object.keys(entry.checkin).length > 0 &&
@@ -41,9 +47,12 @@ export async function GET() {
             time: null,
             status: "Late Checkout",
             note: "Auto-marked as Late Checkout",
+            autoCheckout: true,
           };
+          autoCheckouts.push({ employeeId: empId, date: yesterdayDateStr });
         }
       } else {
+        
         attendance.push({
           id: uuidv4(),
           date: yesterdayDateStr,
@@ -56,9 +65,16 @@ export async function GET() {
       await updateDoc(empRef, { Attendance: attendance });
     }
 
-    return NextResponse.json({ success: true, message: "✅ Daily check done" });
+    return NextResponse.json({
+      success: true,
+      message: "✅ Daily attendance check done",
+      autoCheckouts,
+    });
   } catch (err) {
     console.error("🔥 Error in daily check:", err);
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: err.message },
+      { status: 500 }
+    );
   }
 }

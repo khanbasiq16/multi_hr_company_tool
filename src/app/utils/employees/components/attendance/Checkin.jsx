@@ -1,5 +1,3 @@
-
-
 "use client";
 import { CheckCircle, Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -18,6 +16,7 @@ import { startTimer } from "@/features/Slice/StopwatchSlice";
 import { setattendanceid, setCheckIn } from "@/features/Slice/CheckInSlice";
 import axios from "axios";
 import { resetCheckOut } from "@/features/Slice/CheckOutSlice";
+import { updateCheckIn, UpdateUser } from "@/features/Slice/UserSlice";
 
 const Checkin = () => {
   const { user } = useSelector((state) => state.User);
@@ -29,21 +28,20 @@ const Checkin = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
-const fetchKarachiTime = () => {
-  try {
-    const karachiDate = new Date().toLocaleString("en-US", {
-      timeZone: "Asia/Karachi",
-    });
+  const fetchKarachiTime = () => {
+    try {
+      const karachiDate = new Date().toLocaleString("en-US", {
+        timeZone: "Asia/Karachi",
+      });
 
-    const karachiTime = new Date(karachiDate);
-    console.log("✅ Karachi Time (local):", karachiTime);
-    return karachiTime;
-  } catch (error) {
-    console.error("Failed to get Karachi time:", error);
-    return new Date(); // fallback
-  }
-};
-
+      const karachiTime = new Date(karachiDate);
+      console.log("✅ Karachi Time (local):", karachiTime);
+      return karachiTime;
+    } catch (error) {
+      console.error("Failed to get Karachi time:", error);
+      return new Date();
+    }
+  };
 
   const getcurrentip = async () => {
     const ipResponse = await fetch("https://api.ipify.org?format=json");
@@ -73,7 +71,7 @@ const fetchKarachiTime = () => {
 
     const checkWindow = async () => {
       const checkInStr = user.department.checkInTime;
-      const currentTime =  fetchKarachiTime();
+      const currentTime = fetchKarachiTime();
 
       const is12HourFormat =
         checkInStr.toLowerCase().includes("am") ||
@@ -97,7 +95,6 @@ const fetchKarachiTime = () => {
       const enableTime = new Date(officeCheckInTime.getTime() - 30 * 60000);
       const disableTime = new Date(officeCheckInTime.getTime() + 30 * 60000);
 
-
       setCanCheckIn(currentTime >= enableTime && currentTime <= disableTime);
     };
 
@@ -113,7 +110,7 @@ const fetchKarachiTime = () => {
     } else {
       try {
         const ip = await getcurrentip();
-        let time =  fetchKarachiTime();
+        let time = fetchKarachiTime();
         time = isoTo12Hour(time);
 
         const res = await axios.post("/api/check-in", {
@@ -125,12 +122,15 @@ const fetchKarachiTime = () => {
 
         if (res.data.success) {
           toast.success(res.data.message || "Check-in successful!");
-          const now = new Date();
 
-          dispatch(startTimer(now.getTime()));
-          dispatch(setCheckIn({ time }));
           dispatch(setattendanceid(res.data.attendanceid));
-              dispatch(resetCheckOut());
+          dispatch(resetCheckOut());
+          dispatch(
+            updateCheckIn({
+              startTime: res.data.startTime, // from backend
+              attendanceid: res.data.attendanceid,
+            })
+          );
         }
       } catch (error) {
         console.error(error.message);
@@ -145,11 +145,11 @@ const fetchKarachiTime = () => {
     try {
       const ip = await getcurrentip();
 
-      let time =  fetchKarachiTime();
+      let time = fetchKarachiTime();
 
       time = isoTo12Hour(time);
 
-      console.log(time)
+      console.log(time);
 
       const res = await axios.post("/api/check-in", {
         ip,
@@ -162,12 +162,16 @@ const fetchKarachiTime = () => {
         toast.success(res.data.message || "Check-in successful!");
         const now = new Date();
 
-        dispatch(startTimer(now.getTime()));
-        dispatch(setCheckIn({ time }));
+        dispatch(
+          updateCheckIn({
+            startTime: res.data.startTime,
+            attendanceid: res.data.attendanceid,
+          })
+        );
         dispatch(setattendanceid(res.data.attendanceid));
         dispatch(resetCheckOut());
-        setNoteModal(false)
-        setNote(false)
+        setNoteModal(false);
+        setNote(false);
       }
     } catch (error) {
       console.error(error.message);
@@ -179,21 +183,20 @@ const fetchKarachiTime = () => {
       <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
         <button
           onClick={handlecheckin}
-          // disabled={isCheckedIn}
-
+          disabled={user?.isCheckedin}
           className={`w-36 h-36 md:w-40 md:h-40 rounded-full flex items-center justify-center 
-          shadow-xl transition-all duration-300 bg-[#5965AB] hover:bg-[#5766bc]
-        
-        
-         
-          
-          `}
+          shadow-xl transition-all duration-300
+          ${
+            user?.isCheckedin
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-[#5965AB] hover:bg-[#5766bc]"
+          }`}
         >
           <CheckCircle size={80} color="white" />
         </button>
 
         <p className="mt-4 text-gray-600 text-sm text-center">
-          {isCheckedIn
+          {user?.isCheckedin
             ? "✅ You have already checked in today."
             : canCheckIn
             ? "✅ You can check in now (Karachi Time verified)."

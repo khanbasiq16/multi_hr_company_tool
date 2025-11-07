@@ -16,6 +16,31 @@ const UserSlice = createSlice({
       state.user = action.payload;
     },
 
+      updateCheckIn: (state, action) => {
+      if (state.user) {
+        state.user = {
+          ...state.user,
+          isCheckedin: true,
+          isCheckedout: false,
+          startTime: action.payload.startTime,
+          attendanceid: action.payload.attendanceid,
+        };
+      }
+    },
+
+       updateCheckOut: (state, action) => {
+      if (state.user) {
+        state.user = {
+          ...state.user,
+          isCheckedin: false,
+          isCheckedout: true,
+          startTime: null,
+          attendanceid: null,
+          
+        };
+      }
+    },
+
     logout: (state) => {
       state.user = null;
     },
@@ -23,6 +48,6 @@ const UserSlice = createSlice({
   },
 });
 
-export const {  loginSuccess,UpdateUser , logout } = UserSlice.actions;
+export const {  loginSuccess,UpdateUser , logout , updateCheckIn , updateCheckOut } = UserSlice.actions;
 
 export default UserSlice.reducer;

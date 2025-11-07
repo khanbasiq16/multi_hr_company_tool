@@ -1,17 +1,21 @@
 "use client"
 import Employeelayout from '@/app/utils/employees/layout/Employeelayout'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useSelector } from 'react-redux'
 import { useParams, useRouter } from 'next/navigation'
+import { useAutoCheckoutSync } from '@/app/hooks/useAutoCheckoutSync'
 
 const page = () => {
   const {slug} = useParams()
   const router = useRouter()
   const { user } = useSelector((state) => state.User);
+    const { checkAutoCheckout } = useAutoCheckoutSync();
 
-
+    useEffect(() => {
+    checkAutoCheckout(); 
+  }, []);
 
   return (
     <Employeelayout>

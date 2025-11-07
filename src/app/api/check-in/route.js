@@ -168,9 +168,22 @@ export async function POST(req) {
       checkout: {},
     };
 
+
+    let letstaketime = new Date().toISOString()
+
     await updateDoc(userRef, {
       Attendance: arrayUnion(attendanceEntry),
+      isCheckedin:true,
+      attendanceid:attendanceid,
+      isCheckedout:false,
+      startTime: letstaketime,
     });
+
+
+  
+
+
+
 
     return NextResponse.json(
       {
@@ -178,6 +191,10 @@ export async function POST(req) {
         message: "Check in saved successfully",
         attendance: attendanceEntry,
         attendanceid,
+        isCheckedin:true,
+        attendanceid:attendanceid,
+        isCheckedout:false,
+        startTime:letstaketime
       },
       { status: 200 }
     );

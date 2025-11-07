@@ -172,10 +172,12 @@ const Checkin = () => {
         dispatch(resetCheckOut());
         setNoteModal(false);
         setNote(false);
+        setLoading(false)
       }
     } catch (error) {
       console.error(error.message);
       toast.error(error.response.data.error)
+      setLoading(true);
     }
   };
 

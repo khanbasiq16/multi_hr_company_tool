@@ -134,7 +134,7 @@ const Checkin = () => {
         }
       } catch (error) {
         console.error(error.message);
-        toast.error(error.message);
+       toast.error(error.response.data.error)
       }
     }
   };
@@ -175,6 +175,7 @@ const Checkin = () => {
       }
     } catch (error) {
       console.error(error.message);
+      toast.error(error.response.data.error)
     }
   };
 

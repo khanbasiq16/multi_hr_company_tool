@@ -179,14 +179,15 @@ const fetchKarachiTime = () => {
       <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
         <button
           onClick={handlecheckin}
-          disabled={isCheckedIn}
+          // disabled={isCheckedIn}
+
           className={`w-36 h-36 md:w-40 md:h-40 rounded-full flex items-center justify-center 
-          shadow-xl transition-all duration-300
-          ${
-            isCheckedIn
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-[#5965AB] hover:bg-[#5766bc]"
-          }`}
+          shadow-xl transition-all duration-300 bg-[#5965AB] hover:bg-[#5766bc]
+        
+        
+         
+          
+          `}
         >
           <CheckCircle size={80} color="white" />
         </button>

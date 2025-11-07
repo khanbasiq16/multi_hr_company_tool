@@ -280,6 +280,7 @@ const CheckOut = () => {
         dispatch(updateCheckOut());
         setDialogOpen(false);
         setNote("");
+        setLoading(false)
       }
     } catch (error) {
       console.error("Failed to submit reason:", error);

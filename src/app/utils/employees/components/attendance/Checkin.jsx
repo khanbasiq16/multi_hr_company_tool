@@ -149,7 +149,7 @@ const Checkin = () => {
 
       time = isoTo12Hour(time);
 
-      console.log(time);
+    
 
       const res = await axios.post("/api/check-in", {
         ip,
@@ -171,7 +171,7 @@ const Checkin = () => {
         dispatch(setattendanceid(res.data.attendanceid));
         dispatch(resetCheckOut());
         setNoteModal(false);
-        setNote(false);
+        setNote("");
         setLoading(false)
       }
     } catch (error) {

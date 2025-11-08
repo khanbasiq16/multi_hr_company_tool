@@ -296,7 +296,7 @@ const CheckOut = () => {
           onClick={handleCheckOut}
           className={`w-36 h-36 md:w-40 md:h-40 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 ${
             user?.isCheckedin && !user?.isCheckedout
-              ? "bg-[#5965AB] hover:bg-[#5766bc]"
+              ? "bg-[#5965AB] hover:bg-[#60B89E]"
               : "bg-gray-300 cursor-not-allowed"
           }`}
         >

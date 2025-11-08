@@ -191,8 +191,8 @@ const Checkin = () => {
           shadow-xl transition-all duration-300
           ${
             user?.isCheckedin
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-[#5965AB] hover:bg-[#5766bc]"
+              ? "bg-gray-400 cursor-not-allowed "
+              : "bg-[#5965AB] hover:bg-[#60B89E] cursor-pointer"
           }`}
         >
           <CheckCircle size={80} color="white" />

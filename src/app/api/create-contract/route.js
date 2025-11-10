@@ -15,6 +15,8 @@ export async function POST(req) {
   try {
     const { contractName, templateId, companyid, status } = await req.json();
 
+    console.log(templateId)
+
     if (!contractName || !templateId || !companyid) {
       return NextResponse.json({
         success: false,
@@ -22,7 +24,7 @@ export async function POST(req) {
       });
     }
 
-    const templateRef = doc(db, "template", templateId);
+    const templateRef = doc(db, "templates", templateId);
     const templateSnap = await getDoc(templateRef);
 
     if (!templateSnap.exists()) {

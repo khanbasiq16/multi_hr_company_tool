@@ -17,10 +17,10 @@ import { setattendanceid, setCheckIn } from "@/features/Slice/CheckInSlice";
 import axios from "axios";
 import { resetCheckOut } from "@/features/Slice/CheckOutSlice";
 import { updateCheckIn, UpdateUser } from "@/features/Slice/UserSlice";
+import { se } from "date-fns/locale";
 
-const Checkin = () => {
+const Checkin = ({isCheckedIn , setIsCheckedin , setIsCheckedout}) => {
   const { user } = useSelector((state) => state.User);
-  const { isCheckedIn } = useSelector((state) => state.Checkin);
 
   const [canCheckIn, setCanCheckIn] = useState(false);
   const [noteModal, setNoteModal] = useState(false);
@@ -108,6 +108,7 @@ const Checkin = () => {
     if (!canCheckIn) {
       setNoteModal(true);
     } else {
+      const toastId = toast.loading("Checking Your identity...");
       try {
         const ip = await getcurrentip();
         let time = fetchKarachiTime();
@@ -121,18 +122,18 @@ const Checkin = () => {
         });
 
         if (res.data.success) {
+               toast.dismiss(toastId);
           toast.success(res.data.message || "Check-in successful!");
 
           dispatch(setattendanceid(res.data.attendanceid));
           dispatch(resetCheckOut());
-          dispatch(
-            updateCheckIn({
-              startTime: res.data.startTime, // from backend
-              attendanceid: res.data.attendanceid,
-            })
-          );
+          
+          setIsCheckedin(res.data.isCheckedin);
+          setIsCheckedout(res.data.isCheckedout);
+          setNoteModal(false);
         }
       } catch (error) {
+             toast.dismiss(toastId);
         console.error(error.message);
        toast.error(error.response.data.error)
       }
@@ -141,6 +142,7 @@ const Checkin = () => {
 
   const handleLateCheckin = async () => {
     setLoading(true);
+     const toastId = toast.loading("Checking Your identity...");
 
     try {
       const ip = await getcurrentip();
@@ -159,22 +161,20 @@ const Checkin = () => {
       });
 
       if (res.data.success) {
+        toast.dismiss(toastId);
         toast.success(res.data.message || "Check-in successful!");
         const now = new Date();
 
-        dispatch(
-          updateCheckIn({
-            startTime: res.data.startTime,
-            attendanceid: res.data.attendanceid,
-          })
-        );
         dispatch(setattendanceid(res.data.attendanceid));
         dispatch(resetCheckOut());
+        setIsCheckedin(res.data.isCheckedin);
+        setIsCheckedout(res.data.isCheckedout);
         setNoteModal(false);
         setNote("");
         setLoading(false)
       }
     } catch (error) {
+      toast.dismiss(toastId);
       console.error(error.message);
       toast.error(error.response.data.error)
       setLoading(true);
@@ -186,11 +186,11 @@ const Checkin = () => {
       <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
         <button
           onClick={handlecheckin}
-          disabled={user?.isCheckedin}
+          disabled={isCheckedIn}
           className={`w-36 h-36 md:w-40 md:h-40 rounded-full flex items-center justify-center 
           shadow-xl transition-all duration-300
           ${
-            user?.isCheckedin
+            isCheckedIn
               ? "bg-gray-400 cursor-not-allowed "
               : "bg-[#5965AB] hover:bg-[#60B89E] cursor-pointer"
           }`}
@@ -199,7 +199,7 @@ const Checkin = () => {
         </button>
 
         <p className="mt-4 text-gray-600 text-sm text-center">
-          {user?.isCheckedin
+          {isCheckedIn
             ? "✅ You have already checked in today."
             : canCheckIn
             ? "✅ You can check in now (Karachi Time verified)."

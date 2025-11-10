@@ -18,9 +18,9 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { updateCheckOut, UpdateUser } from "@/features/Slice/UserSlice";
 
-const CheckOut = () => {
-  const { isCheckedIn, attendenceid } = useSelector((state) => state.Checkin);
-  const { isCheckedOut } = useSelector((state) => state.Checkout);
+const CheckOut = (isCheckedIn , isCheckedout ,setIsCheckedout ,  setIsCheckedin ) => {
+  const { attendenceid } = useSelector((state) => state.Checkin);
+
   const { user } = useSelector((state) => state.User);
   const dispatch = useDispatch();
 
@@ -118,123 +118,141 @@ const CheckOut = () => {
   };
 
   const handleCheckOut = async () => {
-    // const currentTime = fetchKarachiTime();
-    // const checkOutStr = user.department.checkOutTime;
+    const currentTime = fetchKarachiTime();
+    const checkOutStr = user.department.checkOutTime;
 
-    // const is12HourFormat =
-    //   checkOutStr.toLowerCase().includes("am") ||
-    //   checkOutStr.toLowerCase().includes("pm");
+    const is12HourFormat =
+      checkOutStr.toLowerCase().includes("am") ||
+      checkOutStr.toLowerCase().includes("pm");
 
-    // let hours, minutes;
-    // if (is12HourFormat) {
-    //   const [time, meridiem] = checkOutStr.split(" ");
-    //   const [h, m] = time.split(":");
-    //   hours = parseInt(h);
-    //   minutes = parseInt(m);
-    //   if (meridiem.toLowerCase() === "pm" && hours < 12) hours += 12;
-    //   if (meridiem.toLowerCase() === "am" && hours === 12) hours = 0;
-    // } else {
-    //   [hours, minutes] = checkOutStr.split(":").map((v) => parseInt(v));
-    // }
+    let hours, minutes;
+    if (is12HourFormat) {
+      const [time, meridiem] = checkOutStr.split(" ");
+      const [h, m] = time.split(":");
+      hours = parseInt(h);
+      minutes = parseInt(m);
+      if (meridiem.toLowerCase() === "pm" && hours < 12) hours += 12;
+      if (meridiem.toLowerCase() === "am" && hours === 12) hours = 0;
+    } else {
+      [hours, minutes] = checkOutStr.split(":").map((v) => parseInt(v));
+    }
 
-    // const officeCheckOutTime = new Date(currentTime);
-    // officeCheckOutTime.setHours(hours, minutes, 0, 0);
+    const officeCheckOutTime = new Date(currentTime);
+    officeCheckOutTime.setHours(hours, minutes, 0, 0);
 
-    // const earlyTime = new Date(officeCheckOutTime.getTime() - 30 * 60000);
-    // const lateTime = new Date(officeCheckOutTime.getTime() + 30 * 60000);
+    const earlyTime = new Date(officeCheckOutTime.getTime() - 30 * 60000);
+    const lateTime = new Date(officeCheckOutTime.getTime() + 30 * 60000);
 
-    // if (currentTime < earlyTime) {
-    //   setDialogType("early");
-    //   setDialogOpen(true);
-    //   return;
-    // }
+    if (currentTime < earlyTime) {
+      setDialogType("early");
+      setDialogOpen(true);
+      return;
+    }
 
-    // if (currentTime > lateTime) {
-    //   setDialogType("late");
-    //   setDialogOpen(true);
-    //   return;
-    // }
+    if (currentTime > lateTime) {
+      setDialogType("late");
+      setDialogOpen(true);
+      return;
+    }
 
-     const currentTime = fetchKarachiTime(); // current Karachi time
-  const checkOutStr = user.department.checkOutTime;
-  const checkInStr = user.department.checkInTime || "9:00 PM"; // added checkInTime support
+  //    const currentTime = fetchKarachiTime(); // current Karachi time
+  // const checkOutStr = user.department.checkOutTime;
+  // const checkInStr = user.department.checkInTime ; // added checkInTime support
 
-  // ✅ Function to convert 12-hour to Date object
-  const parseTime12Hour = (timeStr) => {
-    const [time, meridiem] = timeStr.trim().split(" ");
-    let [hours, minutes] = time.split(":").map(Number);
-    if (meridiem?.toLowerCase() === "pm" && hours < 12) hours += 12;
-    if (meridiem?.toLowerCase() === "am" && hours === 12) hours = 0;
+  // // ✅ Function to convert 12-hour to Date object
+  // const parseTime12Hour = (timeStr) => {
+  //   const [time, meridiem] = timeStr.trim().split(" ");
+  //   let [hours, minutes] = time.split(":").map(Number);
+  //   if (meridiem?.toLowerCase() === "pm" && hours < 12) hours += 12;
+  //   if (meridiem?.toLowerCase() === "am" && hours === 12) hours = 0;
 
-    const date = new Date();
-    date.setHours(hours, minutes || 0, 0, 0);
-    return date;
-  };
+  //   const date = new Date();
+  //   date.setHours(hours, minutes || 0, 0, 0);
+  //   return date;
+  // };
 
-  // 🕐 Parse times
-  const deptCheckIn = parseTime12Hour(checkInStr);
-  const deptCheckOut = parseTime12Hour(checkOutStr);
 
-  // 🕛 Handle night shift (checkout next day)
-  if (deptCheckOut < deptCheckIn) {
-    deptCheckOut.setDate(deptCheckOut.getDate() + 1);
-  }
+  // const deptCheckIn = parseTime12Hour(checkInStr);
+  // const deptCheckOut = parseTime12Hour(checkOutStr);
 
-  const officeCheckOutTime = deptCheckOut;
-  const earlyTime = new Date(officeCheckOutTime.getTime() - 30 * 60000);
-  const lateTime = new Date(officeCheckOutTime.getTime() + 30 * 60000);
 
-  // 💡 Adjust current time if it's after midnight for night shift
-  const adjustedCurrent = new Date(currentTime);
-  if (deptCheckOut < deptCheckIn && adjustedCurrent < deptCheckIn) {
-    adjustedCurrent.setDate(adjustedCurrent.getDate() + 1);
-  }
+  // if (deptCheckOut < deptCheckIn) {
+  //   deptCheckOut.setDate(deptCheckOut.getDate() + 1);
+  // }
 
-  console.log("Current:", adjustedCurrent);
-  console.log("Office CheckOut:", officeCheckOutTime);
+  // const officeCheckOutTime = deptCheckOut;
+  // const earlyTime = new Date(officeCheckOutTime.getTime() - 30 * 60000);
+  // const lateTime = new Date(officeCheckOutTime.getTime() + 30 * 60000);
 
-  // 🧩 Compare
-  if (adjustedCurrent < earlyTime) {
-    setDialogType("early");
-    setDialogOpen(true);
-    return;
-  }
 
-  if (adjustedCurrent > lateTime) {
-    setDialogType("late");
-    setDialogOpen(true);
-    return;
-  }
+  // const adjustedCurrent = new Date(currentTime);
+  // if (deptCheckOut < deptCheckIn && adjustedCurrent < deptCheckIn) {
+  //   adjustedCurrent.setDate(adjustedCurrent.getDate() + 1);
+  // }
 
+  // console.log("Current:", adjustedCurrent);
+  // console.log("Office CheckOut:", officeCheckOutTime);
+
+  // // 🧩 Compare
+  // if (adjustedCurrent < earlyTime) {
+  //   setDialogType("early");
+  //   setDialogOpen(true);
+  //   return;
+  // }
+
+  // if (adjustedCurrent > lateTime) {
+  //   setDialogType("late");
+  //   setDialogOpen(true);
+  //   return;
+  // }
+
+  const toastId = toast.loading("Checking Your identity...");
     try {
       const ip = await getcurrentip();
       let time = fetchKarachiTime();
       time = isoTo12Hour(time);
 
-      console.log(user?.attendanceid)
+    
 
-      const totalElapsedSeconds = isRunning
-        ? elapsedTime + Math.floor((Date.now() - startTime) / 1000)
-        : elapsedTime;
-      const formattedStopwatchTime = formatElapsedTime(totalElapsedSeconds);
+        const start = new Date(user.startTime).getTime();
+      const now = Date.now();
+      const diffInSeconds = Math.floor((now - start) / 1000);
+
+      const formatElapsedTime = (seconds) => {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        return `${h.toString().padStart(2, "0")}:${m
+          .toString()
+          .padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+      };
+
+      const totalWorkedTime = formatElapsedTime(diffInSeconds);
+
+
 
       const res = await axios.post("/api/check-out", {
         ip,
         time,
         employeeId: user?.employeeId,
         note: null,
-        stopwatchTime: formattedStopwatchTime,
+        stopwatchTime: totalWorkedTime,
         attendenceid:user?.attendanceid,
       });
 
       if (res.data.success) {
+        toast.dismiss(toastId);
         toast.success("Checked out successfully!");
         dispatch(UpdateUser(res.data.employee));
         dispatch(resetCheckIn());
-
+        setIsCheckedin(res.data.isCheckedin);
+        setIsCheckedout(res.data.isCheckedout);
+        setDialogOpen(false);
+        
         setNote("");
       }
     } catch (error) {
+      toast.dismiss(toastId);
       console.log(error);
 
       toast.error(error.response.data.error);
@@ -243,6 +261,7 @@ const CheckOut = () => {
 
   const handleSubmitReason = async () => {
     setLoading(true);
+    const toastId = toast.loading("Checking Your identity...");
     try {
       const ip = await getcurrentip();
       let time = fetchKarachiTime();
@@ -275,6 +294,7 @@ const CheckOut = () => {
       });
 
       if (res.data.success) {
+        toast.dismiss(toastId);
         toast.success("Checked out successfully!");
         dispatch(resetCheckIn());
         dispatch(updateCheckOut());
@@ -283,6 +303,7 @@ const CheckOut = () => {
         setLoading(false)
       }
     } catch (error) {
+      toast.dismiss(toastId);
       console.error("Failed to submit reason:", error);
       setLoading(false);
     }
@@ -292,10 +313,10 @@ const CheckOut = () => {
     <>
       <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
         <button
-          disabled={!user?.isCheckedin || user?.isCheckedout}
+          disabled={!isCheckedIn || isCheckedout}
           onClick={handleCheckOut}
           className={`w-36 h-36 md:w-40 md:h-40 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 ${
-            user?.isCheckedin && !user?.isCheckedout
+            isCheckedIn && !isCheckedout
               ? "bg-[#5965AB] hover:bg-[#60B89E]"
               : "bg-gray-300 cursor-not-allowed"
           }`}
@@ -309,9 +330,10 @@ const CheckOut = () => {
         <DialogContent className="sm:max-w-md rounded-xl p-6">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold">
-              {dialogType === "early"
-                ? "Reason for Early Check-Out"
-                : "Reason for Late Check-Out"}
+              Reason for Early or Late Check-Out
+              {/* {dialogType === "early"
+                ? "Reason for Early or Late Check-Out"
+                : "Reason for Late Check-Out"} */}
             </DialogTitle>
           </DialogHeader>
 

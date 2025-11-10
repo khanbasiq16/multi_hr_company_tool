@@ -177,6 +177,8 @@ export async function POST(req) {
     return NextResponse.json({
       success: true,
       message: "Checkout data updated successfully",
+        isCheckedin: false,
+      isCheckedout: true,
       data: attendanceArray[index],
     });
   } catch (error) {

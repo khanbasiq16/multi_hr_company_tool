@@ -1,7 +1,6 @@
-"use client"
-import Employeelayout from '@/app/utils/employees/layout/Employeelayout'
-import React, { useState } from 'react'
-
+"use client";
+import Employeelayout from "@/app/utils/employees/layout/Employeelayout";
+import React, { useEffect, useState } from "react";
 
 import {
   Select,
@@ -9,24 +8,61 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select"
-import Checkin from '@/app/utils/employees/components/attendance/Checkin'
-import CheckOut from '@/app/utils/employees/components/attendance/CheckOut'
-import { useParams } from 'next/navigation'
+} from "@/components/ui/select";
+import Checkin from "@/app/utils/employees/components/attendance/Checkin";
+import CheckOut from "@/app/utils/employees/components/attendance/CheckOut";
+import { useParams } from "next/navigation";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import toast from "react-hot-toast";
 const Page = () => {
-  const [selected, setSelected] = useState("checkin")
-  const {slug} = useParams()
+  const [selected, setSelected] = useState("checkin");
+  const [isCheckedIn, setIsCheckedin] = useState(false);
+  const [isCheckedout ,  setIsCheckedout] = useState(false);
+  const { slug } = useParams();
+
+  const { user } = useSelector((state) => state.User);
+
+  useEffect(() => {
+    const getEmployeeDetails = async () => {
+      try {
+        const response = await axios.get(
+          `/api/attendance/get-attendance-status/${user?.employeeId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const data = response.data;
+
+      
+        setIsCheckedin(data.employee.isCheckedin);
+        setIsCheckedout(data.employee.isCheckedout);
+        
+       
+
+        return data;
+      } catch (error) {
+        console.error("❌ Error fetching attendance:", error);
+        toast.error(
+          error.response?.data?.error || "Failed to fetch attendance details"
+        );
+      }
+    };
+
+    getEmployeeDetails();
+  }, []);
 
   return (
     <Employeelayout>
-      
       <div className="w-full px-6 py-4 flex justify-between items-center border-b">
         <h2 className="text-md  font-semibold text-gray-700">
           Employee {">"} {slug.replace(/-/g, " ")} {">"} mark attendance
         </h2>
 
-       
-        <Select  onValueChange={(value) => setSelected(value)}>
+        <Select onValueChange={(value) => setSelected(value)}>
           <SelectTrigger className="w-40 bg-white">
             <SelectValue placeholder="Select option" />
           </SelectTrigger>
@@ -39,8 +75,8 @@ const Page = () => {
 
       {/* Render Components */}
       <div className="p-6">
-        {selected === "checkin" && <Checkin />}
-        {selected === "checkout" && <CheckOut />}
+        {selected === "checkin" && <Checkin  isCheckedIn={isCheckedIn} setIsCheckedin={setIsCheckedin} setIsCheckedout={setIsCheckedout} />}
+        {selected === "checkout" && <CheckOut isCheckedIn={isCheckedIn} isCheckedout={isCheckedout} setIsCheckedout={setIsCheckedout} setIsCheckedin={setIsCheckedin}/>}
         {!selected && (
           <p className="text-gray-500 text-center py-10">
             Please select an option to continue.
@@ -48,7 +84,7 @@ const Page = () => {
         )}
       </div>
     </Employeelayout>
-  )
-}
+  );
+};
 
-export default Page
+export default Page;

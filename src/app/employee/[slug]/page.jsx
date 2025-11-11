@@ -11,11 +11,8 @@ const page = () => {
   const {slug} = useParams()
   const router = useRouter()
   const { user } = useSelector((state) => state.User);
-    const { checkAutoCheckout } = useAutoCheckoutSync();
-
-    useEffect(() => {
-    checkAutoCheckout(); 
-  }, []);
+  
+ 
 
   return (
     <Employeelayout>

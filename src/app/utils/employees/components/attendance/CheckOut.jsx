@@ -300,6 +300,7 @@ const CheckOut = ({
     } catch (error) {
       toast.dismiss(toastId);
       console.error("Failed to submit reason:", error);
+      toast.error(error.response.data.error);
       setLoading(false);
     }
   };

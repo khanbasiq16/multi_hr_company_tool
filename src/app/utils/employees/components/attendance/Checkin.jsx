@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import toast from "react-hot-toast";
-import { startTimer } from "@/features/Slice/StopwatchSlice";
+import { resetTimer, startTimer } from "@/features/Slice/StopwatchSlice";
 import { setattendanceid, setCheckIn } from "@/features/Slice/CheckInSlice";
 import axios from "axios";
 import { resetCheckOut } from "@/features/Slice/CheckOutSlice";
@@ -127,6 +127,7 @@ const Checkin = ({isCheckedIn , setIsCheckedin , setIsCheckedout}) => {
 
           dispatch(setattendanceid(res.data.attendanceid));
           dispatch(resetCheckOut());
+           dispatch(resetTimer());
           
           setIsCheckedin(res.data.isCheckedin);
           setIsCheckedout(res.data.isCheckedout);
@@ -167,6 +168,7 @@ const Checkin = ({isCheckedIn , setIsCheckedin , setIsCheckedout}) => {
         setIsCheckedin(res.data.isCheckedin);
         setIsCheckedout(res.data.isCheckedout);
         setNoteModal(false);
+         dispatch(resetTimer());
         setNote("");
         setLoading(false)
       }

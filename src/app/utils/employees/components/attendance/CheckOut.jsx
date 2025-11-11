@@ -211,7 +211,7 @@ const CheckOut = ({
       let time = fetchKarachiTime();
       time = isoTo12Hour(time);
 
-      const start = new Date(user.startTime).getTime();
+      const start = new Date(elapsedTime).getTime();
       const now = Date.now();
       const diffInSeconds = Math.floor((now - start) / 1000);
 
@@ -243,7 +243,7 @@ const CheckOut = ({
         setIsCheckedin(res.data.isCheckedin);
         setIsCheckedout(res.data.isCheckedout);
         setDialogOpen(false);
-
+        dispatch(resetTimer());
         setNote("");
       }
     } catch (error) {
@@ -262,7 +262,7 @@ const CheckOut = ({
       let time = fetchKarachiTime();
       time = isoTo12Hour(time);
 
-      const start = new Date(user.startTime).getTime();
+      const start = new Date(elapsedTime).getTime();
       const now = Date.now();
       const diffInSeconds = Math.floor((now - start) / 1000);
 
@@ -293,7 +293,8 @@ const CheckOut = ({
         toast.success("Checked out successfully!");
         dispatch(resetCheckIn());
         dispatch(updateCheckOut());
-         setIsCheckedin(res.data.isCheckedin);
+        dispatch(resetTimer());
+        setIsCheckedin(res.data.isCheckedin);
         setIsCheckedout(res.data.isCheckedout);
         setDialogOpen(false);
         setNote("");

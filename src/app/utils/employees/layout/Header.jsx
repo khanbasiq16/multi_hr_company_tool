@@ -8,7 +8,7 @@ import Timer from "../components/attendance/Timer";
 const Header = () => {
   const pathname = usePathname();
   const { user } = useSelector((state) => state.User);
-
+  
   const links = [
     { href: "/panel", label: "Dashboard" },
     { href: "/companies", label: "Companies" },

@@ -22,6 +22,11 @@ const StopwatchSlice = createSlice({
       state.isRunning = false;
       state.startTime = null;
     },
+
+    updatetime(state, action) {
+      state.elapsedTime = action.payload;
+    },
+
     resetTimer: (state) => {
       state.isRunning = false;
       state.elapsedTime = 0;
@@ -30,5 +35,5 @@ const StopwatchSlice = createSlice({
   },
 });
 
-export const { startTimer, stopTimer, resetTimer } = StopwatchSlice.actions;
+export const { startTimer, stopTimer, resetTimer , updatetime} = StopwatchSlice.actions;
 export default StopwatchSlice.reducer;

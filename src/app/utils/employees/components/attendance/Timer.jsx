@@ -2,13 +2,16 @@
 import React, { useEffect, useState } from "react";
 import { db } from "@/lib/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { updatetime } from "@/features/Slice/StopwatchSlice";
 
 const Timer = () => {
   const [elapsed, setElapsed] = useState(0);
   const [startTime, setStartTime] = useState(null);
   const [isCheckedin, setIsCheckedin] = useState(false);
   const { user } = useSelector((state) => state.User);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!user?.employeeId) return;
@@ -19,6 +22,7 @@ const Timer = () => {
       if (snapshot.exists()) {
         const data = snapshot.data();
         setStartTime(data.startTime || null);
+        dispatch(updatetime(data.startTime || 0));
         setIsCheckedin(data.isCheckedin || false);
       }
     });

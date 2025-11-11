@@ -232,7 +232,7 @@ const CheckOut = ({
         employeeId: user?.employeeId,
         note: null,
         stopwatchTime: totalWorkedTime,
-        attendenceid: user?.attendanceid,
+        attendenceid: attendenceid,
       });
 
       if (res.data.success) {

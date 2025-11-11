@@ -17,7 +17,6 @@ import { setattendanceid, setCheckIn } from "@/features/Slice/CheckInSlice";
 import axios from "axios";
 import { resetCheckOut } from "@/features/Slice/CheckOutSlice";
 import { updateCheckIn, UpdateUser } from "@/features/Slice/UserSlice";
-import { se } from "date-fns/locale";
 
 const Checkin = ({isCheckedIn , setIsCheckedin , setIsCheckedout}) => {
   const { user } = useSelector((state) => state.User);

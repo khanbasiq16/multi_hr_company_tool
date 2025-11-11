@@ -56,8 +56,21 @@ export async function GET() {
           Object.keys(entry.checkin).length > 0 &&
           (!entry.checkout || Object.keys(entry.checkout).length === 0)
         ) {
+          const fetchKarachiTime = () => {
+            try {
+              const karachiDate = new Date().toLocaleString("en-US", {
+                timeZone: "Asia/Karachi",
+              });
+              return new Date(karachiDate);
+            } catch (error) {
+              console.error("Failed to get Karachi time:", error);
+              return new Date();
+            }
+          };
+
+          const checkoutTime = fetchKarachiTime();
           entry.checkout = {
-            time: null,
+            time: checkoutTime,
             status: "Late Checkout",
             note: "Auto-marked as Late Checkout",
             stopwatchTime: totalWorkedTime,

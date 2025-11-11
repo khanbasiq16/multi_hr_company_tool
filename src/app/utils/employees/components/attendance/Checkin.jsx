@@ -146,12 +146,9 @@ const Checkin = ({isCheckedIn , setIsCheckedin , setIsCheckedout}) => {
 
     try {
       const ip = await getcurrentip();
-
       let time = fetchKarachiTime();
-
       time = isoTo12Hour(time);
-
-    
+      
 
       const res = await axios.post("/api/check-in", {
         ip,

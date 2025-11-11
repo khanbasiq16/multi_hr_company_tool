@@ -20,7 +20,7 @@ const Page = () => {
   const [selected, setSelected] = useState("checkin");
   const [isCheckedIn, setIsCheckedin] = useState(false);
   const [isCheckedout, setIsCheckedout] = useState(false);
-  const [loading, setLoading] = useState(true); // 🔹 Loader state
+  const [loading, setLoading] = useState(true); 
 
   const { slug } = useParams();
   const { user } = useSelector((state) => state.User);
@@ -48,7 +48,7 @@ const Page = () => {
           error.response?.data?.error || "Failed to fetch attendance details"
         );
       } finally {
-        setLoading(false); // Stop loader
+        setLoading(false); 
       }
     };
 

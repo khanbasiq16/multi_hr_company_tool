@@ -293,6 +293,8 @@ const CheckOut = ({
         toast.success("Checked out successfully!");
         dispatch(resetCheckIn());
         dispatch(updateCheckOut());
+         setIsCheckedin(res.data.isCheckedin);
+        setIsCheckedout(res.data.isCheckedout);
         setDialogOpen(false);
         setNote("");
         setLoading(false);

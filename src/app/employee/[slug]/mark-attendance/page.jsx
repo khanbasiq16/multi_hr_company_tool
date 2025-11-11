@@ -40,6 +40,9 @@ const Page = () => {
 
         const data = response.data;
 
+        console.log(data.employee.isCheckedin)
+        console.log(data.employee.isCheckedout)
+
         setIsCheckedin(data.employee.isCheckedin);
         setIsCheckedout(data.employee.isCheckedout);
       } catch (error) {

@@ -18,17 +18,20 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { updateCheckOut, UpdateUser } from "@/features/Slice/UserSlice";
 
-const CheckOut = (isCheckedIn , isCheckedout ,setIsCheckedout ,  setIsCheckedin ) => {
+const CheckOut = ({
+  isCheckedIn,
+  isCheckedout,
+  setIsCheckedout,
+  setIsCheckedin,
+}) => {
   const { attendenceid } = useSelector((state) => state.Checkin);
 
   const { user } = useSelector((state) => state.User);
   const dispatch = useDispatch();
 
-  console.log(user);
-
   const [canCheckOut, setCanCheckout] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogType, setDialogType] = useState(""); 
+  const [dialogType, setDialogType] = useState("");
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
   const { isRunning, elapsedTime, startTime } = useSelector(
@@ -56,7 +59,6 @@ const CheckOut = (isCheckedIn , isCheckedout ,setIsCheckedout ,  setIsCheckedin 
       .padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
-  // ✅ Check-out window setup
   useEffect(() => {
     if (!user?.department?.checkOutTime) return;
 
@@ -155,66 +157,61 @@ const CheckOut = (isCheckedIn , isCheckedout ,setIsCheckedout ,  setIsCheckedin 
       return;
     }
 
-  //    const currentTime = fetchKarachiTime(); // current Karachi time
-  // const checkOutStr = user.department.checkOutTime;
-  // const checkInStr = user.department.checkInTime ; // added checkInTime support
+    //    const currentTime = fetchKarachiTime(); // current Karachi time
+    // const checkOutStr = user.department.checkOutTime;
+    // const checkInStr = user.department.checkInTime ; // added checkInTime support
 
-  // // ✅ Function to convert 12-hour to Date object
-  // const parseTime12Hour = (timeStr) => {
-  //   const [time, meridiem] = timeStr.trim().split(" ");
-  //   let [hours, minutes] = time.split(":").map(Number);
-  //   if (meridiem?.toLowerCase() === "pm" && hours < 12) hours += 12;
-  //   if (meridiem?.toLowerCase() === "am" && hours === 12) hours = 0;
+    // // ✅ Function to convert 12-hour to Date object
+    // const parseTime12Hour = (timeStr) => {
+    //   const [time, meridiem] = timeStr.trim().split(" ");
+    //   let [hours, minutes] = time.split(":").map(Number);
+    //   if (meridiem?.toLowerCase() === "pm" && hours < 12) hours += 12;
+    //   if (meridiem?.toLowerCase() === "am" && hours === 12) hours = 0;
 
-  //   const date = new Date();
-  //   date.setHours(hours, minutes || 0, 0, 0);
-  //   return date;
-  // };
+    //   const date = new Date();
+    //   date.setHours(hours, minutes || 0, 0, 0);
+    //   return date;
+    // };
 
+    // const deptCheckIn = parseTime12Hour(checkInStr);
+    // const deptCheckOut = parseTime12Hour(checkOutStr);
 
-  // const deptCheckIn = parseTime12Hour(checkInStr);
-  // const deptCheckOut = parseTime12Hour(checkOutStr);
+    // if (deptCheckOut < deptCheckIn) {
+    //   deptCheckOut.setDate(deptCheckOut.getDate() + 1);
+    // }
 
+    // const officeCheckOutTime = deptCheckOut;
+    // const earlyTime = new Date(officeCheckOutTime.getTime() - 30 * 60000);
+    // const lateTime = new Date(officeCheckOutTime.getTime() + 30 * 60000);
 
-  // if (deptCheckOut < deptCheckIn) {
-  //   deptCheckOut.setDate(deptCheckOut.getDate() + 1);
-  // }
+    // const adjustedCurrent = new Date(currentTime);
+    // if (deptCheckOut < deptCheckIn && adjustedCurrent < deptCheckIn) {
+    //   adjustedCurrent.setDate(adjustedCurrent.getDate() + 1);
+    // }
 
-  // const officeCheckOutTime = deptCheckOut;
-  // const earlyTime = new Date(officeCheckOutTime.getTime() - 30 * 60000);
-  // const lateTime = new Date(officeCheckOutTime.getTime() + 30 * 60000);
+    // console.log("Current:", adjustedCurrent);
+    // console.log("Office CheckOut:", officeCheckOutTime);
 
+    // // 🧩 Compare
+    // if (adjustedCurrent < earlyTime) {
+    //   setDialogType("early");
+    //   setDialogOpen(true);
+    //   return;
+    // }
 
-  // const adjustedCurrent = new Date(currentTime);
-  // if (deptCheckOut < deptCheckIn && adjustedCurrent < deptCheckIn) {
-  //   adjustedCurrent.setDate(adjustedCurrent.getDate() + 1);
-  // }
+    // if (adjustedCurrent > lateTime) {
+    //   setDialogType("late");
+    //   setDialogOpen(true);
+    //   return;
+    // }
 
-  // console.log("Current:", adjustedCurrent);
-  // console.log("Office CheckOut:", officeCheckOutTime);
-
-  // // 🧩 Compare
-  // if (adjustedCurrent < earlyTime) {
-  //   setDialogType("early");
-  //   setDialogOpen(true);
-  //   return;
-  // }
-
-  // if (adjustedCurrent > lateTime) {
-  //   setDialogType("late");
-  //   setDialogOpen(true);
-  //   return;
-  // }
-
-  const toastId = toast.loading("Checking Your identity...");
+    const toastId = toast.loading("Checking Your identity...");
     try {
       const ip = await getcurrentip();
       let time = fetchKarachiTime();
       time = isoTo12Hour(time);
 
-    
-
-        const start = new Date(user.startTime).getTime();
+      const start = new Date(user.startTime).getTime();
       const now = Date.now();
       const diffInSeconds = Math.floor((now - start) / 1000);
 
@@ -229,15 +226,13 @@ const CheckOut = (isCheckedIn , isCheckedout ,setIsCheckedout ,  setIsCheckedin 
 
       const totalWorkedTime = formatElapsedTime(diffInSeconds);
 
-
-
       const res = await axios.post("/api/check-out", {
         ip,
         time,
         employeeId: user?.employeeId,
         note: null,
         stopwatchTime: totalWorkedTime,
-        attendenceid:user?.attendanceid,
+        attendenceid: user?.attendanceid,
       });
 
       if (res.data.success) {
@@ -248,7 +243,7 @@ const CheckOut = (isCheckedIn , isCheckedout ,setIsCheckedout ,  setIsCheckedin 
         setIsCheckedin(res.data.isCheckedin);
         setIsCheckedout(res.data.isCheckedout);
         setDialogOpen(false);
-        
+
         setNote("");
       }
     } catch (error) {
@@ -290,7 +285,7 @@ const CheckOut = (isCheckedIn , isCheckedout ,setIsCheckedout ,  setIsCheckedin 
         employeeId: user?.employeeId,
         note: note,
         stopwatchTime: totalWorkedTime,
-        attendenceid:user?.attendanceid,
+        attendenceid: attendenceid,
       });
 
       if (res.data.success) {
@@ -300,7 +295,7 @@ const CheckOut = (isCheckedIn , isCheckedout ,setIsCheckedout ,  setIsCheckedin 
         dispatch(updateCheckOut());
         setDialogOpen(false);
         setNote("");
-        setLoading(false)
+        setLoading(false);
       }
     } catch (error) {
       toast.dismiss(toastId);
@@ -323,6 +318,14 @@ const CheckOut = (isCheckedIn , isCheckedout ,setIsCheckedout ,  setIsCheckedin 
         >
           <CheckCircle size={80} color="white" />
         </button>
+
+        <p className="mt-4 text-gray-600 text-sm text-center">
+          {isCheckedIn && !isCheckedout
+            ? "✅ You are currently checked in. You can check out anytime today."
+            : canCheckOut
+            ? "✅ You can check out now (Karachi time verified)."
+            : "⏳ You're outside the allowed time — please provide a reason when checking out."}
+        </p>
       </div>
 
       {/* ✅ Early/Late Check-Out Dialog */}

@@ -62,7 +62,7 @@ const Listcontracts = () => {
           <ContractDialog />
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 ">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 ">
           {contracts?.map((contract) => (
             <div
               key={contract.id}
@@ -112,7 +112,7 @@ const Listcontracts = () => {
                   variant="outline"
                   className="flex items-center w-full justify-center border-blue-500 text-blue-600 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-400 dark:hover:bg-blue-900/30 transition-all rounded-lg font-medium"
                   onClick={() =>
-                    router.push(`/contract-details/${contract.id}`)
+                    router.push(`/view-contract-details/${contract.id}`)
                   }
                 >
                   <Eye className="w-4 h-4" />

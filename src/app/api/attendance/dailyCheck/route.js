@@ -56,6 +56,8 @@ export async function GET() {
           Object.keys(entry.checkin).length > 0 &&
           (!entry.checkout || Object.keys(entry.checkout).length === 0)
         ) {
+
+          
           const fetchKarachiTime = () => {
             try {
               const karachiDate = new Date().toLocaleString("en-US", {
@@ -68,9 +70,27 @@ export async function GET() {
             }
           };
 
-          const checkoutTime = fetchKarachiTime();
+          const isoTo12Hour = (isoString) => {
+            const date = new Date(isoString);
+
+            let hours = date.getHours();
+            const minutes = date.getMinutes().toString().padStart(2, "0");
+            const modifier = hours >= 12 ? "PM" : "AM";
+
+            if (hours === 0) {
+              hours = 12;
+            } else if (hours > 12) {
+              hours -= 12;
+            }
+
+            return `${hours}:${minutes} ${modifier}`;
+          };
+
+          let time = isoTo12Hour(fetchKarachiTime());
+
+         
           entry.checkout = {
-            time: checkoutTime,
+            time: time,
             status: "Late Checkout",
             note: "Auto-marked as Late Checkout",
             stopwatchTime: totalWorkedTime,

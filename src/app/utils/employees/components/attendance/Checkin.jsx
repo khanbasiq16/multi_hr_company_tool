@@ -175,7 +175,7 @@ const Checkin = ({isCheckedIn , setIsCheckedin , setIsCheckedout}) => {
       toast.dismiss(toastId);
       console.error(error.message);
       toast.error(error.response.data.error)
-      setLoading(true);
+      setLoading(false);
     }
   };
 

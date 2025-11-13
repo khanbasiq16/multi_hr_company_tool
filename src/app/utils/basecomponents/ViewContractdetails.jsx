@@ -10,9 +10,8 @@ import {
 } from "@/components/ui/select";
 import { Building, Globe, Phone } from "lucide-react";
 
-const ContractFields = ({ fields = [], company, onUpdate }) => {
+const ViewContractdetails = ({ fields = [], company, onUpdate }) => {
   const sigCanvasRef = useRef({});
-
 
   const handleClear = (id) => {
     sigCanvasRef.current[id]?.clear();
@@ -26,7 +25,6 @@ const ContractFields = ({ fields = [], company, onUpdate }) => {
 
   return (
     <div className="relative bg-gradient-to-b max-w-[794px] from-white to-gray-50 dark:from-gray-950 dark:to-gray-900 rounded-2xl  p-8 space-y-8 overflow-hidden border border-gray-200 dark:border-gray-800">
-
       {/* 🖋️ Watermark */}
       {company?.name && (
         <div
@@ -151,9 +149,9 @@ const ContractFields = ({ fields = [], company, onUpdate }) => {
                     {field.question}
                   </p>
                   <p className="text-gray-700 dark:text-gray-300">
-                    {(Array.isArray(field.answer) && field.answer.length > 0
+                    {Array.isArray(field.answer) && field.answer.length > 0
                       ? field.answer.join(", ")
-                      : "—")}
+                      : "—"}
                   </p>
                 </div>
               )}
@@ -183,20 +181,15 @@ const ContractFields = ({ fields = [], company, onUpdate }) => {
               )}
 
               {/* Appendix */}
-              {field.type === "appendix" && (
+              {field.type === "appendix" && field.answer && (
                 <div>
-                  <p className="font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                  <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">
                     {field.question}
                   </p>
-                  <textarea
-                    className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:outline-none bg-transparent"
-                    placeholder="Type your appendix here..."
-                    value={field.answer || ""}
-                    onChange={(e) =>
-                      onUpdate(field.id, { answer: e.target.value })
-                    }
-                    rows={4}
-                  />
+
+                  <p className="text-gray-700 dark:text-gray-300">
+                    {field.answer}
+                  </p>
                 </div>
               )}
 
@@ -208,78 +201,111 @@ const ContractFields = ({ fields = [], company, onUpdate }) => {
                       <p className="font-semibold text-gray-800 dark:text-gray-100">
                         {field.question}
                       </p>
-                      <SignatureCanvas
-                        ref={(ref) => (sigCanvasRef.current[field.id] = ref)}
-                        penColor="black"
-                        canvasProps={{
-                          className:
-                            "border border-gray-300 dark:border-gray-600 rounded-lg w-full h-44 bg-white dark:bg-gray-900",
-                        }}
-                        onEnd={() => handleSave(field.id)}
-                      />
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleClear(field.id)}
-                          className="px-4 py-1.5 text-sm bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-                        >
-                          Clear
-                        </button>
-                        <button
-                          onClick={() => handleSave(field.id)}
-                          className="px-4 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-                        >
-                          Save
-                        </button>
-                      </div>
+
+                      {field.signatureData ? (
+                        // ✅ If signature already saved — show only image
+                        <img
+                          src={field.signatureData}
+                          alt="Signature"
+                          className="border border-gray-300 dark:border-gray-600 rounded-lg w-full h-44 object-contain bg-white dark:bg-gray-900"
+                        />
+                      ) : (
+                        // 📝 If no signature — show SignatureCanvas + buttons
+                        <>
+                          <SignatureCanvas
+                            ref={(ref) =>
+                              (sigCanvasRef.current[field.id] = ref)
+                            }
+                            penColor="black"
+                            canvasProps={{
+                              className:
+                                "border border-gray-300 dark:border-gray-600 rounded-lg w-full h-44 bg-white dark:bg-gray-900",
+                            }}
+                            onEnd={() => handleSave(field.id)}
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleClear(field.id)}
+                              className="px-4 py-1.5 text-sm bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+                            >
+                              Clear
+                            </button>
+                            <button
+                              onClick={() => handleSave(field.id)}
+                              className="px-4 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                            >
+                              Save
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
                   ) : (
                     <div className="flex flex-col gap-3">
                       <p className="font-semibold text-gray-800 dark:text-gray-100">
                         {field.question}
                       </p>
-                      <input
-                        type="text"
-                        placeholder="Type your signature"
-                        value={field.typedSignature || ""}
-                        onChange={(e) =>
-                          onUpdate(field.id, {
-                            typedSignature: e.target.value,
-                          })
-                        }
-                        className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2 text-gray-800 dark:text-gray-100 bg-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      />
-                      <div className="flex items-center gap-4">
-                        <Select
-                          value={field.fontFamily || "Allura"}
-                          onValueChange={(value) =>
-                            onUpdate(field.id, { fontFamily: value })
-                          }
-                        >
-                          <SelectTrigger className="w-[200px]">
-                            <SelectValue placeholder="Select Font" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {[
-                              "Allura",
-                              "Great Vibes",
-                              "Dancing Script",
-                              "Pacifico",
-                              "Cedarville Cursive",
-                            ].map((font) => (
-                              <SelectItem key={font} value={font}>
-                                <span style={{ fontFamily: font }}>{font}</span>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
 
+                      {field.typedSignature ? (
+                        // ✅ If signature already exists — show only p with selected font
                         <p
                           className="text-3xl text-gray-700 dark:text-gray-200"
                           style={{ fontFamily: field.fontFamily || "Allura" }}
                         >
-                          {field.typedSignature || "—"}
+                          {field.typedSignature}
                         </p>
-                      </div>
+                      ) : (
+                        // 📝 If no signature — show input + font select + preview
+                        <>
+                          <input
+                            type="text"
+                            placeholder="Type your signature"
+                            value={field.typedSignature || ""}
+                            onChange={(e) =>
+                              onUpdate(field.id, {
+                                typedSignature: e.target.value,
+                              })
+                            }
+                            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2 text-gray-800 dark:text-gray-100 bg-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          />
+                          <div className="flex items-center gap-4">
+                            <Select
+                              value={field.fontFamily || "Allura"}
+                              onValueChange={(value) =>
+                                onUpdate(field.id, { fontFamily: value })
+                              }
+                            >
+                              <SelectTrigger className="w-[200px]">
+                                <SelectValue placeholder="Select Font" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {[
+                                  "Allura",
+                                  "Great Vibes",
+                                  "Dancing Script",
+                                  "Pacifico",
+                                  "Cedarville Cursive",
+                                ].map((font) => (
+                                  <SelectItem key={font} value={font}>
+                                    <span style={{ fontFamily: font }}>
+                                      {font}
+                                    </span>
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+
+                            <p
+                              className="text-3xl text-gray-700 dark:text-gray-200"
+                              style={{
+                                fontFamily: field.fontFamily || "Allura",
+                              }}
+                            >
+                              {field.typedSignature || "—"}
+                            </p>
+                          </div>
+                        </>
+                      )}
                     </div>
                   )}
                 </>
@@ -294,11 +320,12 @@ const ContractFields = ({ fields = [], company, onUpdate }) => {
           {company?.companyAddress && <p>{company.companyAddress}</p>}
         </div>
         <div className="text-xs text-gray-500 dark:text-gray-400">
-          © {new Date().getFullYear()} {company?.name || "Your Company"}. All rights reserved.
+          © {new Date().getFullYear()} {company?.name || "Your Company"}. All
+          rights reserved.
         </div>
       </footer>
     </div>
   );
 };
 
-export default ContractFields;
+export default ViewContractdetails;

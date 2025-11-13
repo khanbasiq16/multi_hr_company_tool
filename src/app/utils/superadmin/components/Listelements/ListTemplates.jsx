@@ -44,7 +44,7 @@ const ListTemplates = ({loading}) => {
 
                 {/* Template Title */}
                 <h3 className="font-semibold text-lg text-center text-gray-800 dark:text-gray-100 mb-2">
-                  {template.company.name} Template
+                  {template.templateName || "Untitled Form"}
                 </h3>
 
                 {/* Company Info */}

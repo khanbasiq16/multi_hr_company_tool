@@ -32,7 +32,7 @@ export async function POST(req) {
       );
     }
 
-    // 2️⃣ Get IP Whitelist
+   
     const docRef = doc(db, "ipWhitelist", "global");
     const whitelistSnap = await getDoc(docRef);
 
@@ -80,7 +80,7 @@ export async function POST(req) {
 
     
     const index = attendanceArray.findIndex(
-      (item) => item.id === attendenceid
+      (item) => item.id === userData?.attendanceid
     );
 
     if (index === -1) {

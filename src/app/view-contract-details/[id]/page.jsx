@@ -5,6 +5,7 @@ import axios from "axios";
 import Contractfeilds from "@/app/utils/basecomponents/Contractfeilds";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import ViewContractdetails from "@/app/utils/basecomponents/ViewContractdetails";
 
 const Page = () => {
   const { id } = useParams();
@@ -79,18 +80,18 @@ const Page = () => {
   return (
     <div className="p-4 bg-white">
       <h1 className="text-2xl  font-semibold mb-6 text-gray-800">
-        Edit Contract — {contract.contractName}
+        {contract.contractName}
       </h1>
 
       <div className="w-full flex justify-center">
-        <Contractfeilds
+        <ViewContractdetails
           fields={fields}
           company={company}
           onUpdate={handleFieldUpdate}
         />
       </div>
       <div className="flex justify-end mt-8 gap-2">
-        <button
+        {/* <button
           onClick={handleupdateform}
           disabled={updateloading}
           className={`px-4 py-2 rounded text-white transition-colors ${
@@ -100,13 +101,8 @@ const Page = () => {
           }`}
         >
           {updateloading ? "Saving..." : "Save Changes"}
-        </button>
-        <button
-         onClick={()=>router.push(`/view-contract-details/${id}`)}
-          className={`px-4 py-2 rounded text-white bg-[#5965AB] hover:bg-[#5f6ebe] transition-colors `}
-        >
-          Preview Contract
-        </button>
+        </button> */}
+       
       </div>
     </div>
   );

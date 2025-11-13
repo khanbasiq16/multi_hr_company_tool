@@ -148,7 +148,7 @@ const ContractDialog = () => {
                         </div>
 
                         <h3 className="font-semibold text-lg text-center text-gray-800 dark:text-gray-100 mb-2">
-                          {template.company?.name} Template
+                            {template.templateName || "Untitled Form"}
                         </h3>
 
                         <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-3">

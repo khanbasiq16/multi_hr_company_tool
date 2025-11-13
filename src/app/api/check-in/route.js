@@ -14,10 +14,11 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function POST(req) {
   try {
+    
     const body = await req.json();
     const { employeeId, note, time, ip } = body;
 
-    console.log(time);
+ 
 
     if (!employeeId) {
       console.log("❌ Employee ID Missing");

@@ -1,5 +1,5 @@
 import { db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
@@ -25,29 +25,46 @@ export async function GET(req, { params }) {
 
     const contractData = { id: contractSnap.id, ...contractSnap.data() };
 
-    let templateData = null;
+    const companySlug = contractData.companyid;
 
-    if (contractData.templateId) {
-      const templateRef = doc(db, "templates", contractData.templateId);
-      const templateSnap = await getDoc(templateRef);
-
-      if (templateSnap.exists()) {
-        templateData = { id: templateSnap.id, ...templateSnap.data() };
-      }
+    if (!companySlug) {
+      return NextResponse.json(
+        { success: false, error: "Company slug not found in contract" },
+        { status: 400 }
+      );
     }
- 
-    const mergedContract = {
-      ...contractData,
-      template: templateData,
+
+    const companyQuery = query(
+      collection(db, "companies"),
+      where("companyslug", "==", companySlug)
+    );
+
+    const companySnap = await getDocs(companyQuery);
+
+    if (companySnap.empty) {
+      return NextResponse.json(
+        { success: false, error: "Company not found for this slug" },
+        { status: 404 }
+      );
+    }
+
+    const companyData = {
+      id: companySnap.docs[0].id,
+      ...companySnap.docs[0].data(),
     };
+
 
 
     return NextResponse.json({
       success: true,
-      contract: mergedContract,
+      contract: {
+        ...contractData,
+        company: companyData,
+      },
     });
+
   } catch (error) {
-    console.error("Error fetching contract:", error);
+    console.error("Error fetching company by slug:", error);
     return NextResponse.json(
       { success: false, error: "Internal Server Error" },
       { status: 500 }

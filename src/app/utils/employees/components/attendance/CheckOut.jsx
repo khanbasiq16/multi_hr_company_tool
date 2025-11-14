@@ -232,16 +232,16 @@ const CheckOut = ({
         employeeId: user?.employeeId,
         note: null,
         stopwatchTime: totalWorkedTime,
-        attendenceid: attendenceid,
       });
 
       if (res.data.success) {
         toast.dismiss(toastId);
         toast.success("Checked out successfully!");
-        dispatch(UpdateUser(res.data.employee));
+        
         dispatch(resetCheckIn());
         setIsCheckedin(res.data.isCheckedin);
         setIsCheckedout(res.data.isCheckedout);
+        dispatch(updateCheckOut());
         setDialogOpen(false);
         dispatch(resetTimer());
         setNote("");
@@ -285,7 +285,6 @@ const CheckOut = ({
         employeeId: user?.employeeId,
         note: note,
         stopwatchTime: totalWorkedTime,
-        attendenceid: attendenceid,
       });
 
       if (res.data.success) {

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { createcontracts } from "@/features/Slice/ContractsSlice";
 import axios from "axios";
+import SendContractDialog from "../dialog/Sentcontractdialog";
 
 const Listcontracts = () => {
   const [loading, setLoading] = useState(true);
@@ -128,7 +129,7 @@ const Listcontracts = () => {
                   Edit
                 </Button>
 
-                <Button
+                {/* <Button
                   variant="outline"
                   className="flex items-center  w-full justify-center border-green-500 text-green-600 hover:bg-green-50 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-900/30 transition-all rounded-lg font-medium"
                   onClick={() =>
@@ -137,7 +138,9 @@ const Listcontracts = () => {
                 >
                   <Send className="w-4 h-4" />
                   Send
-                </Button>
+                </Button> */}
+
+                <SendContractDialog/>
               </div>
             </div>
           ))}

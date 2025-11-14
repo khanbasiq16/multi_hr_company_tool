@@ -237,7 +237,7 @@ export async function GET() {
           entry.checkout = {
             ip: serverIp,
             time: formattedTime,
-            status: "Late Checkout",
+            status: "Late Check Out",
             note: "Auto-marked as Late Checkout",
             stopwatchTime: totalWorkedTime,
           };

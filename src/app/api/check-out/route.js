@@ -19,10 +19,8 @@ export async function POST(req) {
       time, 
       note,
       stopwatchTime,
-      attendenceid,
     } = body;
-
-    console.log("📥 Request Body:", body);
+  
 
     // 1️⃣ Validate Employee ID
     if (!employeeId) {
@@ -90,7 +88,6 @@ export async function POST(req) {
       );
     }
 
-
     let departmentData = null;
     if (userData.department) {
       const deptRef = collection(db, "departments");
@@ -115,7 +112,7 @@ export async function POST(req) {
       );
     }
 
-    // 6️⃣ Parse and Compare Times (Handles Night Shift Correctly)
+   
     function parseTime12Hour(timeStr) {
       const [timePart, modifier] = timeStr.trim().split(" ");
       let [hours, minutes] = timePart.split(":").map(Number);

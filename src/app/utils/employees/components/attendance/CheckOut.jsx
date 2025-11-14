@@ -277,7 +277,7 @@ const CheckOut = ({
 
       const totalWorkedTime = formatElapsedTime(diffInSeconds);
 
-      console.log("🕒 Total Worked Time:", totalWorkedTime);
+     
 
       const res = await axios.post("/api/check-out", {
         ip,

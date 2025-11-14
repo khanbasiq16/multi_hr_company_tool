@@ -24,7 +24,7 @@ import { useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { getallclients } from "@/features/Slice/ClientSlice";
 
-const SendContractDialog = () => {
+const SendContractDialog = ({contractid}) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedClient, setSelectedClient] = useState("");
@@ -64,11 +64,14 @@ const SendContractDialog = () => {
       return toast.error("Please select a client");
     }
 
-    setLoading(true);
 
-    try {
+
+    setLoading(true);
+ try {
       const res = await axios.post("/api/contracts/send", {
         clientId: selectedClient,
+        contractid: contractid,
+        companyslug:id
       });
 
       if (res.data.success) {

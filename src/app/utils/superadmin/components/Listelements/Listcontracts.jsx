@@ -12,6 +12,8 @@ import {
   Clock,
   Edit,
   Send,
+  Copy,
+  Check,
 } from "lucide-react";
 import { createcontracts } from "@/features/Slice/ContractsSlice";
 import axios from "axios";
@@ -24,17 +26,28 @@ const Listcontracts = () => {
   const { id } = useParams();
   const { contracts } = useSelector((state) => state.Contracts);
 
+  const [copiedId, setCopiedId] = useState(null);
+
+  const handleCopy = (id, url) => {
+    navigator.clipboard.writeText(url);
+    setCopiedId(id);
+
+    setTimeout(() => {
+      setCopiedId(null);
+    }, 1500);
+  };
+
   useEffect(() => {
     const fetchContracts = async () => {
       try {
         const res = await axios.get(`/api/get-contracts/${id}`);
         if (res.data.success) {
-          console.log(res.data.contracts)
+          console.log(res.data.contracts);
           dispatch(createcontracts(res.data?.contracts || []));
         }
       } catch (error) {
         console.error("Error fetching contracts:", error);
-        console.log()
+        console.log();
       } finally {
         setLoading(false);
       }
@@ -77,19 +90,6 @@ const Listcontracts = () => {
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate text-lg">
                   {contract.contractName}
                 </h3>
-              </div>
-
-              {/* Company + Status */}
-              <div className="p-5 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Building2 className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
-                    <span className="font-medium text-gray-800 dark:text-gray-100">
-                      {formatCompanyName(contract.companyid) ||
-                        "Unknown Company"}
-                    </span>
-                  </p>
-                </div>
 
                 <span
                   className={`flex items-center gap-1 text-xs px-3 py-1 rounded-full font-medium shadow-sm ${
@@ -105,6 +105,37 @@ const Listcontracts = () => {
                   )}
                   {contract.status === "active" ? "Active" : "Pending"}
                 </span>
+              </div>
+
+              <div className="p-5 flex items-center justify-between gap-4">
+                {/* Company Name */}
+                <div className="flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    <span className="font-medium text-gray-800 dark:text-gray-100">
+                      {formatCompanyName(contract.companyid) ||
+                        "Unknown Company"}
+                    </span>
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  {contract?.contractURL && (
+                    <button
+                      className="flex items-center gap-1 text-xs px-3 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+                      onClick={() =>
+                        handleCopy(contract.id, contract.contractURL)
+                      }
+                    >
+                      {copiedId === contract.id ? (
+                        <Check className="text-green-600" size={14} />
+                      ) : (
+                        <Copy size={14} />
+                      )}
+                      {copiedId === contract.id ? "Copied!" : "Copy Link"}
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Footer Buttons */}
@@ -129,18 +160,7 @@ const Listcontracts = () => {
                   Edit
                 </Button>
 
-                {/* <Button
-                  variant="outline"
-                  className="flex items-center  w-full justify-center border-green-500 text-green-600 hover:bg-green-50 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-900/30 transition-all rounded-lg font-medium"
-                  onClick={() =>
-                    alert(`Sending contract: ${contract.contractName}`)
-                  }
-                >
-                  <Send className="w-4 h-4" />
-                  Send
-                </Button> */}
-
-                <SendContractDialog/>
+                <SendContractDialog contractid={contract.id} />
               </div>
             </div>
           ))}

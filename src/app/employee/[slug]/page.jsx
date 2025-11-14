@@ -81,9 +81,18 @@ const page = () => {
           </CardHeader>
 
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Detail label="Check In Time" value={user?.department.checkInTime} />
-            <Detail label="Check Out TIme" value={user?.department?.checkOutTime} />
-            <Detail label="Grace Time" value={`${user?.department?.graceTime} Minutes`} />
+            <Detail
+              label="Check In Time"
+              value={user?.department?.checkInTime}
+            />
+            <Detail
+              label="Check Out TIme"
+              value={user?.department?.checkOutTime}
+            />
+            <Detail
+              label="Grace Time"
+              value={`${user?.department?.graceTime} Minutes`}
+            />
           </CardContent>
         </Card>
       </div>

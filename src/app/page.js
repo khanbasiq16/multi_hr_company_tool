@@ -18,6 +18,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/features/Slice/UserSlice";
+import Link from "next/link";
 
 export default function Page() {
   const router = useRouter();
@@ -132,7 +133,16 @@ export default function Page() {
             </div>
           </CardContent>
 
-          <CardFooter className="flex justify-end mt-3 gap-2">
+          <CardFooter className="flex justify-between mt-3 gap-2">
+
+               <Link
+        href="/forgot-password" // Change this to your actual forgot password route
+        className="text-sm text-blue-600 hover:underline"
+      >
+        Forgot Password?
+      </Link>
+
+
             <Button
               type="submit"
               disabled={loading}

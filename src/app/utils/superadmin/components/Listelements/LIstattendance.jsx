@@ -1,4 +1,5 @@
 "use client";
+import AttendanceGraphs from "@/app/utils/basecomponents/AttendanceGraphs";
 import CheckInTable from "@/app/utils/employees/components/Tables/CheckInTable";
 import CheckOutTable from "@/app/utils/employees/components/Tables/CheckOutTable";
 import React, { useEffect, useState } from "react";
@@ -64,6 +65,12 @@ const Listattendance = ({ attendance , setemployee }) => {
         <CheckOutTable data={checkouts} setemployee={setemployee}/>
 
       )}
+
+
+      <AttendanceGraphs data={attendance} activeTab={activeTab} />
+
+
+      
     </div>
   );
 };

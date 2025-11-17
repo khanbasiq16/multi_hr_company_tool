@@ -4,7 +4,7 @@ import { doc, updateDoc } from "firebase/firestore";
 
 export async function POST(req, { params }) {
   try {
-    const { id } = params; // Contract ID from URL
+    const { id } = params; 
 
     const {companyslug} = await req.json();
 

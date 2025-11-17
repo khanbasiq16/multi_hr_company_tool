@@ -130,3 +130,8 @@
 body{
   background-color: #F6F6F6;
 }
+
+
+.recharts-wrapper svg:focus {
+  outline: none;
+}

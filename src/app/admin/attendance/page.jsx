@@ -36,6 +36,9 @@ const page = () => {
             <Superbreadcrumb path={"Attendance"}/>
             
             <Listallattendance />
+
+
+            
         </section>
     </SuperAdminlayout>
     </>

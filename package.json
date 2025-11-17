@@ -55,6 +55,7 @@
     "react-hot-toast": "^2.6.0",
     "react-redux": "^9.2.0",
     "react-signature-canvas": "^1.1.0-alpha.2",
+    "recharts": "^3.4.1",
     "redux-persist": "^6.0.0",
     "stripe": "^19.1.0",
     "tailwind-merge": "^3.3.1",

@@ -12,7 +12,8 @@ const MonthPicker = ({ value, onChange }) => {
     "July", "August", "September", "October", "November", "December"
   ];
 
-  const years = Array.from({ length: 11 }, (_, i) => 2025 - 5 + i); // 5 years before and after 2025
+  const currentYear = new Date().getFullYear();
+const years = Array.from({ length: 20 }, (_, i) => currentYear - 10 + i);// 5 years before and after 2025
 
   const handleSelect = () => {
     const monthValue = `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}`;

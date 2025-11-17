@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import CheckInTable from "../Tables/CheckInTable";
 import CheckOutTable from "../Tables/CheckOutTable";
+import AttendanceGraphs from "@/app/utils/basecomponents/AttendanceGraphs";
 
 
 const Listattendance = ({ attendance }) => {
@@ -22,8 +23,6 @@ const Listattendance = ({ attendance }) => {
         ...item.checkout,
       }));
 
-      console.log(checkins)
-      console.log(checkouts)
 
       setCheckIns(checkins);
       setCheckOuts(checkouts);
@@ -56,7 +55,7 @@ const Listattendance = ({ attendance }) => {
         </button>
       </div>
 
-      {/* Tab Content */}
+      
       {activeTab === "checkin" ? (
         <CheckInTable data={checkins} />
       
@@ -64,6 +63,8 @@ const Listattendance = ({ attendance }) => {
         <CheckOutTable data={checkouts} />
 
       )}
+
+      <AttendanceGraphs data={attendance} activeTab={activeTab} />
     </div>
   );
 };

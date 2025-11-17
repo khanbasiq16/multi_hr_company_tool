@@ -159,8 +159,10 @@ const Listcontracts = () => {
                   <Edit className="w-4 h-4" />
                   Edit
                 </Button>
+                {contract?.contractURL && (
 
                 <SendContractDialog contractid={contract.id} />
+                )}
               </div>
             </div>
           ))}

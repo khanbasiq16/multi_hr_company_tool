@@ -71,7 +71,7 @@ export default function Page() {
           .trim()
           .replace(/\s+/g, "-")
           .toLowerCase();
-          
+
         router.push(`/employee/${slug}`);
       }
     } catch (error) {
@@ -134,14 +134,12 @@ export default function Page() {
           </CardContent>
 
           <CardFooter className="flex justify-between mt-3 gap-2">
-
-               <Link
-        href="/forgot-password" // Change this to your actual forgot password route
-        className="text-sm text-blue-600 hover:underline"
-      >
-        Forgot Password?
-      </Link>
-
+            <Link
+              href="/forgot-password" // Change this to your actual forgot password route
+              className="text-sm text-blue-600 hover:underline"
+            >
+              Forgot Password?
+            </Link>
 
             <Button
               type="submit"
@@ -162,6 +160,6 @@ export default function Page() {
       </Card>
     </div>
   );
-};
+}
 
 // export default page;

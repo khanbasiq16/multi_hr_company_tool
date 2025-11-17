@@ -16,12 +16,12 @@ const AttendanceGraphs = ({ data, activeTab = "checkin" }) => {
   const colorMap = {
     "On Time": "#22c55e", 
     Late: "#eab308",
-    "Half Day": "#3b82f6", // blue
-    "Short Day": "#a855f7", // purple
-    "Early Check Out": "#3b82f6", // blue
-    "Late Check Out": "#a855f7", // purple
-    "On Time Check Out": "#22c55e", // green
-    Absent: "#ef4444", // red
+    "Half Day": "#3b82f6", 
+    "Short Day": "#a855f7", 
+    "Early Check Out": "#3b82f6", 
+    "Late Check Out": "#a855f7", 
+    "On Time Check Out": "#22c55e", 
+    Absent: "#ef4444", 
   };
 
   const today = new Date();
@@ -50,7 +50,7 @@ const AttendanceGraphs = ({ data, activeTab = "checkin" }) => {
       date: day,
       status,
       count: status ? 1 : 0,
-      color: status ? colorMap[status] : "#e5e7eb", // gray for empty days
+      color: status ? colorMap[status] : "#e5e7eb",
     };
   });
 
@@ -93,13 +93,26 @@ const AttendanceGraphs = ({ data, activeTab = "checkin" }) => {
     domain={[0, 1]} 
       ticks={[0, 0.25, 0.5, 0.75, 1]} 
     />
-    <Tooltip
-      formatter={(value, name, props) => {
-        return props.payload.status
-          ? [props.payload.status, "Status"]
-          : ["No Data", "Status"];
-      }}
-    />
+  <Tooltip
+  formatter={(value, name, props) => {
+    // Show status or "No Data"
+    return props.payload.status
+      ? [props.payload.status, "Status"]
+      : ["No Data", "Status"];
+  }}
+  labelFormatter={(label, payload) => {
+    // Find original date from chartData
+    const dataItem = payload?.[0]?.payload;
+    if (dataItem && dataItem.status) {
+      return `Date: ${String(dataItem.date).padStart(2, "0")}/${String(
+        new Date().getMonth() + 1
+      ).padStart(2, "0")}/${new Date().getFullYear()}`;
+    }
+    return `Date: ${String(label).padStart(2, "0")}/${String(
+      new Date().getMonth() + 1
+    ).padStart(2, "0")}/${new Date().getFullYear()}`;
+  }}
+/>
     <Bar dataKey="count" radius={[4, 4, 0, 0]}>
       {chartData.map((entry, index) => (
         <Cell key={index} fill={entry.color} />

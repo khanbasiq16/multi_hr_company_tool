@@ -130,7 +130,7 @@ const Page = () => {
         </button>
       )}
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push(`/admin/company/${company.companyslug}/contracts`)}
           className={`px-4 py-2 rounded text-white transition-colors bg-[#5965AB] hover:bg-[#5f6ebe] `}
         >
           Back to Main Panel

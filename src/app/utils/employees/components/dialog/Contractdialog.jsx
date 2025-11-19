@@ -18,7 +18,7 @@ import {
 import { useParams } from "next/navigation";
 import { createcontracts } from "@/features/Slice/ContractsSlice";
 
-const ContractDialog = () => {
+const Contractdialog = () => {
   const dispatch = useDispatch()
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(1); 
@@ -56,7 +56,7 @@ const ContractDialog = () => {
     setLoading(true);
     try {
       const res = await axios.post("/api/create-contract", {
-        userid: user?.uid,
+        userid: user?.employeeId,
         contractName,
         templateId:selectedTemplate,
         companyid:id,
@@ -202,4 +202,4 @@ const ContractDialog = () => {
   );
 };
 
-export default ContractDialog;
+export default Contractdialog;

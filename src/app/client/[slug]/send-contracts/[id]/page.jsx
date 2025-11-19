@@ -3,6 +3,7 @@ import ViewContractdetails from "@/app/utils/basecomponents/ViewContractdetails"
 import axios from "axios";
 import { useRouter, useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const page = () => {
   const { id } = useParams();
@@ -10,6 +11,7 @@ const page = () => {
   const [fields, setFields] = useState([]);
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [contractloading, setcontractLoading] = useState(false);
   const [updateloading, setUpdateLoading] = useState(false);
   const [contracturl, setcontracturl] = useState("");
   const router = useRouter();
@@ -52,25 +54,69 @@ const page = () => {
 
   const handleupdateform = async () => {
     try {
-      console.log("Updated Fields:", fields);
+      setcontractLoading(true);
+      const currentTime = new Date();
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-      const res = await axios.post("/api/updtate-contract-fields" , {
-        contractId: id,
-        updatedFields: fields,
-        status: "signed",
-      })
+      const getExactLocation = async (lat, lon) => {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
+        );
+        const data = await response.json();
 
-      
-      if (res.data.success) {
+        return {
+          exactLocation: data.display_name || null,
+          city:
+            data.address.city ||
+            data.address.town ||
+            data.address.village ||
+            null,
+          area: data.address.suburb || null,
+          country: data.address.country || null,
+        };
+      };
 
-       
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            const locationData = await getExactLocation(latitude, longitude);
+
+            const res = await axios.post("/api/contracts/contract-signed", {
+              contractId: id,
+              updatedFields: fields,
+              status: "signed",
+              time: currentTime,
+              timezone,
+              latitude,
+              longitude,
+              exactLocation: locationData.exactLocation,
+              city: locationData.city,
+              area: locationData.area,
+              country: locationData.country,
+            });
+
+            if (res.data.success) {
+              toast.success("Contract signed!");
+
+              setcontractLoading(false);
+
+              setTimeout(() => {
+                window.location.reload();
+              }, 500);
+
+              
+            }
+          },
+          (error) => {
+            console.error("Location Permission Denied:", error);
+          }
+        );
+      } else {
+        console.error("Geolocation is not supported in this browser.");
       }
-
-
-    
-      
-  
-      setUpdateLoading(true);
     } catch (error) {
       console.error("Error updating contract:", error);
     }
@@ -101,16 +147,20 @@ const page = () => {
       </div>
 
       <div className="flex justify-center w-full items-center mt-4 mb-8 gap-2">
-        <button
-          onClick={handleupdateform}
-          className={`px-4 py-2 rounded text-white transition-colors ${
-            updateloading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-[#5965AB] hover:bg-[#5f6ebe]"
-          }`}
-        >
-          Contract Signed
-        </button>
+        {contract.status !== "signed" && (
+          <button
+            onClick={handleupdateform}
+            className={`px-4 py-2 rounded text-white transition-colors ${
+              contractloading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#5965AB] hover:bg-[#5f6ebe]"
+            }`}
+          >
+            {
+              contractloading ? "Signing Contract..." : "Contract Signed"
+            }
+          </button>
+        )}
       </div>
     </div>
   );

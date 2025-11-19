@@ -8,6 +8,7 @@ export async function GET(req, { params }) {
 
     console.log(id)
 
+
     if (!id) {
       return NextResponse.json(
         { success: false, error: "Company slug not provided" },

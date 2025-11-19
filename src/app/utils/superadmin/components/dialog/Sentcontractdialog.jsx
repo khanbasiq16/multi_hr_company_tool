@@ -23,12 +23,15 @@ import { Send } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { getallclients } from "@/features/Slice/ClientSlice";
+import { useRouter } from "next/navigation";
 
 const SendContractDialog = ({contractid}) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedClient, setSelectedClient] = useState("");
   const [clientInfo, setClientInfo] = useState(null);
+
+  const router = useRouter();
 
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -41,7 +44,7 @@ const SendContractDialog = ({contractid}) => {
         const res = await axios.get(`/api/get-all-clients/${id}`);
 
         if (res.data.success) {
-          dispatch(getallclients(res.data.clients || []));
+          dispatch(getallclients(res.data.clients));
         }
       } catch (error) {
         dispatch(getallclients([]));
@@ -77,6 +80,10 @@ const SendContractDialog = ({contractid}) => {
       if (res.data.success) {
         toast.success("Contract sent successfully");
         setOpen(false);
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
       } else {
         toast.error("Failed to send contract");
       }

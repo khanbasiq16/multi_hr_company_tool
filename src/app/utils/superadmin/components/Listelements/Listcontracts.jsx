@@ -14,13 +14,17 @@ import {
   Send,
   Copy,
   Check,
+  CopyCheck,
+  Loader2,
 } from "lucide-react";
 import { createcontracts } from "@/features/Slice/ContractsSlice";
 import axios from "axios";
 import SendContractDialog from "../dialog/Sentcontractdialog";
+import toast from "react-hot-toast";
 
 const Listcontracts = () => {
   const [loading, setLoading] = useState(true);
+  const [updateloading, setUpdateLoading] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
   const { id } = useParams();
@@ -39,14 +43,16 @@ const Listcontracts = () => {
 
   useEffect(() => {
     const fetchContracts = async () => {
+      console.log(contracts);
+      dispatch(createcontracts([]));
+
       try {
         const res = await axios.get(`/api/get-contracts/${id}`);
         if (res.data.success) {
-          console.log(res.data.contracts);
-          dispatch(createcontracts(res.data?.contracts || []));
+          console.log(res?.data?.contracts);
+          dispatch(createcontracts(res?.data?.contracts));
         }
       } catch (error) {
-        console.error("Error fetching contracts:", error);
         console.log();
       } finally {
         setLoading(false);
@@ -54,7 +60,29 @@ const Listcontracts = () => {
     };
 
     fetchContracts();
-  }, [id]);
+  }, []);
+
+  const handleupdateform = async (contractid) => {
+    try {
+      setUpdateLoading(true);
+
+      const res = await axios.post(`/api/generate-contracts/${contractid}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        companyslug: id,
+      });
+
+      if (res.data.success) {
+        toast.success(res.data.message || "Contract updated successfully");
+        window.location.reload();
+        setUpdateLoading(false);
+      }
+    } catch (error) {
+      console.error("Error updating contract:", error);
+      alert("⚠️ Failed to update contract.");
+    }
+  };
 
   const formatCompanyName = (name) => {
     if (!name) return "";
@@ -95,15 +123,27 @@ const Listcontracts = () => {
                   className={`flex items-center gap-1 text-xs px-3 py-1 rounded-full font-medium shadow-sm ${
                     contract.status === "active"
                       ? "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300"
-                      : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300"
+                      : contract.status === "sent"
+                      ? "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300"
+                      : contract.status === "signed"
+                      ? "bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300"
+                      : "bg-gray-100 text-gray-700 dark:bg-gray-900/50 dark:text-gray-300"
                   }`}
                 >
-                  {contract.status === "active" ? (
+                  {contract.status === "active" && (
                     <CheckCircle2 className="w-3 h-3" />
-                  ) : (
-                    <Clock className="w-3 h-3" />
                   )}
-                  {contract.status === "active" ? "Active" : "Pending"}
+                  {contract.status === "sent" && <Clock className="w-3 h-3" />}
+                  {contract.status === "signed" && (
+                    <CheckCircle2 className="w-3 h-3" />
+                  )}
+                  {contract.status === "active"
+                    ? "Active"
+                    : contract.status === "sent"
+                    ? "Sent"
+                    : contract.status === "signed"
+                    ? "Signed"
+                    : contract.status}
                 </span>
               </div>
 
@@ -120,7 +160,7 @@ const Listcontracts = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  {contract?.contractURL && (
+                  {contract.status !== "signed" && contract?.contractURL && (
                     <button
                       className="flex items-center gap-1 text-xs px-3 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
                       onClick={() =>
@@ -128,41 +168,71 @@ const Listcontracts = () => {
                       }
                     >
                       {copiedId === contract.id ? (
-                        <Check className="text-green-600" size={14} />
+                        <>
+                          <Check className="text-green-600" size={14} />
+                          Copied!
+                        </>
                       ) : (
-                        <Copy size={14} />
+                        <>
+                          <Copy size={14} />
+                          Copy Link
+                        </>
                       )}
-                      {copiedId === contract.id ? "Copied!" : "Copy Link"}
                     </button>
                   )}
                 </div>
               </div>
 
-              {/* Footer Buttons */}
-              <div className="   border p-4 space-y-2 ">
+             
+              <div className="border p-4 space-y-2 ">
                 <Button
                   variant="outline"
                   className="flex items-center w-full justify-center border-blue-500 text-blue-600 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-400 dark:hover:bg-blue-900/30 transition-all rounded-lg font-medium"
                   onClick={() =>
-                    router.push(`/view-contract-details/${contract.id}`)
+                    router.push(
+                      contract.status !== "signed"
+                        ? `/view-contract-details/${contract.id}`
+                        : contract.contractURL
+                    )
                   }
                 >
                   <Eye className="w-4 h-4" />
-                  View
+                  {contract.status != "status" ? "Preview" : "View"}
                 </Button>
 
-                <Button
-                  variant="outline"
-                  className="flex items-center   w-full justify-center border-amber-500 text-amber-600 hover:bg-amber-50 dark:border-amber-700 dark:text-amber-400 dark:hover:bg-amber-900/30 transition-all rounded-lg font-medium"
-                  onClick={() => router.push(`/edit-contract/${contract.id}`)}
-                >
-                  <Edit className="w-4 h-4" />
-                  Edit
-                </Button>
-                {contract?.contractURL && (
-
-                <SendContractDialog contractid={contract.id} />
+                {contract.status != "signed" && (
+                  <Button
+                    variant="outline"
+                    className="flex items-center   w-full justify-center border-amber-500 text-amber-600 hover:bg-amber-50 dark:border-amber-700 dark:text-amber-400 dark:hover:bg-amber-900/30 transition-all rounded-lg font-medium"
+                    onClick={() => router.push(`/edit-contract/${contract.id}`)}
+                  >
+                    <Edit className="w-4 h-4" />
+                    Edit
+                  </Button>
                 )}
+
+                {!contract.contractURL && (
+                  <Button
+                    variant="outline"
+                    className="flex items-center gap-2 w-full justify-center border-green-500 text-green-600 hover:bg-green-100/40 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-900/40 transition-all rounded-xl font-medium py-5"
+                    onClick={() => handleupdateform(contract.id)}
+                  >
+                    {updateloading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <>
+                        <CopyCheck className="w-4 h-4" />
+                        Generate Contract Url
+                      </>
+                    )}
+                  </Button>
+                )}
+
+                {contract.contractURL &&
+                  contract.status !== "signed" &&
+                  contract.status !== "sent" && (
+                    <SendContractDialog contractid={contract.id} />
+                  )}
               </div>
             </div>
           ))}

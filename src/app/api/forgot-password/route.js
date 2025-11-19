@@ -21,7 +21,6 @@ export async function POST(req) {
   } catch (error) {
     console.error("Reset email error:", error);
 
-    // Generic message to avoid leaking info
     return NextResponse.json(
       { error: "Failed to send reset email. Please try again." },
       { status: 500 }

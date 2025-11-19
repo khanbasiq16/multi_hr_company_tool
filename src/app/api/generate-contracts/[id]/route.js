@@ -8,6 +8,7 @@ export async function POST(req, { params }) {
 
     const {companyslug} = await req.json();
 
+
     const contractURL = `${process.env.NEXT_PUBLIC_BASE_URL}/client/${companyslug}/send-contracts/${id}`;
 
     await updateDoc(doc(db, "contracts", id), {

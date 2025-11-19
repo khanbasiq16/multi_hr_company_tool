@@ -13,7 +13,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    const { contractName, templateId, companyid, status } = await req.json();
+    const { contractName, templateId, companyid, status , userid} = await req.json();
 
     console.log(templateId)
 
@@ -39,6 +39,7 @@ export async function POST(req) {
     const templateFields = templateData.fields || [];
 
     await addDoc(collection(db, "contracts"), {
+      userid,
       contractName,
       status: status || "draft",
       templateId,

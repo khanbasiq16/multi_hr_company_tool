@@ -27,6 +27,7 @@ const Page = () => {
         const res = await axios.get(`/api/get-contract/${id}`);
         if (res.data.success) {
           const c = res.data.contract;
+          console.log(c)
           setContract(c);
 
           setcontracturl(c?.contractURL || "");

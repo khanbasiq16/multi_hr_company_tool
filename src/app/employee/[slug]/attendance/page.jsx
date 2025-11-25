@@ -36,10 +36,13 @@ const Page = () => {
 
   return (
     <Employeelayout>
+      <section className="w-full p-6">
+
       <Employeebreadcrumb slug={slug} path="Show all Attendance" />
 
       <Listattendance attendance={attendance} />
 
+      </section>
   
     </Employeelayout>
   );

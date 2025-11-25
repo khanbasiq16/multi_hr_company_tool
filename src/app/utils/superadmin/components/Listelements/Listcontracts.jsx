@@ -30,6 +30,8 @@ const Listcontracts = () => {
   const { id } = useParams();
   const { contracts } = useSelector((state) => state.Contracts);
 
+
+
   const [copiedId, setCopiedId] = useState(null);
 
   const handleCopy = (id, url) => {
@@ -40,6 +42,12 @@ const Listcontracts = () => {
       setCopiedId(null);
     }, 1500);
   };
+
+
+ 
+  
+  
+
 
   useEffect(() => {
     const fetchContracts = async () => {

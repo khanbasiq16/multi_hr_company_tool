@@ -32,7 +32,7 @@ const page = () => {
   return (
     <>
       <Employeelayout>
-        <section className="w-full">
+        <section className="w-full p-6">
           <Employeebreadcrumb slug={slug} path={id} path2={"Client details"} />
            <ClientDetails client={client} setClient={setClient} />
         </section>

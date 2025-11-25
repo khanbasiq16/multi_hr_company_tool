@@ -98,7 +98,7 @@ const ViewContractdetails = ({ fields = [], company, onUpdate }) => {
       )}
 
       {/* 📜 Fields */}
-      <section className="relative z-10 space-y-6">
+      <section className="relative z-10 space-y-1">
         {fields
           .filter((f) => f.type !== "company_info_block")
           .map((field) => (
@@ -169,17 +169,38 @@ const ViewContractdetails = ({ fields = [], company, onUpdate }) => {
               )}
 
               {/* Date */}
+            
+              
+              
               {field.type === "date" && (
-                <div>
-                  <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">
-                    {field.question}
-                  </p>
-                  <p className="text-gray-700 dark:text-gray-300">
-                    {field.answer || "—"}
-                  </p>
-                </div>
-              )}
+                <>
+                 
+                  {field.answer ? (
+                    <div className="flex w-full justify-start">
+                      <p className="text-gray-700 font-semibold mr-2">
+                        {field.question || "—"} :
+                      </p>
+                      <p className="text-gray-700">{field.answer}</p>
+                    </div>
+                  ) : (
+                    /* If no answer → show date input */
+                    <div className="flex flex-col w-full gap-2">
+                      <label className="text-gray-700 font-semibold">
+                        {field.question || "Select Date"}
+                      </label>
 
+                      <input
+                        type="date"
+                        className="border rounded p-2 w-full text-gray-700"
+                        value={field.answer || ""}
+                        onChange={(e) =>
+                          onUpdate(field.id, { answer: e.target.value })
+                        }
+                      />
+                    </div>
+                  )}
+                </>
+              )}
               {/* Appendix */}
               {field.type === "appendix" && field.answer && (
                 <div>

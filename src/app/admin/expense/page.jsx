@@ -8,7 +8,7 @@ const page = () => {
   return (
     <>
      <SuperAdminlayout>
-      <section className="w-full">  
+      <section className="w-full p-6">  
         <Superbreadcrumb path={"Expense"}/>
         <ListExpenses/>
         

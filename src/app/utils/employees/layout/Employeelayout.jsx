@@ -5,7 +5,7 @@ import Sidebar from './Sidebar'
 const Employeelayout = ({ children }) => {
   return (
     <>
-    <section className='w-full h-full bg-[#F6F6F6] px-5 pb-4'>
+      <section className='w-full h-full bg-[#F6F6F6] px-3 sm:px-5 pb-4'>
         <Header />
         <div className='flex'>
           <Sidebar />

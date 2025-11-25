@@ -9,11 +9,13 @@ import Companybreadcumbs from "@/app/utils/superadmin/components/breadcrumbs/Com
 import Listcontracts from "@/app/utils/superadmin/components/Listelements/Listcontracts";
 import { createtemplate } from "@/features/Slice/TemplateSlice";
 import { createcontracts } from "@/features/Slice/ContractsSlice";
+import { getallclients } from "@/features/Slice/ClientSlice";
 
 
 const Page = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
+  const { clients } = useSelector((state) => state.Client);  
   
 
 
@@ -33,11 +35,37 @@ const Page = () => {
   }, [id, dispatch]);
 
 
+
+ 
+
+  useEffect(() => {
+    const fetchclients = async () => {
+      try {
+        const res = await axios.get(`/api/get-all-clients/${id}`);
+        if(res.data.success){
+
+          console.log(res)
+          dispatch(getallclients(res.data?.clients || []));
+        }
+      } catch (error) {
+        console.error("Error fetching employees:", error);
+        setEmployees([]); 
+      } finally {
+      }
+    };
+
+    fetchclients();
+  }, []);
+
+
  
   return (
     <SuperAdminlayout>
+        <section className="w-full p-6">
+
       <Companybreadcumbs path="Contracts" />
       <Listcontracts  />
+        </section>
     </SuperAdminlayout>
   );
 };

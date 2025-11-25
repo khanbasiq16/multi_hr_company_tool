@@ -13,7 +13,7 @@ const page = () => {
   return (
     <>
       <Employeelayout>
-        <section className="w-full">
+        <section className="w-full p-6">
           <Employeebreadcrumb slug={slug} path={"Companies"} />
           <Listcompanies />
         </section>

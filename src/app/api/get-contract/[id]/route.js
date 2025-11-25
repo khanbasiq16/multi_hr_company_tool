@@ -48,9 +48,25 @@ export async function GET(req, { params }) {
       );
     }
 
+
+    const clientQuery = query(
+      collection(db, "clients"),
+      where("id", "==", contractData?.clientid)
+    );
+
+    const clientSnap = await getDocs(clientQuery);
+
+    if (clientSnap.empty) {
+      return NextResponse.json(
+        { success: false, error: "Company not found for this slug" },
+        { status: 404 }
+      );
+    }
+
     const companyData = {
       id: companySnap.docs[0].id,
       ...companySnap.docs[0].data(),
+      
     };
 
 
@@ -60,6 +76,7 @@ export async function GET(req, { params }) {
       contract: {
         ...contractData,
         company: companyData,
+        clientinfo: clientSnap.docs[0].data(),
       },
     });
 

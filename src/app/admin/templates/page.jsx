@@ -34,9 +34,12 @@ const page = () => {
   return (
     <>
     <SuperAdminlayout>
+        <section className="w-full p-6">
+
         <Superbreadcrumb path={"Templates"}/>
         <ListTemplates loading={loading}/>
 
+        </section>
     </SuperAdminlayout>
     </>
   )

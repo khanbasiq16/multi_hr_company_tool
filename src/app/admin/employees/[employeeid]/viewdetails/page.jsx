@@ -60,11 +60,11 @@ const page = () => {
   return (
     <>
     <SuperAdminlayout>
-      <div className='w-full'>
+     <section className="w-full p-6">
 
        <Superbreadcrumb path={"Employee"} path2={`${employee?.employeeName}`}/> 
        <EmployeesDetails employee={employee} assigncompanies={assigncompanies} setemployee={setemployee} />
-      </div>
+      </section>
     </SuperAdminlayout>
     </>
   )

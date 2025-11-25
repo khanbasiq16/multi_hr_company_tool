@@ -14,7 +14,7 @@ const page = () => {
     
     <Employeelayout>
 
-         <section className="w-full">
+        <section className="w-full p-6">
           <Employeecompbreadcrumb slug={slug} path={id} path2={"Invoices"} />
 
           <Listinvoices />

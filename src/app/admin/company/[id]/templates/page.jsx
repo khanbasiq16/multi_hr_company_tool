@@ -34,8 +34,12 @@ const page = () => {
   return (
     <>
       <SuperAdminlayout>
+
+          <section className="w-full p-6">
+
         <Companybreadcumbs path={"Templates"} />
         <ListTemplates loading={loading} />
+          </section>
 
       </SuperAdminlayout>
     </>

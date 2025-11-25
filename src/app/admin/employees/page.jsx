@@ -50,7 +50,7 @@ const page = () => {
     <>
     
      <SuperAdminlayout>
- <section className="w-full">
+  <section className="w-full p-6">
             <Superbreadcrumb path={"Employees"}/>
             <ListEmployees/>
             </section>

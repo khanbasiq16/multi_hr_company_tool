@@ -6,7 +6,7 @@ export async function GET(req, { params }) {
   try {
     const { id } = params;
 
-    console.log(id)
+
 
 
     if (!id) {
@@ -18,6 +18,8 @@ export async function GET(req, { params }) {
 
     const q = query(collection(db, "contracts"), where("companyid", "==", id));
     const querySnapshot = await getDocs(q);
+
+    
 
     if (querySnapshot.empty) {
       return NextResponse.json(

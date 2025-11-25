@@ -57,12 +57,10 @@ const TemplateEditorPage = () => {
         if (res.data.success) {
           const fetchedTemplate = res.data.template;
 
-          
-
           setCompany(fetchedTemplate.company || {});
           let initialFields = fetchedTemplate.fields || [];
 
-          // Ensure company header exists
+          
           if (
             initialFields.length === 0 ||
             !initialFields.some(
@@ -90,7 +88,7 @@ const TemplateEditorPage = () => {
   }, [templateid]);
 
   const handleAddField = (type) => {
-    if (isPreview) return; 
+    if (isPreview) return;
     const newField = {
       id: Date.now(),
       type,
@@ -166,11 +164,9 @@ const TemplateEditorPage = () => {
     }
   };
 
-
-  const handleexit = () => { 
-    
-    router.push("/admin/templates")
-   }
+  const handleexit = () => {
+    router.push("/admin/templates");
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 bg-gray-100 min-h-screen">
@@ -212,7 +208,6 @@ const TemplateEditorPage = () => {
                 label: "Signature",
                 type: FIELD_TYPES.SIGNATURE,
               },
-              { icon: FileText, label: "Appendix", type: FIELD_TYPES.APPENDIX },
             ].map(({ icon: Icon, label, type }) => (
               <Button
                 key={type}
@@ -224,8 +219,6 @@ const TemplateEditorPage = () => {
                 <Icon size={14} /> {label}
               </Button>
             ))}
-
-           
           </div>
         </div>
 
@@ -235,7 +228,14 @@ const TemplateEditorPage = () => {
             disabled={loading}
             className={`w-full flex items-center justify-center gap-2 `}
           >
-            <Save size={16} /> {loading ? <><Loader2 className="animate-spin"/> Saving...</> : "Save"}
+            <Save size={16} />{" "}
+            {loading ? (
+              <>
+                <Loader2 className="animate-spin" /> Saving...
+              </>
+            ) : (
+              "Save"
+            )}
           </Button>
           <Button
             onClick={() => setIsPreview((prev) => !prev)}
@@ -246,11 +246,9 @@ const TemplateEditorPage = () => {
             {isPreview ? "Close Preview" : "Preview"}
           </Button>
 
-           <Button 
-             onClick={handleexit}
-           className={"bottom-0 mt-5 w-full "}>
-              Exit to Editor
-            </Button>
+          <Button onClick={handleexit} className={"bottom-0 mt-5 w-full "}>
+            Exit to Editor
+          </Button>
         </div>
       </div>
 
@@ -285,4 +283,3 @@ const TemplateEditorPage = () => {
 };
 
 export default TemplateEditorPage;
-

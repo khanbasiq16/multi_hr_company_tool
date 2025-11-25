@@ -13,9 +13,9 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    const { contractName, templateId, companyid, status , userid} = await req.json();
+    const { contractName, templateId, companyid, status , userid , clientId} = await req.json();
 
-    console.log(templateId)
+   
 
     if (!contractName || !templateId || !companyid) {
       return NextResponse.json({
@@ -44,6 +44,7 @@ export async function POST(req) {
       status: status || "draft",
       templateId,
       companyid,
+      clientId,
       fields: templateFields,
       createdAt: serverTimestamp(),
     });

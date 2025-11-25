@@ -40,7 +40,7 @@ const page = () => {
   return (
     <>
     <Employeelayout>
-        <section className="w-full">
+<section className="w-full p-6">
        <Employeebreadcrumb slug={slug} path={id} path2={"Invoice details"} />
         <Invoicedetails invoice={invoice} client={client} setInvoice={setInvoice} />
         </section>

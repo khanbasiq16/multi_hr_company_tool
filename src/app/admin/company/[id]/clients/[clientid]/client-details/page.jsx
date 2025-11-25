@@ -36,11 +36,11 @@ const page = () => {
   return (
     <>
     <SuperAdminlayout>
-  <div className='w-full'>
+  <section className="w-full p-6">
 
        <Superbreadcrumb path={"Client"} path2={`${client?.clientName}`}/> 
        <ClientDetails client={client} setClient={setClient} />
-      </div>
+      </section>
     </SuperAdminlayout>
     
     </>

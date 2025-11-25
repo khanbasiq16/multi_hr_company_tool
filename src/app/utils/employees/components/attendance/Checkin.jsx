@@ -191,7 +191,8 @@ const Checkin = ({isCheckedIn , setIsCheckedin , setIsCheckedout}) => {
             isCheckedIn
               ? "bg-gray-400 cursor-not-allowed "
               : "bg-[#5965AB] hover:bg-[#60B89E] cursor-pointer"
-          }`}
+          }
+          `}
         >
           <CheckCircle size={80} color="white" />
         </button>
@@ -205,7 +206,6 @@ const Checkin = ({isCheckedIn , setIsCheckedin , setIsCheckedout}) => {
         </p>
       </div>
 
-      {/* ✅ Late Check-In Dialog */}
       <Dialog open={noteModal} onOpenChange={setNoteModal}>
         <DialogContent className="sm:max-w-md rounded-xl p-6">
           <DialogHeader>

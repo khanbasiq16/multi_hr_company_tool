@@ -6,6 +6,7 @@ export async function GET(req, { params }) {
   try {
     const { id } = params;
 
+
     if (!id) {
       return NextResponse.json(
         { success: false, error: "Contract ID not provided" },
@@ -25,6 +26,7 @@ export async function GET(req, { params }) {
 
     const contractData = { id: contractSnap.id, ...contractSnap.data() };
 
+
     const companySlug = contractData.companyid;
 
     if (!companySlug) {
@@ -39,6 +41,8 @@ export async function GET(req, { params }) {
       where("companyslug", "==", companySlug)
     );
 
+
+
     const companySnap = await getDocs(companyQuery);
 
     if (companySnap.empty) {
@@ -49,24 +53,23 @@ export async function GET(req, { params }) {
     }
 
 
-    const clientQuery = query(
-      collection(db, "clients"),
-      where("id", "==", contractData?.clientid)
-    );
 
-    const clientSnap = await getDocs(clientQuery);
+    const clientRef = doc(db, "clients", contractData?.clientId);
+    const clientSnap = await getDoc(clientRef);
 
-    if (clientSnap.empty) {
+    if (!clientSnap.exists()) {
       return NextResponse.json(
-        { success: false, error: "Company not found for this slug" },
+        { success: false, error: "Client not found" },
         { status: 404 }
       );
     }
 
+
+
     const companyData = {
       id: companySnap.docs[0].id,
       ...companySnap.docs[0].data(),
-      
+
     };
 
 
@@ -76,7 +79,7 @@ export async function GET(req, { params }) {
       contract: {
         ...contractData,
         company: companyData,
-        clientinfo: clientSnap.docs[0].data(),
+        clientinfo: clientSnap.data(),
       },
     });
 

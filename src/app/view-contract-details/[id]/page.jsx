@@ -17,6 +17,7 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
   const [updateloading, setUpdateLoading] = useState(false);
   const [contracturl, setcontracturl] = useState("");
+  const [clientinfo, setclientinfo] = useState();
   const router = useRouter();
 
   useEffect(() => {
@@ -29,6 +30,7 @@ const Page = () => {
           const c = res.data.contract;
           console.log(c)
           setContract(c);
+          setclientinfo(c?.clientinfo);
 
           setcontracturl(c?.contractURL || "");
 
@@ -141,6 +143,7 @@ const Page = () => {
 
       <div className="w-full flex justify-center mb-5">
         <ViewContractdetails
+          clientinfo={clientinfo}
           fields={fields}
           company={company}
           onUpdate={handleFieldUpdate}

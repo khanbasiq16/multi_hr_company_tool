@@ -70,7 +70,7 @@
 //         setContractName("");
 //         setSelectedTemplate(null);
 //         dispatch(createcontracts(data?.contracts))
-        
+
 //         setOpen(false);
 //         setStep(1);
 //       } else {
@@ -97,7 +97,7 @@
 //           </DialogTitle>
 //         </DialogHeader>
 
-    
+
 //         {step === 1 && (
 //           <div className="space-y-6 mt-2">
 //             <div>
@@ -121,7 +121,7 @@
 //           </div>
 //         )}
 
-       
+
 //         {step === 2 && (
 //           <form onSubmit={formHandler} className="space-y-6 mt-2">
 //             <div>
@@ -330,30 +330,30 @@ const ContractDialog = () => {
             </div>
 
             {/* Client Selection */}
-          <div>
-  <Label htmlFor="clientSelect">Select Client *</Label>
-  <Select
-    value={selectedClient || ""}
-    onValueChange={(value) => setSelectedClient(value)}
-  >
-    <SelectTrigger className="w-full mt-2">
-      <SelectValue placeholder="Select a client" />
-    </SelectTrigger>
-    <SelectContent>
-      {clients?.length > 0 ? (
-        clients.map((client) => (
-          <SelectItem key={client.id} value={client.id}>
-            {client.clientName}
-          </SelectItem>
-        ))
-      ) : (
-        <SelectItem value="" disabled>
-          No clients available
-        </SelectItem>
-      )}
-    </SelectContent>
-  </Select>
-</div>
+            <div>
+              <Label htmlFor="clientSelect">Select Client *</Label>
+              <Select
+                value={selectedClient || ""}
+                onValueChange={(value) => setSelectedClient(value)}
+              >
+                <SelectTrigger className="w-full mt-2">
+                  <SelectValue placeholder="Select a client" />
+                </SelectTrigger>
+                <SelectContent>
+                  {clients?.length > 0 ? (
+                    clients.map((client) => (
+                      <SelectItem key={client.id} value={client.id}>
+                        {client.clientName}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="" disabled>
+                      No clients available
+                    </SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
 
             <DialogFooter className="flex justify-end gap-3 mt-6">
               <Button
@@ -379,11 +379,10 @@ const ContractDialog = () => {
                       <div
                         key={template.id}
                         onClick={() => handleSelectTemplate(template.id)}
-                        className={`group bg-white dark:bg-gray-900 p-5 border rounded-2xl transition-all cursor-pointer ${
-                          isSelected
+                        className={`group bg-white dark:bg-gray-900 p-5 border rounded-2xl transition-all cursor-pointer ${isSelected
                             ? "border-blue-500 ring-2 ring-blue-300"
                             : "border-gray-200 dark:border-gray-700 hover:border-blue-400"
-                        }`}
+                          }`}
                       >
                         <div className="flex justify-center mb-4">
                           <img

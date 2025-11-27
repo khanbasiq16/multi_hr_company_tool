@@ -42,7 +42,7 @@ const Timer = () => {
         setElapsed(diff);
       }, 1000);
     } else {
-      setElapsed(0); // reset timer when checked out
+      setElapsed(0); 
     }
 
     return () => clearInterval(interval);

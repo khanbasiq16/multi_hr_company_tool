@@ -14,11 +14,11 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function POST(req) {
   try {
-    
+
     const body = await req.json();
     const { employeeId, note, time, ip } = body;
 
- 
+
 
     if (!employeeId) {
       console.log("❌ Employee ID Missing");
@@ -64,7 +64,7 @@ export async function POST(req) {
       );
     }
 
-  
+
 
     const docRef = doc(db, "ipWhitelist", "global");
     const whitelistSnap = await getDoc(docRef);
@@ -78,25 +78,31 @@ export async function POST(req) {
 
     const whitelist = whitelistSnap.data()?.whitelist || [];
 
-
+    if (whitelist.length > 0) {
       const partialIp = ip.split(".").slice(0, 3).join(".");
 
-        const isAllowed = whitelist.some((item) => {
-          const partialWhitelistIp = item.ip.split(".").slice(0, 3).join(".");
-          return partialIp === partialWhitelistIp;
-        });
-        
-        if (!isAllowed) {
-          console.log("❌ Blocked IP:", ip);
+      const isAllowed = whitelist.some((item) => {
+        const partialWhitelistIp = item.ip.split(".").slice(0, 3).join(".");
+        return partialIp === partialWhitelistIp;
+      });
 
-           return NextResponse.json(
-        { success: false, error: "Check In Failed. Please Connect With the Office Network Use Local Internet 5G" },
-        { status: 403 }
-      );
-        } 
+      if (!isAllowed) {
+        console.log("❌ Blocked IP:", ip);
+
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "Check In Failed. Please Connect With the Office Network Use Local Internet 5G",
+          },
+          { status: 403 }
+        );
+      }
+    }
 
 
-    
+
+
     const convertToMinutes = (timeStr) => {
       const [time, modifier] = timeStr.split(" ");
       let [hours, minutes] = time.split(":").map(Number);
@@ -111,9 +117,9 @@ export async function POST(req) {
       const checkInMinutes = convertToMinutes(checkInTime);
       const currentMinutes = convertToMinutes(currentTimeStr);
 
-    
+
       const adjustedCurrent =
-        currentMinutes < 720 ? currentMinutes + 1440 : currentMinutes; 
+        currentMinutes < 720 ? currentMinutes + 1440 : currentMinutes;
       const adjustedCheckIn =
         checkInMinutes < 720 ? checkInMinutes + 1440 : checkInMinutes;
 
@@ -126,7 +132,7 @@ export async function POST(req) {
 
       if (adjustedCurrent >= absentLimit) {
         status = "Late";
-      } 
+      }
       else if (adjustedCurrent <= graceLimit) {
         status = "On Time";
       } else if (
@@ -154,7 +160,7 @@ export async function POST(req) {
       time
     );
 
-    
+
 
     let attendanceid = uuidv4()
     const attendanceEntry = {
@@ -174,14 +180,14 @@ export async function POST(req) {
 
     await updateDoc(userRef, {
       Attendance: arrayUnion(attendanceEntry),
-      isCheckedin:true,
-      attendanceid:attendanceid,
-      isCheckedout:false,
+      isCheckedin: true,
+      attendanceid: attendanceid,
+      isCheckedout: false,
       startTime: letstaketime,
     });
 
 
-  
+
 
 
 
@@ -192,10 +198,10 @@ export async function POST(req) {
         message: "Check in saved successfully",
         attendance: attendanceEntry,
         attendanceid,
-        isCheckedin:true,
-        attendanceid:attendanceid,
-        isCheckedout:false,
-        startTime:letstaketime
+        isCheckedin: true,
+        attendanceid: attendanceid,
+        isCheckedout: false,
+        startTime: letstaketime
       },
       { status: 200 }
     );

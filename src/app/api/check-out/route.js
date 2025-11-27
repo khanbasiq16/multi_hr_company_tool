@@ -16,11 +16,11 @@ export async function POST(req) {
     const {
       employeeId,
       ip,
-      time, 
+      time,
       note,
       stopwatchTime,
     } = body;
-  
+
 
     // 1️⃣ Validate Employee ID
     if (!employeeId) {
@@ -30,7 +30,7 @@ export async function POST(req) {
       );
     }
 
-   
+
     const docRef = doc(db, "ipWhitelist", "global");
     const whitelistSnap = await getDoc(docRef);
 
@@ -43,26 +43,30 @@ export async function POST(req) {
 
     const whitelist = whitelistSnap.data()?.whitelist || [];
 
-   
-    const partialIp = ip.split(".").slice(0, 3).join(".");
-    const isAllowed = whitelist.some((item) => {
-      const partialWhitelistIp = item.ip.split(".").slice(0, 3).join(".");
-      return partialIp === partialWhitelistIp;
-    });
+    if (whitelist.length > 0) {
+      const partialIp = ip.split(".").slice(0, 3).join(".");
 
-    if (!isAllowed) {
-      console.log("❌ Blocked IP:", ip);
-      return NextResponse.json(
-        {
-          success: false,
-          error:
-            "Check Out Failed. Please connect with the office network.",
-        },
-        { status: 403 }
-      );
+      const isAllowed = whitelist.some((item) => {
+        const partialWhitelistIp = item.ip.split(".").slice(0, 3).join(".");
+        return partialIp === partialWhitelistIp;
+      });
+
+      if (!isAllowed) {
+        console.log("❌ Blocked IP:", ip);
+
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "Check In Failed. Please Connect With the Office Network Use Local Internet 5G",
+          },
+          { status: 403 }
+        );
+      }
     }
 
-   
+
+
     const userRef = doc(db, "employees", employeeId);
     const userDoc = await getDoc(userRef);
 
@@ -76,7 +80,7 @@ export async function POST(req) {
     const userData = userDoc.data();
     const attendanceArray = userData.Attendance || [];
 
-    
+
     const index = attendanceArray.findIndex(
       (item) => item.id === userData?.attendanceid
     );
@@ -112,7 +116,7 @@ export async function POST(req) {
       );
     }
 
-   
+
     function parseTime12Hour(timeStr) {
       const [timePart, modifier] = timeStr.trim().split(" ");
       let [hours, minutes] = timePart.split(":").map(Number);
@@ -174,7 +178,7 @@ export async function POST(req) {
     return NextResponse.json({
       success: true,
       message: "Checkout data updated successfully",
-        isCheckedin: false,
+      isCheckedin: false,
       isCheckedout: true,
       data: attendanceArray[index],
     });

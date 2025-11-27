@@ -61,6 +61,8 @@ export async function POST(req) {
       totalWorkingHours,
       dateOfJoining,
       Attendance: [],
+      isCheckedin:false,
+      isCheckedout:true,
       salesTarget: salesTarget || "",
       status: "active",
       createdAt: new Date().toISOString(),

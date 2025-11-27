@@ -8,22 +8,23 @@ import Employeedailog from '../dialog/Employeedailog';
 import axios from 'axios';
 
 const ListEmployees = () => {
-    const dispatch = useDispatch();
-    const [loading, setLoading] = useState(false)
-    const { employees } = useSelector((state) => state.Employee);
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false)
+  const { employees } = useSelector((state) => state.Employee);
 
 
 
 
-     useEffect(() => {
+  useEffect(() => {
     const fetchEmployees = async () => {
       try {
         setLoading(true)
         const res = await axios.get(`/api/get-all-employees`);
+        console.log(res.data.employees);
         dispatch(createemployees(res.data?.employees || []));
       } catch (error) {
         console.error("Error fetching employees:", error);
-        setEmployees([]); // ✅ corrected
+
       } finally {
         setLoading(false);
       }
@@ -34,7 +35,7 @@ const ListEmployees = () => {
 
 
   return (
-     <Card className="p-6 rounded-xl shadow-md flex flex-col h-[64vh] overflow-auto">
+    <Card className="p-6 rounded-xl shadow-md flex flex-col h-[64vh] overflow-auto">
       {loading ? (
         <p className="text-center text-gray-500">Loading employees...</p>
       ) : employees.length === 0 ? (
@@ -44,7 +45,7 @@ const ListEmployees = () => {
       ) : (
         <>
 
-        <EmployeeTable employees={employees}/>
+          <EmployeeTable employees={employees} />
         </>
       )}
     </Card>

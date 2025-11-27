@@ -12,7 +12,8 @@ const page = () => {
   const router = useRouter();
   const { user } = useSelector((state) => state.User);
 
-  console.log(user);
+
+
 
   return (
     <Employeelayout>

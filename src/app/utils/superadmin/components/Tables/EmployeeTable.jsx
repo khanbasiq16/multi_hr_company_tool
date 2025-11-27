@@ -143,9 +143,7 @@ export function EmployeeTable({ employees }) {
     }
   };
 
-  // -------------------------------------------
-  //   DELETE SELECTED EMPLOYEES
-  // -------------------------------------------
+
   const handleDelete = async () => {
     const selectedRows = table
       .getFilteredSelectedRowModel()

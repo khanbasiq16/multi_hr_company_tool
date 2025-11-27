@@ -25,7 +25,7 @@ const AttendanceGraphs = ({ data, activeTab = "checkin" }) => {
   };
 
   const today = new Date();
-  const currentMonth = today.getMonth(); 
+  const currentMonth = today.getMonth();
   const currentYear = today.getFullYear();
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
@@ -42,8 +42,8 @@ const AttendanceGraphs = ({ data, activeTab = "checkin" }) => {
       dayData && activeTab === "checkin"
         ? dayData.checkin?.status
         : dayData
-        ? dayData.checkout?.status
-        : null;
+          ? dayData.checkout?.status
+          : null;
 
     return {
       date: day,

@@ -282,6 +282,7 @@
 // };
 
 // export default TemplateEditorPage;
+
 "use client";
 import React, { useRef, useState } from "react";
 
@@ -321,7 +322,7 @@ Effective Date: {{field:effective_date}}
 
   const templateRef = useRef(null);
 
-  // Insert placeholders
+ 
   function insertPlaceholder(type, key) {
     const placeholder =
       type === "company"
@@ -347,7 +348,6 @@ Effective Date: {{field:effective_date}}
     });
   }
 
-  // Preview rendering
   function renderPreview() {
     let out = template;
 
@@ -372,7 +372,7 @@ Effective Date: {{field:effective_date}}
 
   return (
     <div className="w-full min-h-screen bg-gray-100 p-6 flex gap-6">
-      {/* LEFT TEMPLATE EDITOR */}
+
       <div className="flex-1 bg-white shadow rounded p-6">
         <h2 className="text-xl font-semibold mb-4">Contract Template</h2>
 

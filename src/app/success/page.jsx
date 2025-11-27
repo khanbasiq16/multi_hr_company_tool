@@ -67,7 +67,7 @@ const SuccessPage = () => {
             <span className="font-semibold">Status:</span> {invoice.status || "Paid"}
           </p>
           <p>
-            <span className="font-semibold">Date:</span>{" "}
+            <span className="font-semibold">Date\:</span>{" "}
             {invoice.invoiceDate || "N/A"}
           </p>
         </div>

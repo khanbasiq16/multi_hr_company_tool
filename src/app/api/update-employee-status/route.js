@@ -18,6 +18,7 @@ export async function POST(req) {
 
     await admin.auth().updateUser(employeeId, { disabled: disableAccount });
 
+
     const employeeRef = doc(db, "employees", employeeId);
     await updateDoc(employeeRef, { status });
 

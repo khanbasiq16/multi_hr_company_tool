@@ -418,6 +418,9 @@ import { Building, Globe, Phone } from "lucide-react";
 const ViewContractdetails = ({ fields = [], company, onUpdate, clientinfo }) => {
   const sigRef = useRef({});
 
+
+  console.log(clientinfo)
+
   const handleClear = (id) => {
     sigRef.current[id]?.clear();
     onUpdate(id, { signatureData: "" });
@@ -521,7 +524,7 @@ const ViewContractdetails = ({ fields = [], company, onUpdate, clientinfo }) => 
       {/* --------------------------- Contract Fields --------------------------- */}
       <section className="relative z-10 space-y-4">
         {fields
-          .filter((f) => f.type !== "company_info_block")
+          .filter((f) => f.type !== "company_info_block" && f.type !== "client_info_block")
           .map((field) => (
             <div key={field.id} className="p-4 transition-all border-b dark:border-gray-700">
 
@@ -678,14 +681,17 @@ const SignatureField = ({ field, sigRef, onUpdate, handleClear, handleSave }) =>
 
 const TypedSignature = ({ field, onUpdate, handleSave }) => (
   <>
-    {field.tempTypedSignature ? (
+
+    {field.typedSignature ? (
+      // -------------------- SHOW ONLY FINAL SIGNATURE --------------------
       <p
         className="text-3xl text-gray-700 dark:text-gray-200"
         style={{ fontFamily: field.fontFamily || "Allura" }}
       >
-        {field.tempTypedSignature}
+        {field.typedSignature}
       </p>
     ) : (
+      // -------------------- SHOW EDITABLE AREA (NO FINAL SIGNATURE SAVED YET) --------------------
       <>
         <input
           type="text"
@@ -693,6 +699,72 @@ const TypedSignature = ({ field, onUpdate, handleSave }) => (
           value={field.tempTypedSignature || ""}
           onChange={(e) =>
             onUpdate(field.id, { tempTypedSignature: e.target.value })
+          }
+          className="w-full border rounded-lg p-2 bg-transparent dark:text-gray-100"
+        />
+
+        <div className="flex items-center gap-4">
+          <Select
+            value={field.fontFamily || "Allura"}
+            onValueChange={(val) => onUpdate(field.id, { fontFamily: val })}
+          >
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Select Font" />
+            </SelectTrigger>
+
+            <SelectContent>
+              {[
+                "Allura",
+                "Great Vibes",
+                "Dancing Script",
+                "Pacifico",
+                "Cedarville Cursive",
+              ].map((font) => (
+                <SelectItem key={font} value={font}>
+                  <span style={{ fontFamily: font }}>{font}</span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Live Preview */}
+          <p
+            className="text-3xl text-gray-700 dark:text-gray-200"
+            style={{ fontFamily: field.fontFamily || "Allura" }}
+          >
+            {field.tempTypedSignature || "—"}
+          </p>
+        </div>
+
+        {/* SAVE BUTTON */}
+        <button
+          onClick={() =>
+            onUpdate(field.id, {
+              typedSignature: field.tempTypedSignature || "",
+              tempTypedSignature: "",
+            })
+          }
+          className="mt-2 px-4 py-1.5 text-sm bg-[#5965AB] text-white rounded-md hover:bg-[#5f6ebe]"
+        >
+          Save
+        </button>
+      </>
+    )}
+    {/* {field.typedSignature ? (
+      <p
+        className="text-3xl text-gray-700 dark:text-gray-200"
+        style={{ fontFamily: field.fontFamily || "Allura" }}
+      >
+        {field.typedSignature}
+      </p>
+    ) : (
+      <>
+        <input
+          type="text"
+          placeholder="Type your signature"
+          value={field.typedSignature || ""}
+          onChange={(e) =>
+            onUpdate(field.id, { typedSignature: e.target.value })
           }
           className="w-full border rounded-lg p-2 bg-transparent dark:text-gray-100"
         />
@@ -730,13 +802,14 @@ const TypedSignature = ({ field, onUpdate, handleSave }) => (
         </div>
 
         <button
-          onClick={() => handleSave(field.id)}
+          onClick={(e) =>
+            onUpdate(field.id, { typedSignature: e.target.value })}
           className="mt-2 px-4 py-1.5 text-sm bg-[#5965AB] text-white rounded-md hover:bg-[#5f6ebe]"
         >
           Save
         </button>
       </>
-    )}
+    )} */}
   </>
 );
 

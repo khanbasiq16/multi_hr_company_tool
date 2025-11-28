@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Building, Globe, Phone } from "lucide-react";
 
-const FormPreview = ({ fields = [], company, onUpdate }) => {
+const FormPreview = ({ fields = [], company, onUpdate, client }) => {
   const sigCanvasRef = useRef({});
 
   const handleClear = (id) => {
@@ -101,10 +101,37 @@ const FormPreview = ({ fields = [], company, onUpdate }) => {
         </div>
       )}
 
+
+      {client && (
+        <div
+          className="bg-white  rounded-2xl   transition-all"
+        >
+
+          <div className="flex justify-between items-center gap-4">
+
+            <div className="flex items-center gap-4">
+
+              <div className="flex flex-col gap-2">
+                <p className="text-lg  text-gray-800">
+                  <span className="font-bold">Hi</span> {"  "}
+                  <span className="font-semibold">{client.clientName || "{{Client Name}}"}</span>
+                </p>
+
+                
+
+              </div>
+            </div>
+
+
+
+          </div>
+        </div>
+      )}
+
       {/* ✅ Render Fields */}
       <div className="relative z-10">
         {fields
-          .filter((f) => f.type !== "company_info_block")
+          .filter((f) => f.type !== "company_info_block" && f.type !== "client_info_block")
           .map((field) => (
             <div key={field.id} className="space-y-2 pb-4 last:border-none">
               {/* Short Answer */}
@@ -208,7 +235,7 @@ const FormPreview = ({ fields = [], company, onUpdate }) => {
 
               {field.type === "date" && (
                 <>
-                 
+
                   {field.answer ? (
                     <div className="flex w-full justify-start">
                       <p className="text-gray-700 font-semibold mr-2">
@@ -383,3 +410,5 @@ const FormPreview = ({ fields = [], company, onUpdate }) => {
 };
 
 export default FormPreview;
+
+

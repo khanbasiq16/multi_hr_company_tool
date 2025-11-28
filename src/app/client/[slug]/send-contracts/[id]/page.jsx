@@ -13,6 +13,7 @@ const page = () => {
   const [loading, setLoading] = useState(true);
   const [contractloading, setcontractLoading] = useState(false);
   const [updateloading, setUpdateLoading] = useState(false);
+  const [clientinfo, setClientinfo] = useState(null);
   const [contracturl, setcontracturl] = useState("");
   const router = useRouter();
 
@@ -25,6 +26,7 @@ const page = () => {
         if (res.data.success) {
           const c = res.data.contract;
           setContract(c);
+          setClientinfo(c?.clientinfo || {});
 
           setcontracturl(c?.contractURL || "");
 
@@ -58,6 +60,13 @@ const page = () => {
       const currentTime = new Date();
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+      // ⬅️ STEP 1: Get Public IP
+      const getIP = async () => {
+        const ipRes = await fetch("https://api.ipify.org?format=json");
+        const ipData = await ipRes.json();
+        return ipData.ip || null;
+      };
+
       const getExactLocation = async (lat, lon) => {
         const response = await fetch(
           `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
@@ -75,6 +84,9 @@ const page = () => {
           country: data.address.country || null,
         };
       };
+
+      // ⬅️ Fetch Public IP First
+      const userIP = await getIP();
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -96,18 +108,16 @@ const page = () => {
               city: locationData.city,
               area: locationData.area,
               country: locationData.country,
+              ip: userIP,
             });
 
             if (res.data.success) {
               toast.success("Contract signed!");
-
               setcontractLoading(false);
 
               setTimeout(() => {
                 window.location.reload();
               }, 500);
-
-              
             }
           },
           (error) => {
@@ -121,6 +131,7 @@ const page = () => {
       console.error("Error updating contract:", error);
     }
   };
+
 
   if (loading) {
     return <div className="p-4 text-gray-500">Loading contract...</div>;
@@ -143,6 +154,7 @@ const page = () => {
           fields={fields}
           company={company}
           onUpdate={handleFieldUpdate}
+          clientinfo={clientinfo}
         />
       </div>
 
@@ -150,11 +162,10 @@ const page = () => {
         {contract.status !== "signed" && (
           <button
             onClick={handleupdateform}
-            className={`px-4 py-2 rounded text-white transition-colors ${
-              contractloading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[#5965AB] hover:bg-[#5f6ebe]"
-            }`}
+            className={`px-4 py-2 rounded text-white transition-colors ${contractloading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-[#5965AB] hover:bg-[#5f6ebe]"
+              }`}
           >
             {
               contractloading ? "Signing Contract..." : "Contract Signed"

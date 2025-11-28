@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Building, Globe, Phone } from "lucide-react";
 
-const ContractFields = ({ fields = [], company, onUpdate }) => {
+const ContractFields = ({ fields = [], company, onUpdate, clientinfo }) => {
   const sigCanvasRef = useRef({});
 
 
@@ -27,7 +27,7 @@ const ContractFields = ({ fields = [], company, onUpdate }) => {
   return (
     <div className="relative bg-gradient-to-b max-w-[794px] from-white to-gray-50 dark:from-gray-950 dark:to-gray-900 rounded-2xl  p-8 space-y-8 overflow-hidden border border-gray-200 dark:border-gray-800">
 
-      {/* 🖋️ Watermark */}
+
       {company?.name && (
         <div
           className="absolute inset-0 flex justify-center items-center pointer-events-none select-none"
@@ -99,16 +99,29 @@ const ContractFields = ({ fields = [], company, onUpdate }) => {
         </header>
       )}
 
+
+
+      {clientinfo && (
+        <section className="relative z-10">
+          {clientinfo.clientName && (
+            <div className="px-6">
+              <span className="text-lg font-semibold">
+                Hi {clientinfo.clientName},
+              </span>
+            </div>
+          )}
+        </section>
+      )}
+
       {/* 📜 Fields */}
       <section className="relative z-10 space-y-6">
-        {fields
-          .filter((f) => f.type !== "company_info_block")
+        {/* {fields
+          .filter((f) => f.type !== "company_info_block" && f.type !== "client_info_block")
           .map((field) => (
             <div
               key={field.id}
               className="p-4  dark:border-gray-700   transition-all duration-200"
             >
-              {/* Short Answer */}
               {field.type === "short_answer" && (
                 <div>
                   <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">
@@ -120,7 +133,6 @@ const ContractFields = ({ fields = [], company, onUpdate }) => {
                 </div>
               )}
 
-              {/* Paragraph */}
               {field.type === "paragraph" && (
                 <div>
                   <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">
@@ -132,7 +144,6 @@ const ContractFields = ({ fields = [], company, onUpdate }) => {
                 </div>
               )}
 
-              {/* Multiple Choice */}
               {field.type === "multiple_choice" && (
                 <div>
                   <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">
@@ -144,7 +155,6 @@ const ContractFields = ({ fields = [], company, onUpdate }) => {
                 </div>
               )}
 
-              {/* Checkboxes */}
               {field.type === "checkboxes" && (
                 <div>
                   <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">
@@ -158,7 +168,6 @@ const ContractFields = ({ fields = [], company, onUpdate }) => {
                 </div>
               )}
 
-              {/* Dropdown */}
               {field.type === "dropdown" && (
                 <div>
                   <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">
@@ -170,7 +179,6 @@ const ContractFields = ({ fields = [], company, onUpdate }) => {
                 </div>
               )}
 
-              {/* Date */}
               {field.type === "date" && (
                 <div>
                   <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">
@@ -182,7 +190,6 @@ const ContractFields = ({ fields = [], company, onUpdate }) => {
                 </div>
               )}
 
-              {/* Appendix */}
               {field.type === "appendix" && (
                 <div>
                   <p className="font-semibold text-gray-800 dark:text-gray-100 mb-2">
@@ -200,7 +207,6 @@ const ContractFields = ({ fields = [], company, onUpdate }) => {
                 </div>
               )}
 
-              {/* Signature */}
               {field.type === "signature" && (
                 <>
                   {field.signatureType === "pad" ? (
@@ -285,7 +291,264 @@ const ContractFields = ({ fields = [], company, onUpdate }) => {
                 </>
               )}
             </div>
-          ))}
+          ))} */}
+
+
+        {fields
+          .filter((f) => f.type !== "company_info_block" && f.type !== "client_info_block")
+          .map((field) => {
+            const isEditable = !field.answer || field.isEditing;
+
+            const handleBlur = (e) => {
+              onUpdate(field.id, { answer: e.target.value, isEditing: false });
+            };
+
+            return (
+              <div
+                key={field.id}
+                className="p-4 dark:border-gray-700 transition-all duration-200"
+                onDoubleClick={() => onUpdate(field.id, { isEditing: true })}
+              >
+                {/* SHORT ANSWER */}
+                {field.type === "short_answer" && (
+                  <div>
+                    <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">
+                      {field.question}
+                    </p>
+
+                    {isEditable ? (
+                      <input
+                        type="text"
+                        autoFocus
+                        defaultValue={field.answer || ""}
+                        onBlur={handleBlur}
+                        onKeyDown={(e) => e.key === "Enter" && e.target.blur()}
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2 bg-transparent"
+                      />
+                    ) : (
+                      <p className="text-gray-700 dark:text-gray-300">{field.answer}</p>
+                    )}
+                  </div>
+                )}
+
+                {/* PARAGRAPH */}
+                {field.type === "paragraph" && (
+                  <div>
+                    <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">
+                      {field.question}
+                    </p>
+
+                    {isEditable ? (
+                      <textarea
+                        autoFocus
+                        defaultValue={field.answer || ""}
+                        onBlur={handleBlur}
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-transparent"
+                        rows={4}
+                      />
+                    ) : (
+                      <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
+                        {field.answer}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* MULTIPLE CHOICE */}
+                {field.type === "multiple_choice" && (
+                  <div>
+                    <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">
+                      {field.question}
+                    </p>
+
+                    {isEditable ? (
+                      <input
+                        autoFocus
+                        defaultValue={field.answer || ""}
+                        onBlur={handleBlur}
+                        className="w-full border dark:border-gray-600 p-2 bg-transparent rounded-lg"
+                      />
+                    ) : (
+                      <p className="text-gray-700 dark:text-gray-300">{field.answer}</p>
+                    )}
+                  </div>
+                )}
+
+                {/* CHECKBOXES */}
+                {field.type === "checkboxes" && (
+                  <div>
+                    <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">
+                      {field.question}
+                    </p>
+
+                    {isEditable ? (
+                      <input
+                        autoFocus
+                        defaultValue={(field.answer || []).join(", ")}
+                        onBlur={(e) =>
+                          onUpdate(field.id, {
+                            answer: e.target.value.split(",").map((v) => v.trim()),
+                            isEditing: false,
+                          })
+                        }
+                        className="w-full border dark:border-gray-600 p-2 bg-transparent rounded-lg"
+                      />
+                    ) : (
+                      <p className="text-gray-700 dark:text-gray-300">
+                        {(Array.isArray(field.answer) && field.answer.length > 0
+                          ? field.answer.join(", ")
+                          : "—")}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* DROPDOWN */}
+                {field.type === "dropdown" && (
+                  <div>
+                    <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">
+                      {field.question}
+                    </p>
+
+                    {isEditable ? (
+                      <input
+                        autoFocus
+                        defaultValue={field.answer || ""}
+                        onBlur={handleBlur}
+                        className="w-full border dark:border-gray-600 p-2 bg-transparent rounded-lg"
+                      />
+                    ) : (
+                      <p className="text-gray-700 dark:text-gray-300">{field.answer}</p>
+                    )}
+                  </div>
+                )}
+
+                {/* DATE */}
+                {field.type === "date" && (
+                  <div>
+                    <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">
+                      {field.question}
+                    </p>
+
+                    {isEditable ? (
+                      <input
+                        type="date"
+                        autoFocus
+                        defaultValue={field.answer || ""}
+                        onBlur={handleBlur}
+                        className="border p-2 rounded-lg bg-transparent dark:border-gray-600"
+                      />
+                    ) : (
+                      <p className="text-gray-700 dark:text-gray-300">{field.answer}</p>
+                    )}
+                  </div>
+                )}
+
+                {/* APPENDIX (already editable always) */}
+                {field.type === "appendix" && (
+                  <div>
+                    <p className="font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                      {field.question}
+                    </p>
+                    <textarea
+                      className="w-full border dark:border-gray-600 rounded-lg p-3 bg-transparent"
+                      value={field.answer || ""}
+                      onChange={(e) => onUpdate(field.id, { answer: e.target.value })}
+                      rows={4}
+                    />
+                  </div>
+                )}
+
+                {/* SIGNATURE (same as before) */}
+                {/* no change */}
+                {field.type === "signature" && (
+                  <>
+                    {field.signatureType === "pad" ? (
+                      <div className="flex flex-col gap-3">
+                        <p className="font-semibold text-gray-800 dark:text-gray-100">
+                          {field.question}
+                        </p>
+                        <SignatureCanvas
+                          ref={(ref) => (sigCanvasRef.current[field.id] = ref)}
+                          penColor="black"
+                          canvasProps={{
+                            className:
+                              "border border-gray-300 dark:border-gray-600 rounded-lg w-full h-44 bg-white dark:bg-gray-900",
+                          }}
+                          onEnd={() => handleSave(field.id)}
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleClear(field.id)}
+                            className="px-4 py-1.5 text-sm bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+                          >
+                            Clear
+                          </button>
+                          <button
+                            onClick={() => handleSave(field.id)}
+                            className="px-4 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-3">
+                        <p className="font-semibold text-gray-800 dark:text-gray-100">
+                          {field.question}
+                        </p>
+                        <input
+                          type="text"
+                          placeholder="Type your signature"
+                          value={field.typedSignature || ""}
+                          onChange={(e) =>
+                            onUpdate(field.id, {
+                              typedSignature: e.target.value,
+                            })
+                          }
+                          className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2 text-gray-800 dark:text-gray-100 bg-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        />
+                        <div className="flex items-center gap-4">
+                          <Select
+                            value={field.fontFamily || "Allura"}
+                            onValueChange={(value) =>
+                              onUpdate(field.id, { fontFamily: value })
+                            }
+                          >
+                            <SelectTrigger className="w-[200px]">
+                              <SelectValue placeholder="Select Font" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {[
+                                "Allura",
+                                "Great Vibes",
+                                "Dancing Script",
+                                "Pacifico",
+                                "Cedarville Cursive",
+                              ].map((font) => (
+                                <SelectItem key={font} value={font}>
+                                  <span style={{ fontFamily: font }}>{font}</span>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+
+                          <p
+                            className="text-3xl text-gray-700 dark:text-gray-200"
+                            style={{ fontFamily: field.fontFamily || "Allura" }}
+                          >
+                            {field.typedSignature || "—"}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            );
+          })}
+
+
       </section>
 
       {/* 📄 Footer */}

@@ -18,6 +18,7 @@ export async function POST(req) {
       city,
       area,
       country,
+      ip,
     } = body;
 
 
@@ -27,14 +28,15 @@ export async function POST(req) {
         message: "contractId is required",
       });
     }
-  
+
     const ref = doc(db, "contracts", contractId);
 
     await updateDoc(ref, {
-      fields:updatedFields,
+      fields: updatedFields,
       status,
       signedAt: time,
       timezone,
+      ip,
       location: {
         latitude,
         longitude,

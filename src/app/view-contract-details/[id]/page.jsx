@@ -141,7 +141,7 @@ const Page = () => {
        </div>
       </div>
 
-      <div className="w-full flex justify-center mb-5">
+      <div className="w-full flex justify-center ">
         <ViewContractdetails
           clientinfo={clientinfo}
           fields={fields}

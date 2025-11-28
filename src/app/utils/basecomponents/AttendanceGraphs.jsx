@@ -63,8 +63,11 @@ const AttendanceGraphs = ({ data, activeTab = "checkin" }) => {
     ),
   ];
 
+
   return (
     <div className="space-y-4">
+
+
       {/* Status Badges */}
       <div className="flex flex-wrap gap-2">
         {uniqueStatuses.map((status) => (

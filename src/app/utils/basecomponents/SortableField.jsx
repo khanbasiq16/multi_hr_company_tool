@@ -17,7 +17,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-const SortableField = ({ field, onDelete, onUpdate, onDuplicate, isPreview }) => {
+const SortableField = ({ field, onDelete, onUpdate, onDuplicate, isPreview, client }) => {
   const sigRef = useRef();
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: field.id });
   const style = { transform: CSS.Transform.toString(transform), transition };
@@ -52,6 +52,40 @@ const SortableField = ({ field, onDelete, onUpdate, onDuplicate, isPreview }) =>
     );
   }
 
+
+
+  if (field.type === "client_info_block") {
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className="bg-white border rounded-2xl  p-6 mb-4 transition-all"
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-semibold text-gray-800">Client Information</h3>
+
+        </div>
+
+        <div className="flex justify-between items-center gap-4">
+
+          <div className="flex items-center gap-4">
+
+            <div>
+              <p className="text-lg  text-gray-800">
+                <span className="font-bold">Hi</span> {"  "}
+                <span className="font-semibold">{client.clientName || "{{Client Name}}"}</span>
+              </p>
+
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    );
+  }
+
+
   return (
     <div ref={setNodeRef} style={style} className="bg-white border rounded-lg shadow-sm p-4 mb-4">
       {/* Header controls */}
@@ -60,16 +94,16 @@ const SortableField = ({ field, onDelete, onUpdate, onDuplicate, isPreview }) =>
           <div {...attributes} {...listeners} className="cursor-grab text-gray-400 flex items-center gap-1">
             <GripVertical size={16} /> Drag
           </div>
-           {field.type !== "appendix" && (
-          <div className="flex items-center gap-2">
-            <button onClick={() => onDuplicate(field)} className="text-blue-500 hover:text-blue-700">
-              <Copy size={18} />
-            </button>
-            <button onClick={() => onDelete(field.id)} className="text-red-500 hover:text-red-700">
-              <Trash2 size={18} />
-            </button>
-          </div>
-           )}
+          {field.type !== "appendix" && (
+            <div className="flex items-center gap-2">
+              <button onClick={() => onDuplicate(field)} className="text-blue-500 hover:text-blue-700">
+                <Copy size={18} />
+              </button>
+              <button onClick={() => onDelete(field.id)} className="text-red-500 hover:text-red-700">
+                <Trash2 size={18} />
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -92,8 +126,8 @@ const SortableField = ({ field, onDelete, onUpdate, onDuplicate, isPreview }) =>
         />
       )}
 
-     
-    
+
+
       {field.type === "short_answer" && (
         <div className="space-y-2">
           {!isPreview && (
@@ -133,9 +167,8 @@ const SortableField = ({ field, onDelete, onUpdate, onDuplicate, isPreview }) =>
             value={field.answer || ""}
             onChange={(e) => !isPreview && onUpdate(field.id, { answer: e.target.value })}
             disabled={isPreview}
-            className={`w-full ${field.bold ? "font-bold" : ""} ${field.italic ? "italic" : ""} ${
-              field.underline ? "underline" : ""
-            }`}
+            className={`w-full ${field.bold ? "font-bold" : ""} ${field.italic ? "italic" : ""} ${field.underline ? "underline" : ""
+              }`}
           />
         </div>
       )}
@@ -180,9 +213,8 @@ const SortableField = ({ field, onDelete, onUpdate, onDuplicate, isPreview }) =>
             value={field.answer || ""}
             onChange={(e) => !isPreview && onUpdate(field.id, { answer: e.target.value })}
             disabled={isPreview}
-            className={`w-full ${field.bold ? "font-bold" : ""} ${field.italic ? "italic" : ""} ${
-              field.underline ? "underline" : ""
-            }`}
+            className={`w-full ${field.bold ? "font-bold" : ""} ${field.italic ? "italic" : ""} ${field.underline ? "underline" : ""
+              }`}
           />
         </div>
       )}
@@ -250,53 +282,52 @@ const SortableField = ({ field, onDelete, onUpdate, onDuplicate, isPreview }) =>
 
 
       {field.type === "appendix" && (
-  <div className="space-y-2">
+        <div className="space-y-2">
 
-    {/* Optional formatting buttons (if needed) */}
-    {!isPreview && (
-      <div className="flex gap-2 mb-1">
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          onClick={() => onUpdate(field.id, { bold: !field.bold })}
-          className={field.bold ? "bg-gray-200" : ""}
-        >
-          <b>B</b>
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          onClick={() => onUpdate(field.id, { italic: !field.italic })}
-          className={field.italic ? "bg-gray-200" : ""}
-        >
-          <i>I</i>
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          onClick={() => onUpdate(field.id, { underline: !field.underline })}
-          className={field.underline ? "bg-gray-200" : ""}
-        >
-          <u>U</u>
-        </Button>
-      </div>
-    )}
+          {/* Optional formatting buttons (if needed) */}
+          {!isPreview && (
+            <div className="flex gap-2 mb-1">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => onUpdate(field.id, { bold: !field.bold })}
+                className={field.bold ? "bg-gray-200" : ""}
+              >
+                <b>B</b>
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => onUpdate(field.id, { italic: !field.italic })}
+                className={field.italic ? "bg-gray-200" : ""}
+              >
+                <i>I</i>
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => onUpdate(field.id, { underline: !field.underline })}
+                className={field.underline ? "bg-gray-200" : ""}
+              >
+                <u>U</u>
+              </Button>
+            </div>
+          )}
 
-    {/* Input area */}
-    <Textarea
-      placeholder="Enter appendix content..."
-      value={field.answer || ""}
-      onChange={(e) => !isPreview && onUpdate(field.id, { answer: e.target.value })}
-      disabled={isPreview}
-      className={`w-full ${field.bold ? "font-bold" : ""} ${field.italic ? "italic" : ""} ${
-        field.underline ? "underline" : ""
-      }`}
-    />
-  </div>
-)}
+          {/* Input area */}
+          <Textarea
+            placeholder="Enter appendix content..."
+            value={field.answer || ""}
+            onChange={(e) => !isPreview && onUpdate(field.id, { answer: e.target.value })}
+            disabled={isPreview}
+            className={`w-full ${field.bold ? "font-bold" : ""} ${field.italic ? "italic" : ""} ${field.underline ? "underline" : ""
+              }`}
+          />
+        </div>
+      )}
 
       {/* Signature Field */}
       {field.type === "signature" && (
@@ -384,7 +415,7 @@ const SortableField = ({ field, onDelete, onUpdate, onDuplicate, isPreview }) =>
                 </div>
               )}
 
-              
+
 
               {/* Signature Preview */}
               <div className="border rounded-md p-3 bg-gray-50">
@@ -395,12 +426,12 @@ const SortableField = ({ field, onDelete, onUpdate, onDuplicate, isPreview }) =>
                       field.fontFamily === "Allura"
                         ? "Allura"
                         : field.fontFamily === "Great Vibes"
-                        ? "Great Vibes"
-                        : field.fontFamily === "Dancing Script"
-                        ? "Dancing Script"
-                        : field.fontFamily === "Pacifico"
-                        ? "Pacifico"
-                        : "Cedarville Cursive",
+                          ? "Great Vibes"
+                          : field.fontFamily === "Dancing Script"
+                            ? "Dancing Script"
+                            : field.fontFamily === "Pacifico"
+                              ? "Pacifico"
+                              : "Cedarville Cursive",
                   }}
                 >
                   {field.typedSignature || "Your signature will appear here"}
@@ -412,6 +443,10 @@ const SortableField = ({ field, onDelete, onUpdate, onDuplicate, isPreview }) =>
       )}
     </div>
   );
+
+
+
+   
 };
 
 export default SortableField;

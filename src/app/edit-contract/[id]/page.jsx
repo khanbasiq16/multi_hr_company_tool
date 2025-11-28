@@ -12,6 +12,7 @@ const Page = () => {
   const [fields, setFields] = useState([]);
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [clientinfo, setclientinfo] = useState();
   const [updateloading, setUpdateLoading] = useState(false);
   const router = useRouter();
 
@@ -24,6 +25,8 @@ const Page = () => {
         if (res.data.success) {
           const c = res.data.contract;
           setContract(c);
+
+          setclientinfo(c?.clientinfo || {});
 
           setCompany(c?.company || {});
           setFields(c?.fields || []);
@@ -86,6 +89,7 @@ const Page = () => {
         <Contractfeilds
           fields={fields}
           company={company}
+          clientinfo={clientinfo}
           onUpdate={handleFieldUpdate}
         />
       </div>
@@ -93,16 +97,15 @@ const Page = () => {
         <button
           onClick={handleupdateform}
           disabled={updateloading}
-          className={`px-4 py-2 rounded text-white transition-colors ${
-            updateloading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-[#5965AB] hover:bg-[#5f6ebe]"
-          }`}
+          className={`px-4 py-2 rounded text-white transition-colors ${updateloading
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-[#5965AB] hover:bg-[#5f6ebe]"
+            }`}
         >
           {updateloading ? "Saving..." : "Save Changes"}
         </button>
         <button
-         onClick={()=>router.push(`/view-contract-details/${id}`)}
+          onClick={() => router.push(`/view-contract-details/${id}`)}
           className={`px-4 py-2 rounded text-white bg-[#5965AB] hover:bg-[#5f6ebe] transition-colors `}
         >
           Preview Contract

@@ -559,7 +559,7 @@ const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmplo
       if (res.data.success) {
         toast.success(res.data.message);
         setSelectedEmployee(res.data.employee);
-        
+
         setDeleteloading(false);
       }
 
@@ -787,15 +787,27 @@ const ListAllAttendance = () => {
     return effectiveAbsent;
   }, [filteredAttendance, selectedEmployee, activeTab]);
 
+
+
+  const getDaysInMonth = (monthStr) => {
+    if (!monthStr) return 30; // default
+    const [year, month] = monthStr.split("-");
+    return new Date(year, parseInt(month), 0).getDate();
+  };
+
   const totalDeduction = useMemo(() => {
     if (!selectedEmployee || activeTab !== "checkin") return 0;
     const selectedEmp = employees.find(
       (emp) => emp.employeeName === selectedEmployee
     );
     if (!selectedEmp) return 0;
+
     const salary = selectedEmp.employeeSalary || 0;
-    return Math.round(((salary * absentPercentage) / 100) * totalAbsentDays);
-  }, [totalAbsentDays, employees, selectedEmployee, activeTab]);
+    const daysInMonth = getDaysInMonth(selectedMonth);
+    const perDaySalary = salary / daysInMonth;
+
+    return Math.round(perDaySalary * totalAbsentDays);
+  }, [totalAbsentDays, employees, selectedEmployee, selectedMonth, activeTab]);
 
   /* Columns */
   const columns = useMemo(

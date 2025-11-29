@@ -23,7 +23,6 @@ const Listattendance = ({ attendance }) => {
         ...item.checkout,
       }));
 
-
       setCheckIns(checkins);
       setCheckOuts(checkouts);
     }

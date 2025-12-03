@@ -117,7 +117,7 @@ const FormPreview = ({ fields = [], company, onUpdate, client }) => {
                   <span className="font-semibold">{client.clientName || "{{Client Name}}"}</span>
                 </p>
 
-                
+
 
               </div>
             </div>

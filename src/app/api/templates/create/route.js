@@ -38,15 +38,51 @@ export async function POST(req) {
     const companydata = companySnap.data();
 
     const defaultFields = [
+
+      {
+        id: "start-date-field",
+        type: "date",
+        label: "Start Date",
+        question: "Start Date",
+        answer: "",
+        isFixed: true,
+      },
+      {
+        id: "ending-date-field",
+        type: "date",
+        label: "Ending Date",
+        question: "Ending Date",
+        answer: "",
+        isFixed: true,
+      },
+      {
+        id: "your-signature-field",
+        type: "signature",
+        signatureType: "typed",
+        label: "Your Signature",
+        question: "Your Signature",
+        answer: "",
+        isFixed: true,
+      },
+      {
+        id: "client-signature-field",
+        type: "signature",
+        signatureType: "pad",
+        label: "Client Signature",
+        question: "Client Signature",
+        answer: "",
+        isFixed: true,
+      },
       {
         id: "appendix-field",
         type: "appendix",
         label: "Appendix",
-        question:"Appendix",
+        question: "Appendix",
         answer: "",
         isFixed: true,
       },
     ];
+
 
     // Create template
     const templateRef = doc(db, "templates", templateId);

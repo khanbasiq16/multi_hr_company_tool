@@ -19,7 +19,6 @@ export async function POST(req) {
     const { employeeId, note, time, ip } = body;
 
 
-
     if (!employeeId) {
       console.log("❌ Employee ID Missing");
       return NextResponse.json(

@@ -51,11 +51,11 @@ const Sidebar = () => {
       label: "Attendance",
       icon: <Calendar className="2xl:w-5 w-4 2xl:h-5 h-4" />,
     },
-    {
-      href: "/admin/templates",
-      label: "Templates",
-      icon: <NotepadTextDashed className="2xl:w-5 w-4 2xl:h-5 h-4" />,
-    },
+    // {
+    //   href: "/admin/templates",
+    //   label: "Templates",
+    //   icon: <NotepadTextDashed className="2xl:w-5 w-4 2xl:h-5 h-4" />,
+    // },
     {
       href: "/admin/expense",
       label: "Expenses",

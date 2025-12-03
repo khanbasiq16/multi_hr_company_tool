@@ -484,7 +484,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, MoreHorizontal, Trash2 } from "lucide-react";
+import { Loader2, MoreHorizontal, Plus, Trash2 } from "lucide-react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -505,6 +505,7 @@ import { useSelector } from "react-redux";
 import Listallattendancewithgraph from "./Listallattendancewithgraph";
 import axios from "axios";
 import toast from "react-hot-toast";
+import AttendanceImportDialog from "../dialog/AttendanceImportDialog";
 
 /* Status Badge Component */
 const StatusBadge = ({ status }) => {
@@ -599,16 +600,20 @@ const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmplo
           onChange={(e) => setGlobalFilter(e.target.value)}
           className="w-64"
         />
-        <Button
-          variant="destructive"
-          disabled={deleteloading || Object.keys(rowSelection).length === 0}
-          onClick={() => {
-            const selectedRows = table.getSelectedRowModel().rows.map(row => row.original);
-            handledatadelete(selectedRows);
-          }}
-        >
-          {deleteloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-        </Button>
+        <div className="flex gap-4">
+          <AttendanceImportDialog />
+
+          <Button
+            variant="destructive"
+            disabled={deleteloading || Object.keys(rowSelection).length === 0}
+            onClick={() => {
+              const selectedRows = table.getSelectedRowModel().rows.map(row => row.original);
+              handledatadelete(selectedRows);
+            }}
+          >
+            {deleteloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+          </Button>
+        </div>
       </div>
 
       {/* Table */}

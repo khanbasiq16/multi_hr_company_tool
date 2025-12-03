@@ -37,8 +37,8 @@ const TemplateDialog = () => {
         const res = await axios.get("/api/get-all-companies");
         if (res.data.success) {
 
-            console.log(res.data.companies)
-          setAllCompanies(res.data.companies); 
+          console.log(res.data.companies)
+          setAllCompanies(res.data.companies);
           setCompany(res.data.companies[0].name)
         }
       } catch (error) {
@@ -46,7 +46,7 @@ const TemplateDialog = () => {
       }
     };
 
- fetchCompanies();
+    fetchCompanies();
   }, []);
 
   // 🔹 Submit handler
@@ -57,18 +57,16 @@ const TemplateDialog = () => {
     try {
       const formData = { role, company };
 
-    
-
       const res = await axios.post("/api/templates/create", formData);
 
       if (res.data.success) {
-        toast.success(res.data.message); 
+        toast.success(res.data.message);
         dispatch(createtemplate(res.data.templates))
-        
+
         setOpen(false);
         setRole("");
         setCompany("");
-        
+
       } else {
         toast.error("Failed to create template");
       }
@@ -108,7 +106,7 @@ const TemplateDialog = () => {
             </Select>
           </div>
 
-          
+
           {role === "Admin" && (
             <div className="flex flex-col space-y-2">
               <Label className="text-sm font-medium text-gray-700">

@@ -20,10 +20,14 @@ const Page = () => {
   const [selected, setSelected] = useState("checkin");
   const [isCheckedIn, setIsCheckedin] = useState(false);
   const [isCheckedout, setIsCheckedout] = useState(false);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
 
   const { slug } = useParams();
   const { user } = useSelector((state) => state.User);
+
+
+
+
 
   useEffect(() => {
     const getEmployeeDetails = async () => {
@@ -40,9 +44,6 @@ const Page = () => {
 
         const data = response.data;
 
-        console.log(data.employee.isCheckedin)
-        console.log(data.employee.isCheckedout)
-
         setIsCheckedin(data.employee.isCheckedin);
         setIsCheckedout(data.employee.isCheckedout);
       } catch (error) {
@@ -51,7 +52,7 @@ const Page = () => {
           error.response?.data?.error || "Failed to fetch attendance details"
         );
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
@@ -65,9 +66,10 @@ const Page = () => {
           Employee {">"} {slug.replace(/-/g, " ")} {">"} mark attendance
         </h2>
 
-        <Select onValueChange={(value) => setSelected(value)}>
+        <Select onValueChange={(value) => setSelected(value)} value={isCheckedIn ? "checkout" : selected}>
           <SelectTrigger className="w-40 bg-white">
-            <SelectValue placeholder="Select option" />
+            <SelectValue placeholder="Select option"
+            />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="checkin">Check In</SelectItem>
@@ -76,20 +78,23 @@ const Page = () => {
         </Select>
       </div>
 
+      
+
+
       <div className="p-6 flex justify-center items-center min-h-[300px]">
         {loading ? (
-          // 🔹 Loader while fetching data
+          
           <div className="flex flex-col items-center">
             <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
             <p className="text-gray-500 mt-3">Loading attendance status...</p>
           </div>
-        ) : selected === "checkin" ? (
+        ) : !isCheckedIn ? (
           <Checkin
             isCheckedIn={isCheckedIn}
             setIsCheckedin={setIsCheckedin}
             setIsCheckedout={setIsCheckedout}
           />
-        ) : selected === "checkout" ? (
+        ) : isCheckedIn && !isCheckedout ? (
           <CheckOut
             isCheckedIn={isCheckedIn}
             isCheckedout={isCheckedout}
@@ -97,13 +102,17 @@ const Page = () => {
             setIsCheckedin={setIsCheckedin}
           />
         ) : (
+          
           <p className="text-gray-500 text-center py-10">
-            Please select an option to continue.
+            You have successfully checked in & checked out for today.
           </p>
         )}
       </div>
+
     </Employeelayout>
   );
 };
 
 export default Page;
+
+

@@ -1,355 +1,65 @@
-// "use client";
-
-// import React, { useEffect, useState } from "react";
-// import { useParams } from "next/navigation";
-// import axios from "axios";
-// import toast from "react-hot-toast";
-// import { Button } from "@/components/ui/button";
-// import { Input } from "@/components/ui/input";
-// import {
-//   Type,
-//   FileText,
-//   PenLine,
-//   CheckSquare,
-//   Circle,
-//   List,
-//   Calendar,
-//   Save,
-//   Eye,
-//   EyeOff,
-//   Loader2,
-// } from "lucide-react";
-// import { DndContext, closestCenter } from "@dnd-kit/core";
-// import {
-//   SortableContext,
-//   verticalListSortingStrategy,
-// } from "@dnd-kit/sortable";
-// import SortableField from "@/app/utils/basecomponents/SortableField";
-// import FormPreview from "@/app/utils/basecomponents/FormPreview";
-// import { useRouter } from "next/navigation";
-
-// const FIELD_TYPES = {
-//   SHORT_ANSWER: "short_answer",
-//   PARAGRAPH: "paragraph",
-//   MULTIPLE_CHOICE: "multiple_choice",
-//   CHECKBOXES: "checkboxes",
-//   DROPDOWN: "dropdown",
-//   DATE: "date",
-//   SIGNATURE: "signature",
-//   COMPANY_INFO_BLOCK: "company_info_block",
-//   APPENDIX: "appendix",
-// };
-
-// const TemplateEditorPage = () => {
-//   const { templateid } = useParams();
-//   const [fields, setFields] = useState([]);
-//   const [loading, setLoading] = useState(false);
-//   const [templateName, setTemplateName] = useState("Untitled Form");
-//   const [isPreview, setIsPreview] = useState(false);
-//   const [company, setCompany] = useState(null);
-//   const router = useRouter();
-
-//   useEffect(() => {
-//     if (!templateid) return;
-//     const fetchTemplate = async () => {
-//       try {
-//         const res = await axios.get(`/api/get-template/${templateid}`);
-//         if (res.data.success) {
-//           const fetchedTemplate = res.data.template;
-
-//           setCompany(fetchedTemplate.company || {});
-//           let initialFields = fetchedTemplate.fields || [];
-
-
-//           if (
-//             initialFields.length === 0 ||
-//             !initialFields.some(
-//               (f) => f.type === FIELD_TYPES.COMPANY_INFO_BLOCK
-//             )
-//           ) {
-//             initialFields = [
-//               {
-//                 id: "company-header",
-//                 type: FIELD_TYPES.COMPANY_INFO_BLOCK,
-//                 label: "Company Header",
-//                 isFixed: true,
-//               },
-//               ...initialFields,
-//             ];
-//           }
-//           setFields(initialFields);
-//           setTemplateName(fetchedTemplate.templateName || "Untitled Form");
-//         }
-//       } catch {
-//         toast.error("Failed to load template");
-//       }
-//     };
-//     fetchTemplate();
-//   }, [templateid]);
-
-//   const handleAddField = (type) => {
-//     if (isPreview) return;
-//     const newField = {
-//       id: Date.now(),
-//       type,
-//       question: "Untitled question",
-//       description: "",
-//       options:
-//         type === FIELD_TYPES.MULTIPLE_CHOICE ||
-//           type === FIELD_TYPES.CHECKBOXES ||
-//           type === FIELD_TYPES.DROPDOWN
-//           ? ["Option 1"]
-//           : [],
-//       required: false,
-//     };
-//     setFields((prev) => [...prev, newField]);
-//   };
-
-//   const handleDeleteField = (id) => {
-//     if (isPreview) return;
-//     setFields(fields.filter((f) => f.id !== id));
-//   };
-
-//   const handleDuplicateField = (field) => {
-//     if (isPreview) return;
-//     const duplicate = {
-//       ...field,
-//       id: Date.now(),
-//       question: `${field.question} (Copy)`,
-//     };
-//     setFields((prev) => [...prev, duplicate]);
-//   };
-
-//   const handleUpdateField = (id, updated) => {
-//     if (isPreview) return;
-//     setFields(fields.map((f) => (f.id === id ? { ...f, ...updated } : f)));
-//   };
-
-//   const handleSave = async () => {
-//     setLoading(true);
-//     try {
-//       const slug = templateName.trim().toLowerCase().replace(/\s+/g, "_");
-
-//       console.log(fields);
-
-//       const res = await axios.post(`/api/update-template/${templateid}`, {
-//         templateName,
-//         fields,
-//         slug,
-//       });
-
-//       if (res.data.success) {
-//         toast.success(res?.data?.message);
-//       }
-//     } catch {
-//       toast.error("Failed to save template");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleDragEnd = (event) => {
-//     if (isPreview) return;
-//     const { active, over } = event;
-//     if (!over) return;
-//     if (active.id !== over.id) {
-//       setFields((prev) => {
-//         const oldIndex = prev.findIndex((f) => f.id === active.id);
-//         const newIndex = prev.findIndex((f) => f.id === over.id);
-//         const updated = [...prev];
-//         const [moved] = updated.splice(oldIndex, 1);
-//         updated.splice(newIndex, 0, moved);
-//         return updated;
-//       });
-//     }
-//   };
-
-//   const handleexit = () => {
-//     router.push("/admin/templates");
-//   };
-
-//   return (
-//     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 bg-gray-100 min-h-screen">
-//       {/* Sidebar */}
-//       <div className="space-y-6 bg-white p-4 rounded-xl shadow-md">
-//         <div>
-//           <h2 className="text-lg font-semibold mb-2">Form Info</h2>
-//           <Input
-//             value={templateName}
-//             onChange={(e) => setTemplateName(e.target.value)}
-//             placeholder="Form title"
-//           />
-//         </div>
-
-//         <div>
-//           <h3 className="font-semibold mb-3">Add Question</h3>
-//           <div className="grid grid-cols-2 gap-2">
-//             {[
-//               { icon: Type, label: "Short", type: FIELD_TYPES.SHORT_ANSWER },
-//               {
-//                 icon: FileText,
-//                 label: "Paragraph",
-//                 type: FIELD_TYPES.PARAGRAPH,
-//               },
-//               {
-//                 icon: Circle,
-//                 label: "Choice",
-//                 type: FIELD_TYPES.MULTIPLE_CHOICE,
-//               },
-//               {
-//                 icon: CheckSquare,
-//                 label: "Checkbox",
-//                 type: FIELD_TYPES.CHECKBOXES,
-//               },
-//               { icon: List, label: "Dropdown", type: FIELD_TYPES.DROPDOWN },
-//               { icon: Calendar, label: "Date", type: FIELD_TYPES.DATE },
-//               {
-//                 icon: PenLine,
-//                 label: "Signature",
-//                 type: FIELD_TYPES.SIGNATURE,
-//               },
-//             ].map(({ icon: Icon, label, type }) => (
-//               <Button
-//                 key={type}
-//                 onClick={!isPreview ? () => handleAddField(type) : undefined}
-//                 className={`flex items-center gap-2 ${isPreview ? "opacity-50 cursor-not-allowed" : ""
-//                   }`}
-//               >
-//                 <Icon size={14} /> {label}
-//               </Button>
-//             ))}
-//           </div>
-//         </div>
-
-//         <div className="border-t pt-4 space-y-2 ">
-//           <Button
-//             onClick={handleSave}
-//             disabled={loading}
-//             className={`w-full flex items-center justify-center gap-2 `}
-//           >
-//             <Save size={16} />{" "}
-//             {loading ? (
-//               <>
-//                 <Loader2 className="animate-spin" /> Saving...
-//               </>
-//             ) : (
-//               "Save"
-//             )}
-//           </Button>
-//           <Button
-//             onClick={() => setIsPreview((prev) => !prev)}
-//             className="w-full flex items-center justify-center gap-2"
-//             variant="outline"
-//           >
-//             {isPreview ? <EyeOff size={16} /> : <Eye size={16} />}{" "}
-//             {isPreview ? "Close Preview" : "Preview"}
-//           </Button>
-
-//           <Button onClick={handleexit} className={"bottom-0 mt-5 w-full "}>
-//             Exit to Editor
-//           </Button>
-//         </div>
-//       </div>
-
-//       {/* Main area */}
-//       <div className="md:col-span-3 bg-gray-50 p-6 rounded-xl shadow-inner">
-//         {isPreview ? (
-//           <FormPreview fields={fields} company={company} />
-//         ) : (
-//           <DndContext
-//             collisionDetection={closestCenter}
-//             onDragEnd={handleDragEnd}
-//           >
-//             <SortableContext
-//               items={fields.map((f) => f.id)}
-//               strategy={verticalListSortingStrategy}
-//             >
-//               {fields.map((field) => (
-//                 <SortableField
-//                   key={field.id}
-//                   field={field}
-//                   onDelete={handleDeleteField}
-//                   onUpdate={handleUpdateField}
-//                   onDuplicate={handleDuplicateField}
-//                 />
-//               ))}
-//             </SortableContext>
-//           </DndContext>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default TemplateEditorPage;
-
-
-
-
-
-
-
-
 "use client";
-
-import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
-import toast from "react-hot-toast";
-import { Button } from "@/components/ui/button";
+import { Copy, Trash2, GripVertical } from "lucide-react";
+import TextEditor from "@/app/utils/basecomponents/TextEditor";
 import { Input } from "@/components/ui/input";
-import {
-  Type,
-  FileText,
-  PenLine,
-  CheckSquare,
-  Circle,
-  List,
-  Calendar,
-  Save,
-  Eye,
-  EyeOff,
-  Loader2,
-} from "lucide-react";
-import { DndContext, closestCenter } from "@dnd-kit/core";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import SortableField from "@/app/utils/basecomponents/SortableField";
-import FormPreview from "@/app/utils/basecomponents/FormPreview";
-import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import SignatureCanvas from "react-signature-canvas";
 
-const FIELD_TYPES = {
-  SHORT_ANSWER: "short_answer",
-  PARAGRAPH: "paragraph",
-  MULTIPLE_CHOICE: "multiple_choice",
-  CHECKBOXES: "checkboxes",
-  DROPDOWN: "dropdown",
-  DATE: "date",
-  SIGNATURE: "signature",
-  COMPANY_INFO_BLOCK: "company_info_block",
-  CLIENT_INFO_BLOCK: "client_info_block", // ⭐ ADD THIS
-  APPENDIX: "appendix",
-};
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
-const TemplateEditorPage = () => {
+const initialTemplate = [
+  {
+    id: 1,
+    type: "text",
+    label: "Agreement Intro",
+    value:
+      "This agreement is made between [Client Name] located at [Client Address], and [Company Name] on this [FIELD:DATE:1] day. The client's phone number is [Client Phone].",
+  },
+  {
+    id: 2,
+    type: "text",
+    label: "Scope of Work",
+    value:
+      "The services provided by [Company Name] will include web development and design as detailed in Appendix A. Any changes to the scope must be agreed upon in writing by both parties.",
+  },
+];
+
+
+const TemplateEditor = () => {
   const { templateid } = useParams();
-  const [fields, setFields] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [templateName, setTemplateName] = useState("Untitled Form");
-  const [isPreview, setIsPreview] = useState(false);
-  const [company, setCompany] = useState(null);
+  const [fields, setFields] = useState(initialTemplate);
+
+  const [openSignatureMenu, setOpenSignatureMenu] = useState(null);
+  const [formname, setFormName] = useState("Untitled Form");
+  const [shortcodes, setShortcodes] = useState({
+    "Client Name": "[Client Name]",
+    "Client Address": "[Client Address]",
+    "Client Phone": "[Client Phone]",
+    "Client Website": "[Client Website]",
+    "Client Email": "[Client Email]",
+  });
 
 
+  const [data] = useState(shortcodes);
 
-  let client = {
-    clientName: "",
-    clientAddress: "",
-    clientPhone: "",
-    clientWebsite: "",
-  }
-  const router = useRouter();
+  const dragItem = useRef(null);
+  const dragOverItem = useRef(null);
+
+  const [company, setCompany] = useState({
+    name: "Tech Solutions Pvt. Ltd.",
+    companyAddress: "Bangalore, India",
+    companyEmail: "info@techsolutions.com",
+    companyLogo: "/icons/icon-512x512.png",
+  });
+
   useEffect(() => {
     if (!templateid) return;
 
@@ -360,227 +70,505 @@ const TemplateEditorPage = () => {
         if (res.data.success) {
           const fetchedTemplate = res.data.template;
 
-          setCompany(fetchedTemplate.company || {});
+          setCompany(fetchedTemplate.company || company);
+          setFormName(fetchedTemplate.templateName || "Untitled Form");
 
-          let initialFields = fetchedTemplate.fields || [];
+          setShortcodes((prev) => ({
+            ...prev,
+            CompanyName: fetchedTemplate.company.name,
+            CompanyAddress: fetchedTemplate.company.companyAddress,
+            CompanyPhone: fetchedTemplate.company.companyPhoneNumber,
+            CompanyWebsite: fetchedTemplate.company.companyWebsite,
+            CompanyEmail: fetchedTemplate.company.companyEmail,
+          }));
 
-          if (
-            initialFields.length === 0 ||
-            !initialFields.some((f) => f.type === FIELD_TYPES.COMPANY_INFO_BLOCK)
-          ) {
-            initialFields = [
-              {
-                id: "company-header",
-                type: FIELD_TYPES.COMPANY_INFO_BLOCK,
-                label: "Company Header",
-                isFixed: true,
-              },
-              {
-                id: "client-header",
-                type: FIELD_TYPES.CLIENT_INFO_BLOCK,
-                label: "Client Header",
-                isFixed: true,
-              },
-              ...initialFields,
-            ];
-          }
-
-          setFields(initialFields);
-          setTemplateName(fetchedTemplate.templateName || "Untitled Form");
+          setFields(
+            (fetchedTemplate.fields || []).map((f) => ({
+              ...f,
+              value: f.value || "",
+            }))
+          );
         }
-      } catch {
-        toast.error("Failed to load template");
+      } catch (error) {
+        console.error("Error fetching template:", error);
       }
     };
 
     fetchTemplate();
-  }, [templateid]);
+  }, []);
 
-  const handleAddField = (type) => {
-    if (isPreview) return;
-
-    const newField = {
-      id: Date.now(),
-      type,
-      question: "Untitled question",
-      description: "",
-      options:
-        type === FIELD_TYPES.MULTIPLE_CHOICE ||
-          type === FIELD_TYPES.CHECKBOXES ||
-          type === FIELD_TYPES.DROPDOWN
-          ? ["Option 1"]
-          : [],
-      required: false,
-    };
-
-    setFields((prev) => [...prev, newField]);
+  const addBlock = (type) => {
+    setFields((prev) => [
+      ...prev,
+      { id: Date.now(), type, label: `${type} Field`, value: "" },
+    ]);
   };
 
-  const handleDeleteField = (id) => {
-    if (isPreview) return;
-    setFields(fields.filter((f) => f.id !== id));
+  // 🔥 FIXED: useCallback (PREVENTS EDITOR FREEZING)
+  const updateField = useCallback((id, newValue) => {
+    setFields((prev) =>
+      prev.map((f) => (f.id === id ? { ...f, value: newValue } : f))
+    );
+  }, []);
+
+  const insertShortcode = (id, shortcode) => {
+    setFields((prev) =>
+      prev.map((f) =>
+        f.id === id ? { ...f, value: `${f.value} [${shortcode}] ` } : f
+      )
+    );
   };
 
-  const handleDuplicateField = (field) => {
-    if (isPreview) return;
-    const duplicate = {
-      ...field,
-      id: Date.now(),
-      question: `${field.question} (Copy)`,
-    };
-    setFields((prev) => [...prev, duplicate]);
+  const insertSpecialField = (id, type) => {
+    let fieldType = type;
+
+    if (type === "SIGNATURE_TYPED") fieldType = "SIGNATURE:text";
+    if (type === "SIGNATURE_PAD") fieldType = "SIGNATURE:pad";
+
+    setFields((prev) =>
+      prev.map((f) =>
+        f.id === id
+          ? { ...f, value: `${f.value} [FIELD:${fieldType}:${Date.now()}] ` }
+          : f
+      )
+    );
   };
 
-  const handleUpdateField = (id, updated) => {
-    if (isPreview) return;
-    setFields(fields.map((f) => (f.id === id ? { ...f, ...updated } : f)));
+
+
+  const handleDragStart = (e, index) => {
+    dragItem.current = index;
+    e.currentTarget.classList.add("opacity-50", "border-dashed", "border-2", "border-blue-500");
   };
 
-  const handleSave = async () => {
-    setLoading(true);
-    try {
-      const slug = templateName.trim().toLowerCase().replace(/\s+/g, "_");
+  const handleDragEnter = (e, index) => {
+    dragOverItem.current = index;
+    e.currentTarget.classList.add("bg-blue-50");
+  };
 
-      const res = await axios.post(`/api/update-template/${templateid}`, {
-        templateName,
-        fields,
-        slug,
+  const handleDragLeave = (e) => {
+    e.currentTarget.classList.remove("bg-blue-50");
+  };
+
+  const handleDragEnd = (e) => {
+    e.currentTarget.classList.remove("opacity-50", "border-dashed", "border-2", "border-blue-500");
+    document.querySelectorAll(".bg-blue-50").forEach(el => el.classList.remove("bg-blue-50"));
+    dragItem.current = null;
+    dragOverItem.current = null;
+  }
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+
+
+    e.currentTarget.classList.remove("bg-blue-50");
+
+    const draggedIndex = dragItem.current;
+    const droppedIndex = dragOverItem.current;
+
+    if (draggedIndex !== null && droppedIndex !== null && draggedIndex !== droppedIndex) {
+      setFields((prevFields) => {
+        const newFields = [...prevFields];
+        // 1. Get the item being dragged
+        const [reorderedItem] = newFields.splice(draggedIndex, 1);
+        // 2. Insert it into the new position
+        newFields.splice(droppedIndex, 0, reorderedItem);
+        return newFields;
+      });
+    }
+
+  };
+
+
+
+  const renderTemplate = () => {
+    let html = `
+    <div class="relative w-full min-h-[600px]">
+      <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10">
+        <img src="${company.companyLogo}" class="max-w-[50%] object-contain" />
+      </div>
+
+      <div class="relative z-10 mb-12">
+        <div class="flex items-center gap-3">
+          <img src="${company.companyLogo}" class="w-20" />
+          <div>
+            <h1 class="text-2xl font-bold">${company.name}</h1>
+            <p class="text-gray-700 text-sm">${company.companyAddress}</p>
+            <p class="text-gray-700 text-sm">${company.companyemail}</p>
+          </div>
+        </div>
+        <div class="mt-6 border-b border-gray-300"></div>
+      </div>
+
+      <div class="relative z-10 text-[17px] leading-8"> 
+  `;
+
+    fields.forEach((field) => {
+      let val = field.value || "";
+      console.log(val);
+
+      // Replace shortcodes like [Client Name]
+      Object.keys(shortcodes).forEach((key) => {
+        val = val.replace(
+          new RegExp(`\\[${key}\\]`, "g"),
+          `<span class="text-blue-800 font-semibold">${shortcodes[key]}</span>`
+        );
       });
 
-      if (res.data.success) {
-        toast.success(res?.data?.message);
-      }
-    } catch {
-      toast.error("Failed to save template");
-    } finally {
-      setLoading(false);
-    }
-  };
+      val = val.replace(
+        /\[FIELD:DATE:\d+\]/g,
+        `<input type="date" class="border p-2 rounded w-44 mt-2 mb-2" />`
+      );
 
-  const handleDragEnd = (event) => {
-    if (isPreview) return;
+      val = val.replace(
+        /\[FIELD:SIGNATURE(?::(text|pad))?:\d+\]/gi,
+        (match, type) => {
+          if (type === "text") {
+            return `
+        <div class="flex flex-col gap-2 mt-2">
+          <div class="flex gap-2">
+            <select 
+              class="w-40 border border-gray-300 rounded px-2 py-1"
+              id="signatureFontSelect_${Date.now()}"
+            >
+              <option value="allura" style="font-family: var(--font-allura)">Allura</option>
+              <option value="greatVibes" style="font-family: var(--font-great-vibes)">Great Vibes</option>
+              <option value="dancingScript" style="font-family: var(--font-dancing-script)">Dancing Script</option>
+            </select>
+            <input type="text" placeholder="Type Signature" class="border p-2 rounded w-60" id="signatureInput_${Date.now()}" />
+          </div>
+          <p id="signaturePreview_${Date.now()}" class="border p-2 rounded w-60 text-gray-700">Your signature will appear here</p>
+        </div>
 
-    const { active, over } = event;
-    if (!over) return;
+        <script>
+          const input = document.getElementById('signatureInput_${Date.now()}');
+          const select = document.getElementById('signatureFontSelect_${Date.now()}');
+          const preview = document.getElementById('signaturePreview_${Date.now()}');
+          function updateSignature() {
+            preview.textContent = input.value || 'Your signature will appear here';
+            preview.style.fontFamily = 'var(--font-' + select.value + ')';
+          }
+          input.addEventListener('input', updateSignature);
+          select.addEventListener('change', updateSignature);
+        </script>
+      `;
+          }
+          if (type === "pad") {
+            return `<div class="border-2 border-dashed p-4 mt-4 w-60 rounded text-gray-500">
+            Signature Pad
+          </div>`;
+          }
+          return `<div class="border-2 border-dashed p-4 mt-4 w-60 rounded text-gray-500">
+          Signature
+        </div>`;
+        }
+      );
 
-    if (active.id !== over.id) {
-      setFields((prev) => {
-        const oldIndex = prev.findIndex((f) => f.id === active.id);
-        const newIndex = prev.findIndex((f) => f.id === over.id);
-        const updated = [...prev];
-        const [moved] = updated.splice(oldIndex, 1);
-        updated.splice(newIndex, 0, moved);
-        return updated;
-      });
-    }
-  };
+      html += `<div>${val.replace(/\n/g, "<br/>")}</div>`;
+    });
 
-  const handleExit = () => {
-    router.push("/admin/templates");
+    html += `</div></div>`;
+    return html;
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 bg-gray-100 min-h-screen">
-      {/* Sidebar */}
-      <div className="space-y-6 bg-white p-4 rounded-xl shadow-md">
-        <div>
-          <h2 className="text-lg font-semibold mb-2">Form Info</h2>
-          <Input
-            value={templateName}
-            onChange={(e) => setTemplateName(e.target.value)}
-            placeholder="Form title"
-          />
-        </div>
+    <div className="w-full flex gap-6 p-4">
+      {/* LEFT PANEL */}
+      <div className="w-[32%] h-[90vh] bg-white overflow-y-scroll custom-scroll fixed top-7 z-50  p-2 rounded-lg flex flex-col gap-2 ">
+        <h1 className="text-2xl font-bold">Text Editor</h1>
 
-        <div>
-          <h3 className="font-semibold mb-3">Add Question</h3>
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              { icon: Type, label: "Short", type: FIELD_TYPES.SHORT_ANSWER },
-              { icon: FileText, label: "Paragraph", type: FIELD_TYPES.PARAGRAPH },
-              { icon: Circle, label: "Choice", type: FIELD_TYPES.MULTIPLE_CHOICE },
-              { icon: CheckSquare, label: "Checkbox", type: FIELD_TYPES.CHECKBOXES },
-              { icon: List, label: "Dropdown", type: FIELD_TYPES.DROPDOWN },
-              { icon: Calendar, label: "Date", type: FIELD_TYPES.DATE },
-              { icon: PenLine, label: "Signature", type: FIELD_TYPES.SIGNATURE },
-            ].map(({ icon: Icon, label, type }) => (
+        <Input type="text" value={formname} className={"bg-white py-4 "} onChange={(e) => setFormName(e.target.value)} />
+
+        {/* {fields.map((field, index) => (
+          <div
+            key={field.id}
+            className="bg-white p-5 border rounded-lg shadow-sm"
+            draggable
+            onDragStart={(e) => handleDragStart(e, index)}
+            onDragEnter={(e) => handleDragEnter(e, index)}
+            onDragLeave={handleDragLeave}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleDrop}
+            onDragEnd={handleDragEnd}
+          >
+            <div className="flex justify-between items-center mb-3">
+
+              <div className="cursor-grab text-gray-400 mr-1 cursor-grab">
+                <GripVertical size={20} />
+              </div>
+
+              <Input
+                type="text"
+                className="text-xl border-none rounded- font-semibold border-b w-full pb-1 outline-none"
+                value={field.label}
+                onChange={(e) =>
+                  setFields((prev) =>
+                    prev.map((f) =>
+                      f.id === field.id ? { ...f, label: e.target.value } : f
+                    )
+                  )
+                }
+              />
+
+
+              {field.label !== "Appendix" && (
+                <div className="flex gap-2 ml-4">
+
+                  <button
+                    onClick={() => {
+                      const baseLabel = field.label.replace(/\s*-\s*Copy$/, "");
+                      const copyField = {
+                        ...field,
+                        id: Date.now(),
+                        label: `${baseLabel} - Copy`,
+                      };
+                      setFields((prev) => {
+                        const arr = [...prev];
+                        arr.splice(index + 1, 0, copyField);
+                        return arr;
+                      });
+                    }}
+                    className="px-3 py-1 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 transition"
+                  >
+                    <Copy size={16} />
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      setFields((prev) => prev.filter((f) => f.id !== field.id))
+                    }
+                    className="w-8 h-8 bg-red-600 text-white rounded-full flex justify-center items-center hover:bg-red-700 transition"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <TextEditor field={field} updateField={updateField} />
+
+            <div className="flex flex-wrap gap-2 mt-2">
+              <div className="flex flex-wrap gap-2">
+                {Object.keys(shortcodes).map((key) => (
+                  <button
+                    key={key}
+                    onClick={() => insertShortcode(field.id, key)}
+                    className="px-2 py-1 bg-blue-100 text-blue-800 rounded-xs text-xs font-medium  hover:bg-blue-200 transition"
+                  >
+                    [{key}]
+                  </button>
+                ))}
+              </div>
+
+            </div>
+
+            <div className="mt-3 flex gap-2">
               <Button
-                key={type}
-                onClick={!isPreview ? () => handleAddField(type) : undefined}
-                className={`flex items-center gap-2 ${isPreview ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
+                onClick={() => insertSpecialField(field.id, "DATE")}
+                className="px-4 py-2 bg-white text-blue-600 font-medium rounded-sm border shadow-sm 
+                   hover:bg-gray-100 hover:text-blue-600 transition-all duration-200"
               >
-                <Icon size={14} /> {label}
+                Add Date
               </Button>
-            ))}
+
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button className="px-4 py-2 bg-white text-red-600 font-medium rounded-sm border shadow-sm 
+                   hover:bg-gray-100 hover:text-red-600 transition-all duration-200">
+                    Add Signature
+                  </Button>
+
+                </DropdownMenuTrigger>
+
+                <DropdownMenuContent className="w-44 bg-white shadow-lg border rounded-lg p-1">
+                  <DropdownMenuItem
+                    className="hover:bg-gray-100 rounded-md"
+                    onClick={() => insertSpecialField(field.id, "SIGNATURE_TYPED")}
+                  >
+                    Typed Signature
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    className="hover:bg-gray-100 rounded-md"
+                    onClick={() => insertSpecialField(field.id, "SIGNATURE_PAD")}
+                  >
+                    Signature Pad
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+        ))} */}
+
+
+        {fields.map((field, index) => (
+          <div
+            key={field.id}
+            className="bg-white p-5 border rounded-lg shadow-sm"
+            draggable
+            onDragStart={(e) => handleDragStart(e, index)}
+            onDragEnter={(e) => handleDragEnter(e, index)}
+            onDragLeave={handleDragLeave}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleDrop}
+            onDragEnd={handleDragEnd}
+          >
+            {/* Label + Controls */}
+            <div className="flex justify-between items-center mb-3">
+              <div className="cursor-grab text-gray-400 mr-1">
+                <GripVertical size={20} />
+              </div>
+
+              <Input
+                type="text"
+                className="text-xl border-none rounded font-semibold border-b w-full pb-1 outline-none"
+                value={field.label}
+                onChange={(e) =>
+                  setFields((prev) =>
+                    prev.map((f) =>
+                      f.id === field.id ? { ...f, label: e.target.value } : f
+                    )
+                  )
+                }
+              />
+
+              {field.label !== "Appendix" && (
+                <div className="flex gap-2 ml-4">
+                  <button
+                    onClick={() => {
+                      const baseLabel = field.label.replace(/\s*-\s*Copy$/, "");
+                      const copyField = {
+                        ...field,
+                        id: Date.now(),
+                        label: `${baseLabel} - Copy`,
+                      };
+                      setFields((prev) => {
+                        const arr = [...prev];
+                        arr.splice(index + 1, 0, copyField);
+                        return arr;
+                      });
+                    }}
+                    className="px-3 py-1 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 transition"
+                  >
+                    <Copy size={16} />
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      setFields((prev) => prev.filter((f) => f.id !== field.id))
+                    }
+                    className="w-8 h-8 bg-red-600 text-white rounded-full flex justify-center items-center hover:bg-red-700 transition"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Conditional Input */}
+            {field.type === "date" ? (
+              <input
+                type="date"
+                className="border-b w-full text-lg pb-1 outline-none"
+                value={field.answer || ""}
+                onChange={(e) =>
+                  setFields((prev) =>
+                    prev.map((f) =>
+                      f.id === field.id ? { ...f, answer: e.target.value } : f
+                    )
+                  )
+                }
+              />
+            ) : field.type === "signature" ? (
+              field.signatureType === "pad" ? (
+                <div className="border p-2 mt-2">
+                  {/* Signature Pad Component */}
+                  <SignatureCanvas
+                    value={field.answer || ""}
+                    onChange={(sig) =>
+                      setFields((prev) =>
+                        prev.map((f) =>
+                          f.id === field.id ? { ...f, answer: sig } : f
+                        )
+                      )
+                    }
+                  />
+                </div>
+              ) : field.signatureType === "typed" ? (
+                <input
+                  type="text"
+                  placeholder="Type signature..."
+                  className="border-b w-full text-lg pb-1 outline-none mt-2"
+                  value={field.answer || ""}
+                  onChange={(e) =>
+                    setFields((prev) =>
+                      prev.map((f) =>
+                        f.id === field.id ? { ...f, answer: e.target.value } : f
+                      )
+                    )
+                  }
+                />
+              ) : (
+                <p className="text-gray-400 mt-2">Select signature type above</p>
+              )
+            ) : (
+              <>
+                <TextEditor field={field} updateField={updateField} />
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {Object.keys(shortcodes).map((key) => (
+                    <button
+                      key={key}
+                      onClick={() => insertShortcode(field.id, key)}
+                      className="px-2 py-1 bg-blue-100 text-blue-800 rounded-xs text-xs font-medium hover:bg-blue-200 transition"
+                    >
+                      [{key}]
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* Shortcodes */}
+
+            {/* Buttons to add Date or Signature */}
+
+          </div>
+        ))}
+
+
+      </div>
+
+      {/* RIGHT SIDE PREVIEW */}
+      <div className="relative left-[26rem] w-2/3">
+
+        <div className="flex justify-between  mb-4 items-center w-full  gap-2">
+          <h1 className="text-2xl font-bold "> Live Template Preview</h1>
+          <div className="flex items-center justify-center gap-2">
+            <Button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Save</Button>
+            <Button
+              onClick={() => addBlock("text")}
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+            >
+              ➕ Add New Text Block
+            </Button>
+
           </div>
         </div>
 
-        <div className="border-t pt-4 space-y-2 ">
-          <Button
-            onClick={handleSave}
-            disabled={loading}
-            className="w-full flex items-center justify-center gap-2"
-          >
-            <Save size={16} />
-            {loading ? (
-              <>
-                <Loader2 className="animate-spin" /> Saving...
-              </>
-            ) : (
-              "Save"
-            )}
-          </Button>
 
-          <Button
-            onClick={() => setIsPreview((prev) => !prev)}
-            className="w-full flex items-center justify-center gap-2"
-            variant="outline"
-          >
-            {isPreview ? <EyeOff size={16} /> : <Eye size={16} />}
-            {isPreview ? "Close Preview" : "Preview"}
-          </Button>
 
-          <Button onClick={handleExit} className="bottom-0 mt-5 w-full">
-            Exit to Editor
-          </Button>
-        </div>
-      </div>
 
-      {/* Main */}
-      <div className="md:col-span-3 bg-gray-50 p-6 rounded-xl shadow-inner">
-        {isPreview ? (
-          <FormPreview
-            fields={fields}
-            company={company}
-            onUpdate={handleUpdateField}
-            client={client}
-          />
-        ) : (
-          <DndContext
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={fields.map((f) => f.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {fields.map((field) => (
-                <SortableField
-                  key={field.id}
-                  field={field}
-                  client={client}
-                  onDelete={handleDeleteField}
-                  onUpdate={handleUpdateField}
-                  onDuplicate={handleDuplicateField}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
-        )}
+        <div
+          className="border bg-white shadow p-10 rounded"
+          dangerouslySetInnerHTML={{ __html: renderTemplate() }}
+        />
       </div>
     </div>
+
+
+
   );
 };
 
-export default TemplateEditorPage;
+export default TemplateEditor;

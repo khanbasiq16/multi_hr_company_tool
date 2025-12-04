@@ -16,6 +16,7 @@ import {
   Settings,
   ArrowBigLeft,
   Building,
+  DollarSign,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -57,9 +58,9 @@ const Sidebar = () => {
     //   icon: <NotepadTextDashed className="2xl:w-5 w-4 2xl:h-5 h-4" />,
     // },
     {
-      href: "/admin/expense",
-      label: "Expenses",
-      icon: <BanknoteArrowDown className="2xl:w-5 w-4 2xl:h-5 h-4" />,
+      href: "/admin/accounts",
+      label: "Accounts",
+      icon: <DollarSign className="2xl:w-5 w-4 2xl:h-5 h-4" />,
     },
     // { href: "/admin/account-manager", label: "Account Manager", icon: <HandCoins className="2xl:w-5 w-4 2xl:h-5 h-4" /> },
   ];

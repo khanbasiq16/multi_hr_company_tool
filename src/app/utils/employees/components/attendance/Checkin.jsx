@@ -182,6 +182,9 @@ const Checkin = ({isCheckedIn , setIsCheckedin , setIsCheckedout}) => {
   return (
     <>
       <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
+
+
+
         <button
           onClick={handlecheckin}
           disabled={isCheckedIn}

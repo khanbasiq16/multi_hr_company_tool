@@ -3,6 +3,7 @@ import Companydailog from "../dialog/Companydailog";
 import Employeedailog from "../dialog/Employeedailog";
 import Expensedailog from "../dialog/Expensedailog";
 import TemplateDialog from "../dialog/TemplateDialog";
+import AccountDialog from "../dialog/Accountsdialog";
 
 const Superbreadcrumb = ({ path, path2 }) => {
   return (
@@ -24,6 +25,8 @@ const Superbreadcrumb = ({ path, path2 }) => {
         <Expensedailog />
       ) : path === "Templates" ? (
         <TemplateDialog />
+      ) : path === "Accountants" ? (
+        <AccountDialog />
       ) : null}
     </div>
   );

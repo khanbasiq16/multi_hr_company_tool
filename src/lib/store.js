@@ -1,7 +1,7 @@
 "use client";
 
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import storage from "redux-persist/lib/storage"; 
+import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
 import UserReducer from "../features/Slice/UserSlice";
 import CompanyReducer from "../features/Slice/CompanySlice";
@@ -17,29 +17,31 @@ import StopwatchReducer from "../features/Slice/StopwatchSlice";
 import TemplatesReducer from "../features/Slice/TemplateSlice";
 import TimeZoneReducer from "../features/Slice/TimeZoneSlice";
 import ContractReducer from "../features/Slice/ContractsSlice";
+import AccountantReducer from "../features/Slice/AccountantSlice";
 
 const rootReducer = combineReducers({
+  Acounts: AccountantReducer,
   User: UserReducer,
-  Company:CompanyReducer,
-  Department:DepartmentReducer,
-  Employee:EmployeeReducer,
-  Expense:ExpenseReducer,
-  Client:ClientReducer,
-  Invoice:InvoiceReducer,
-  Ipwhitelist:IpwhiteReducer,
-  Checkin:CheckinReducer,
-  Checkout:CheckOutReducer,
-  Stopwatch:StopwatchReducer,
-  Templates:TemplatesReducer,
-  TimeZone:TimeZoneReducer,
-  Contracts:ContractReducer
-  
+  Company: CompanyReducer,
+  Department: DepartmentReducer,
+  Employee: EmployeeReducer,
+  Expense: ExpenseReducer,
+  Client: ClientReducer,
+  Invoice: InvoiceReducer,
+  Ipwhitelist: IpwhiteReducer,
+  Checkin: CheckinReducer,
+  Checkout: CheckOutReducer,
+  Stopwatch: StopwatchReducer,
+  Templates: TemplatesReducer,
+  TimeZone: TimeZoneReducer,
+  Contracts: ContractReducer
+
 });
 
 
 const persistConfig = {
-  key: "root", 
-  storage, 
+  key: "root",
+  storage,
 };
 
 
@@ -50,7 +52,7 @@ export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false, 
+      serializableCheck: false,
     }),
   devTools: process.env.NODE_ENV !== "production",
 });

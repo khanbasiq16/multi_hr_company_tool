@@ -5,7 +5,7 @@ import CheckOutTable from "@/app/utils/employees/components/Tables/CheckOutTable
 import React, { useEffect, useState } from "react";
 
 
-const Listattendance = ({ attendance , setemployee }) => {
+const Listattendance = ({ attendance, setemployee }) => {
   const [checkins, setCheckIns] = useState([]);
   const [checkouts, setCheckOuts] = useState([]);
   const [activeTab, setActiveTab] = useState("checkin");
@@ -14,14 +14,16 @@ const Listattendance = ({ attendance , setemployee }) => {
     if (attendance && attendance.length > 0) {
       const checkins = attendance.map((item) => ({
         id: item.id,
-        date:item.date,
+        date: item.date,
         ...item.checkin,
-      }));
+      }))
+        .reverse();
       const checkouts = attendance.map((item) => ({
         id: item.id,
-        date:item.date,
+        date: item.date,
         ...item.checkout,
-      }));
+      }))
+        .reverse();
 
       console.log(checkins)
       console.log(checkouts)
@@ -37,21 +39,19 @@ const Listattendance = ({ attendance , setemployee }) => {
       <div className="flex justify-center mb-6">
         <button
           onClick={() => setActiveTab("checkin")}
-          className={`px-6 py-2 font-semibold rounded-l-2xl transition-all duration-300 ${
-            activeTab === "checkin"
+          className={`px-6 py-2 font-semibold rounded-l-2xl transition-all duration-300 ${activeTab === "checkin"
               ? "bg-blue-600 text-white"
               : "bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
-          }`}
+            }`}
         >
           Check In
         </button>
         <button
           onClick={() => setActiveTab("checkout")}
-          className={`px-6 py-2 font-semibold rounded-r-2xl transition-all duration-300 ${
-            activeTab === "checkout"
+          className={`px-6 py-2 font-semibold rounded-r-2xl transition-all duration-300 ${activeTab === "checkout"
               ? "bg-blue-600 text-white"
               : "bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
-          }`}
+            }`}
         >
           Check Out
         </button>
@@ -59,10 +59,10 @@ const Listattendance = ({ attendance , setemployee }) => {
 
       {/* Tab Content */}
       {activeTab === "checkin" ? (
-        <CheckInTable data={checkins}  setemployee={setemployee}/>
-      
+        <CheckInTable data={checkins} setemployee={setemployee} />
+
       ) : (
-        <CheckOutTable data={checkouts} setemployee={setemployee}/>
+        <CheckOutTable data={checkouts} setemployee={setemployee} />
 
       )}
 
@@ -70,7 +70,7 @@ const Listattendance = ({ attendance , setemployee }) => {
       <AttendanceGraphs data={attendance} activeTab={activeTab} />
 
 
-      
+
     </div>
   );
 };

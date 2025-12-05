@@ -1,16 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    Accountants: [],
+    accountants: [],
 };
 
 const AccountantSlice = createSlice({
     name: "Accountants",
     initialState,
     reducers: {
-
         createAccountants: (state, action) => {
-            state.Accountants = action.payload;
+            state.accountants = action.payload;
         },
 
     },

@@ -12,16 +12,21 @@ const Listattendance = ({ attendance }) => {
 
   useEffect(() => {
     if (attendance && attendance.length > 0) {
-      const checkins = attendance.map((item) => ({
-        id: item.id,
-        date:item.date,
-        ...item.checkin,
-      }));
-      const checkouts = attendance.map((item) => ({
-        id: item.id,
-        date:item.date,
-        ...item.checkout,
-      }));
+      const checkins = attendance
+        .map((item) => ({
+          id: item.id,
+          date: item.date,
+          ...item.checkin,
+        }))
+        .reverse();
+
+      const checkouts = attendance
+        .map((item) => ({
+          id: item.id,
+          date: item.date,
+          ...item.checkout,
+        }))
+        .reverse();
 
       setCheckIns(checkins);
       setCheckOuts(checkouts);
@@ -34,30 +39,28 @@ const Listattendance = ({ attendance }) => {
       <div className="flex justify-center mb-6">
         <button
           onClick={() => setActiveTab("checkin")}
-          className={`px-6 py-2 font-semibold rounded-l-2xl transition-all duration-300 ${
-            activeTab === "checkin"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
-          }`}
+          className={`px-6 py-2 font-semibold rounded-l-2xl transition-all duration-300 ${activeTab === "checkin"
+            ? "bg-[#5965AB] text-white"
+            : "bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+            }`}
         >
           Check In
         </button>
         <button
           onClick={() => setActiveTab("checkout")}
-          className={`px-6 py-2 font-semibold rounded-r-2xl transition-all duration-300 ${
-            activeTab === "checkout"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
-          }`}
+          className={`px-6 py-2 font-semibold rounded-r-2xl transition-all duration-300 ${activeTab === "checkout"
+            ? "bg-[#5965AB] text-white"
+            : "bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+            }`}
         >
           Check Out
         </button>
       </div>
 
-      
+
       {activeTab === "checkin" ? (
         <CheckInTable data={checkins} />
-      
+
       ) : (
         <CheckOutTable data={checkouts} />
 

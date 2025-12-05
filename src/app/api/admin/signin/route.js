@@ -42,13 +42,14 @@ export async function POST(req) {
       );
     }
 
- 
+
+
 
     const token = signToken({
       id: user.uid,
       email: user.email,
       role: userData.role,
-     
+
     });
 
     const response = NextResponse.json({

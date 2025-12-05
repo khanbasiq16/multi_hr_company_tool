@@ -10,10 +10,11 @@ export async function POST(req) {
             accountuserName,
             accountuseremail,
             accountuserpassword,
-            accountAddress,
+            accountuseraddress,
+            accountuserphone,
         } = body;
 
-        // Basic validation
+
         if (!accountuserName || !accountuseremail || !accountuserpassword) {
             return NextResponse.json(
                 { success: false, error: "All fields are required" },
@@ -21,7 +22,7 @@ export async function POST(req) {
             );
         }
 
-        // Create user in Firebase Auth
+
         const userCredential = await createUserWithEmailAndPassword(
             auth,
             accountuseremail,
@@ -29,21 +30,22 @@ export async function POST(req) {
         );
 
         const user = userCredential.user;
-        const employeeId = user.uid;
+        const accountId = user.uid;
 
-        // Save user info in Firestore
-        await setDoc(doc(collection(db, "Accounts"), employeeId), {
-            employeeId,
+
+        await setDoc(doc(collection(db, "Accounts"), accountId), {
+            accountId,
             accountuserName,
             accountuseremail,
             accountuserpassword,
-            accountAddress,
+            accountuseraddress,
+            accountuserphone,
             banks: [],
             status: "active",
             createdAt: new Date().toISOString(),
         });
 
-        // Fetch all accounts
+
         const accountsCollection = collection(db, "Accounts");
         const snapshot = await getDocs(accountsCollection);
         const accounts = snapshot.docs.map((doc) => ({
@@ -55,10 +57,12 @@ export async function POST(req) {
             {
                 success: true,
                 message: "Account created successfully",
-                accounts,
+                accounts:accounts,
             },
             { status: 200 }
         );
+
+
     } catch (error) {
         console.error("Error creating account:", error);
 

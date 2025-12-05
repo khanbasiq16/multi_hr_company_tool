@@ -552,6 +552,8 @@ const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmplo
 
       const employee = employees.find((emp) => emp.employeeName === selectedEmployee);
 
+
+
       const res = await axios.post("/api/attendance/delete-attendance", {
         attendanceIds: filteredData,
         employeeId: employee.employeeId,
@@ -577,6 +579,7 @@ const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmplo
 
   }
 
+
   const table = useReactTable({
     data,
     columns,
@@ -601,7 +604,7 @@ const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmplo
           className="w-64"
         />
         <div className="flex gap-4">
-          <AttendanceImportDialog />
+          <AttendanceImportDialog selectedEmployee={selectedEmployee} />
 
           <Button
             variant="destructive"
@@ -1033,7 +1036,7 @@ const ListAllAttendance = () => {
         selectedMonth={selectedMonth}
       />
 
-      <p>Per Absent 10% Deduction</p>
+
     </div>
   );
 };

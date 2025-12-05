@@ -71,6 +71,7 @@ export default function Page() {
           .trim()
           .replace(/\s+/g, "-")
           .toLowerCase();
+          
 
         router.push(`/employee/${slug}`);
       }

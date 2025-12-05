@@ -248,16 +248,18 @@ const Ipwhitelistdialog = ({ open, setOpen }) => {
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    if (entries.length === 0) {
-      toast.error("Network Not found");
-      return;
-    }
+    // if (entries.length === 0) {
+    //   toast.error("Network Not found");
+    //   return;
+    // }
+
+    console.log(entries)
 
     setLoading(true);
     try {
       const res = await axios.post(
         "/api/create-ip-whitelist",
-        { whitelist: entries },
+        { whitelist: entries ? entries : [] },
         { headers: { "Content-Type": "application/json" } }
       );
 
@@ -265,12 +267,10 @@ const Ipwhitelistdialog = ({ open, setOpen }) => {
         toast.success("✅ Whitelist saved successfully");
         dispatch(getallipwhitelist(res.data.whitelist))
         setOpen(false);
-      } else {
-        toast.error(res.data.error || "Failed to save");
-      }
+      } 
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong");
+      toast.error(error.response.data.error);
     } finally {
       setLoading(false);
     }

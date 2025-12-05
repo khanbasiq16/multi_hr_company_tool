@@ -30,10 +30,10 @@ function to12HourFormat(date) {
 
 export async function GET() {
   try {
-    const serverIp = await getServerIp(); // 🌐 get current server public IP
+    const serverIp = await getServerIp(); 
     const employeesSnap = await getDocs(collection(db, "employees"));
 
-    // ✅ Karachi-based today and yesterday
+    
     const today = getKarachiDate();
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);

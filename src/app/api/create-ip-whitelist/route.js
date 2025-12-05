@@ -6,7 +6,7 @@ export async function POST(req) {
   try {
     const { whitelist } = await req.json();
 
-    if (!whitelist || !Array.isArray(whitelist) || whitelist.length === 0) {
+    if (!whitelist || !Array.isArray(whitelist) ) {
       return NextResponse.json(
         { success: false, error: "Whitelist array is required" },
         { status: 400 }

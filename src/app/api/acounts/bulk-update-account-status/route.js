@@ -22,7 +22,7 @@ export async function POST(req) {
         await adminAuth.updateUser(id, { disabled: false });
       }
     }
-
+    
     await batch.commit();
 
 

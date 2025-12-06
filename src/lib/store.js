@@ -18,6 +18,8 @@ import TemplatesReducer from "../features/Slice/TemplateSlice";
 import TimeZoneReducer from "../features/Slice/TimeZoneSlice";
 import ContractReducer from "../features/Slice/ContractsSlice";
 import AccountantReducer from "../features/Slice/AccountantSlice";
+import CurencyReducer from "../features/Slice/CurencySlice";
+import BanksReducer from "../features/Slice/BankSlice";
 
 const rootReducer = combineReducers({
   Acounts: AccountantReducer,
@@ -34,7 +36,9 @@ const rootReducer = combineReducers({
   Stopwatch: StopwatchReducer,
   Templates: TemplatesReducer,
   TimeZone: TimeZoneReducer,
-  Contracts: ContractReducer
+  Contracts: ContractReducer,
+  Curency: CurencyReducer,
+  Banks: BanksReducer,
 
 });
 

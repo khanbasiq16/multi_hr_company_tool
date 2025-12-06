@@ -1,9 +1,10 @@
+"use client"
 import React from "react";
 
 
-const Employeebreadcrumb = ({  slug ,  path , path2 }) => {
+const Employeebreadcrumb = ({ slug, path, path2 }) => {
   return (
-    <div className="bg-white p-6 mb-5 rounded-xl flex justify-between items-center h-[15vh]">
+    <div className="bg-white px-6 py-4 mb-5 rounded-xl flex justify-between items-center ">
       {/* Left - Company Name */}
       <div className="flex flex-col gap-0">
         <h2 className="text-lg font-semibold text-gray-700">{path}</h2>
@@ -12,7 +13,7 @@ const Employeebreadcrumb = ({  slug ,  path , path2 }) => {
         </p>
       </div>
 
-     
+
     </div>
   );
 };

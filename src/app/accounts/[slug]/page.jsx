@@ -1,6 +1,6 @@
 "use client"
 import Accountslayout from "@/app/utils/accounts/layout/Accountslayout";
-import { Users, UserPlus, CreditCard, Settings, ArrowUpRight, Bell } from "lucide-react";
+import { Users, UserPlus, CreditCard, Settings, ArrowUpRight, Bell, Landmark, BanknoteArrowDown } from "lucide-react";
 
 const Page = () => {
     return (
@@ -16,10 +16,10 @@ const Page = () => {
                 {/* Cards Section */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
-                    <DashboardCard icon={<Users />} title="Total Users" value="1,245" growth="+12%" />
-                    <DashboardCard icon={<UserPlus />} title="New Registrations" value="78" growth="+4%" />
-                    <DashboardCard icon={<CreditCard />} title="Active Accounts" value="860" growth="+8%" />
-                    <DashboardCard icon={<Settings />} title="Pending Approvals" value="23" growth="-2%" negative />
+                    <DashboardCard icon={<Landmark />} title="Total Banks" value="1,245" growth="+12%" />
+                    <DashboardCard icon={<CreditCard />} title="Active Accounts" value="78" growth="+4%" />
+                    <DashboardCard icon={<CreditCard />} title="Inactive Accounts" value="860" growth="+8%" />
+                    <DashboardCard icon={<BanknoteArrowDown />} title="Total Transaction" value="23" growth="-2%" negative />
 
                 </div>
 

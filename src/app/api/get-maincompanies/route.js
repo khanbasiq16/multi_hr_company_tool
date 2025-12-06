@@ -15,7 +15,6 @@ export async function GET() {
       ...doc.data(),
     }));
 
-    console.log(companies)
 
     return NextResponse.json({ success: true, companies }, { status: 200 });
   } catch (error) {

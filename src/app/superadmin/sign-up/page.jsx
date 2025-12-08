@@ -1,28 +1,25 @@
 export const dynamic = "force-dynamic";
-import { notFound } from "next/navigation";
+
+import Notfoundcomponent from "@/app/utils/basecomponents/Notfoundcomponent";
 import SignupForm from "@/app/utils/basecomponents/SignupForm";
 
-export default async function Page({ params }) {
+export default async function Page() {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-signup-access`,
-      { cache: "no-store" }
-    );
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/get-signup-access`, {
+      cache: "no-store",
+    });
 
-    if (!res.ok) {
-      throw new Error("Failed to fetch access data");
-    }
+    if (!res.ok) throw new Error("Failed to fetch access data");
 
     const data = await res.json();
-    console.log("Signup Access Response:", data);
 
     if (!data.signupAccess) {
-      notFound();
+      return <Notfoundcomponent />;
     }
 
     return <SignupForm />;
   } catch (err) {
     console.error("Error fetching signup access:", err);
-    notFound();
+    return <p className="text-center text-red-500 mt-10">Unable to load signup access.</p>;
   }
 }

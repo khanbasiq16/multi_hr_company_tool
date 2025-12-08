@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
 import SignupForm from "@/app/utils/basecomponents/SignupForm";
 
@@ -16,7 +17,6 @@ export default async function Page({ params }) {
     console.log("Signup Access Response:", data);
 
     if (!data.signupAccess) {
-      // ❌ access denied → 404 page
       notFound();
     }
 

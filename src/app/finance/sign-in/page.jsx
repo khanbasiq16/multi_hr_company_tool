@@ -72,7 +72,6 @@ export default function Page() {
                     .replace(/\s+/g, "-")
                     .toLowerCase();
 
-
                 router.push(`/accounts/${slug}`);
             }
         } catch (error) {

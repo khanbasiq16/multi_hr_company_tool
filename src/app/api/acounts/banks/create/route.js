@@ -15,16 +15,6 @@ export async function POST(req) {
     try {
         const body = await req.json();
 
-        const companyRef = doc(db, "companies", body.linkedCompany);
-        const companySnap = await getDoc(companyRef);
-
-        if (!companySnap.exists()) {
-            return NextResponse.json(
-                { success: false, error: "Company not found" },
-                { status: 404 }
-            );
-        }
-
         const acountseref = doc(db, "Accounts", body.userid);
         const acountsnap = await getDoc(acountseref);
 
@@ -45,20 +35,19 @@ export async function POST(req) {
             branchCode: body?.branchCode,
             iban: body?.iban,
             balance: body?.balance,
-            linkedCompany: body?.linkedCompany,
             currency: body?.currency,
             notes: body?.notes,
+            bankslug: body?.bankTitle.toLowerCase().replace(/\s+/g, "-"),
             userid: body?.userid,
             Transaction: [],
+            Transferlogs: [],
+            Loanlogs: [],
             banks: [],
             status: "active",
             createdAt: new Date().toISOString(),
         });
 
 
-        await updateDoc(companyRef, {
-            banks: arrayUnion(bankid),
-        });
 
         await updateDoc(acountseref, {
             banks: arrayUnion(bankid),

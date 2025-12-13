@@ -6,11 +6,11 @@ import { v4 as uuidv4 } from "uuid";
 export async function POST(req) {
     try {
         const body = await req.json();
-        const { currenyName, currencyCode, currencySymbol } = body;
-        const curencyid = uuidv4()
+        const { currenyName, currencyCode, currencySymbol  , Curencyrate} = body;
+        const curencyid = uuidv4();
 
 
-        if (!currenyName || !currencyCode || !currencySymbol) {
+        if (!currenyName || !currencyCode || !currencySymbol || !Curencyrate) {
             return NextResponse.json(
                 { error: "Curency Data are required" },
                 { status: 400 }
@@ -22,6 +22,7 @@ export async function POST(req) {
             currenyName,
             currencyCode,
             currencySymbol,
+            Curencyrate,
             createdAt: new Date().toISOString(),
         });
 

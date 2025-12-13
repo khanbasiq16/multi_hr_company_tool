@@ -54,7 +54,7 @@ const Listbanks = () => {
                                 <div className="flex items-center gap-2">
                                     <Wallet className="w-4 h-4 text-green-600" />
                                     <span className="font-semibold">
-                                        {bank.currency?.currencyCode} {bank.balance}
+                                        {parseFloat(bank.balance).toLocaleString()} {bank.currency?.symbol}
                                     </span>
                                 </div>
 
@@ -74,7 +74,7 @@ const Listbanks = () => {
                                     size="sm"
                                     className="w-full"
                                     onClick={() => router.push(
-                                        `/accounts/${slug}/bank/${bank.banktitle?.trim()?.toLowerCase()?.replace(/\s+/g, "-")
+                                        `/accounts/${slug}/bank/${bank?.bankslug
                                         }`
                                     )}
 

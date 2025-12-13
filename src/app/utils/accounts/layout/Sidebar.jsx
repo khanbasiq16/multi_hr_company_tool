@@ -15,6 +15,9 @@ import {
     Settings,
     Calendar1,
     ArrowBigLeft,
+    ArrowRightLeft,
+    BadgeDollarSign,
+    Receipt,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -44,55 +47,45 @@ const Sidebar = () => {
         },
         {
             href: `/accounts/${employeeSlug}/banks`,
-            label: "Banks",
+            label: "Bank Accounts",
             icon: <BanknoteArrowDown className="w-4 h-4 2xl:w-5 2xl:h-5" />,
         },
 
-
     ];
-
-    // Add Companies if Sales
-    if (
-        user?.department?.departmentName?.toLowerCase() === "sales"
-    ) {
-        dashboardLinks.splice(1, 0, {
-            href: `/accounts/${employeeSlug}/companies`,
-            label: "Companies",
-            icon: <Calendar className="w-4 h-4 2xl:w-5 2xl:h-5" />,
-        });
-    }
 
     const parts = pathname.split("/");
     const companyId = parts[4] || null;
 
-    const shouldShow = pathname.startsWith(`/accounts/${employeeSlug}/company`);
+    const shouldShow = pathname.startsWith(`/accounts/${employeeSlug}/bank/${companyId}`);
+
+    console.log("shouldShow", shouldShow);
 
     const companyDetailsLinks = companyId
         ? [
             {
-                href: `/accounts/${employeeSlug}/company/${companyId}`,
+                href: `/accounts/${employeeSlug}/bank/${companyId}`,
                 label: "General",
                 icon: <Home className="w-4 h-4 2xl:w-5 2xl:h-5" />,
             },
             {
-                href: `/accounts/${employeeSlug}/company/${companyId}/clients`,
-                label: "Clients",
-                icon: <PersonStanding className="w-4 h-4 2xl:w-5 2xl:h-5" />,
+                href: `/accounts/${employeeSlug}/bank/${companyId}/transfer`,
+                label: "Transfer",
+                icon: <ArrowRightLeft className="w-4 h-4 2xl:w-5 2xl:h-5" />,
             },
             {
-                href: `/accounts/${employeeSlug}/company/${companyId}/invoices`,
-                label: "Invoice",
-                icon: <CardSim className="w-4 h-4 2xl:w-5 2xl:h-5" />,
+                href: `/accounts/${employeeSlug}/bank/${companyId}/loans`,
+                label: "Loans",
+                icon: <BadgeDollarSign className="w-4 h-4 2xl:w-5 2xl:h-5" />,
             },
             {
-                href: `/accounts/${employeeSlug}/company/${companyId}/contracts`,
-                label: "Contracts",
-                icon: <CardSim className="w-4 h-4 2xl:w-5 2xl:h-5" />,
+                href: `/accounts/${employeeSlug}/bank/${companyId}/expenses`,
+                label: "Expense",
+                icon: <Receipt className="w-4 h-4 2xl:w-5 2xl:h-5" />,
             },
         ]
         : [];
 
-    const links = pathname.startsWith(`/employee/${employeeSlug}/company`)
+    const links = pathname.startsWith(`/accounts/${employeeSlug}/bank/${companyId}`)
         ? companyDetailsLinks
         : dashboardLinks;
 
@@ -153,7 +146,7 @@ const Sidebar = () => {
 
         `}
             >
-               
+
                 <div>
                     <nav className="flex flex-col gap-2 text-sm md:text-base ">
                         {links.map((link) => {
@@ -181,7 +174,7 @@ const Sidebar = () => {
                 <div className="flex flex-col gap-2 text-sm md:text-base 2xl:text-lg mt-6">
                     {shouldShow && (
                         <Link
-                            href={`/employee/${employeeSlug}`}
+                            href={`/accounts/${employeeSlug}`}
                             className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100"
                         >
                             <ArrowBigLeft className="w-4 h-4 2xl:w-5 2xl:h-5" /> Back
@@ -190,7 +183,7 @@ const Sidebar = () => {
 
 
                     <Link
-                        href={`/employee/${employeeSlug}/settings`}
+                        href={`/accounts/${employeeSlug}/settings`}
                         className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100"
                     >
                         <Settings className="w-4 h-4 2xl:w-5 2xl:h-5" /> Settings

@@ -1,8 +1,5 @@
-
-
-
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -15,21 +12,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import toast from "react-hot-toast";
 import { Textarea } from "@/components/ui/textarea";
+import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import { Pencil } from "lucide-react";
 import { createallBanks } from "@/features/Slice/BankSlice";
+import { useRouter } from "next/navigation";
 
-const BankDialog = ({ open, setOpen }) => {
+const EditBankDialog = ({ open, setOpen, bankData, setBank }) => {
 
     const { companies } = useSelector((state) => state.Company);
     const { user } = useSelector((state) => state.User);
     const { curency } = useSelector((state) => state.Curency);
+    const router = useRouter();
 
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
-
 
     const [formData, setFormData] = useState({
         bankTitle: "",
@@ -38,55 +37,61 @@ const BankDialog = ({ open, setOpen }) => {
         branchCode: "",
         iban: "",
         balance: "",
+        linkedCompany: "",
         currency: {
-            code: curency[0]?.currencyCode,
-            symbol: curency[0]?.currencySymbol,
-            CurencyName: curency[0]?.currencyName,
-            rate: curency[0]?.Curencyrate
+            code: "USD",
+            symbol: "$",
         },
         notes: "",
     });
 
-    // handle normal input
+    useEffect(() => {
+        if (bankData) {
+            setFormData({
+                bankTitle: bankData.banktitle || "",
+                accountHolderName: bankData.accountHolderName || "",
+                accountType: bankData.accountType || "Current",
+                branchCode: bankData.branchCode || "",
+                iban: bankData.iban || "",
+                balance: bankData.balance || "",
+                linkedCompany: bankData.linkedCompany || "",
+                currency: bankData.currency || { code: "USD", symbol: "$" },
+                notes: bankData.notes || "",
+            });
+        }
+    }, [bankData]);
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-
-    // ******** Currency onchange ********
     const handleCurrencySelect = (currencyCode) => {
         const selected = curency.find(c => c.currencyCode === currencyCode);
-
-
-        console.log(selected)
         setFormData({
             ...formData,
             currency: {
                 code: selected.currencyCode,
                 symbol: selected.currencySymbol,
-                CurencyName: selected.currencyName,
-                rate: selected.Curencyrate
+                CurencyName: selected.currencyName
             }
         });
     };
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            setLoading(true)
+            setLoading(true);
 
-
-
-            const res = await axios.post("/api/acounts/banks/create", {
+            const res = await axios.post(`/api/acounts/banks/update-bank/${bankData.bankid}`, {
                 ...formData,
-                userid: user?.accountId
             });
 
             if (res.data.success) {
-                dispatch(createallBanks(res.data.banks));
-                toast.success("Bank account added successfully!");
+                setBank(res.data.bank);
+                toast.success(res.data.message);
                 setOpen(false);
+
+                router.push(`/accounts/${user?.accountuserName.toLowerCase().replace(/\s+/g, "-")}/bank/${res?.data?.bank?.bankslug}`);
             }
         } catch (error) {
             toast.error(error.response?.data?.error || "Something went wrong");
@@ -95,16 +100,15 @@ const BankDialog = ({ open, setOpen }) => {
         }
     };
 
-
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="bg-[#5965AB] text-white">+ Add Bank Account</Button>
+                <Button className="bg-[#5965AB] text-white"> <Pencil className="mr-2" /> Edit Bank</Button>
             </DialogTrigger>
 
             <DialogContent className="sm:max-w-[700px]">
                 <DialogHeader>
-                    <DialogTitle>Add New Bank Account</DialogTitle>
+                    <DialogTitle> Edit Bank</DialogTitle>
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="space-y-4 mt-4">
@@ -160,21 +164,17 @@ const BankDialog = ({ open, setOpen }) => {
                         </div>
 
                         <div>
-                            <Label>Initial Balance</Label>
-                            <div className="flex">
-                                <span className="px-3 bg-gray-200 border border-r-0 rounded-l-md flex items-center">
-                                    {formData.currency.symbol}
-                                </span>
-
-                                <Input name="balance" type="number"
-                                    className="rounded-none rounded-r-md  [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                                    placeholder="Enter Balance"
-                                    value={formData.balance}
-                                    onChange={handleChange} required />
-                            </div>
+                            <Label>Linked Company</Label>
+                            <Select value={formData.linkedCompany}
+                                onValueChange={(value) => setFormData({ ...formData, linkedCompany: value })}>
+                                <SelectTrigger><SelectValue placeholder="Select Company" /></SelectTrigger>
+                                <SelectContent>
+                                    {companies?.length > 0 ?
+                                        companies.map((c) => <SelectItem key={c.companyId} value={c.companyId}>{c.name}</SelectItem>)
+                                        : <SelectItem disabled>No Companies Found</SelectItem>}
+                                </SelectContent>
+                            </Select>
                         </div>
-
-
 
                         <div className="col-span-2">
                             <Label>Notes</Label>
@@ -185,7 +185,7 @@ const BankDialog = ({ open, setOpen }) => {
 
                     <DialogFooter>
                         <Button type="submit" className="bg-[#5965AB] text-white" disabled={loading}>
-                            {loading ? "Saving..." : "Add Bank"}
+                            {loading ? "Saving..." : "Update Bank"}
                         </Button>
                     </DialogFooter>
                 </form>
@@ -194,4 +194,4 @@ const BankDialog = ({ open, setOpen }) => {
     );
 };
 
-export default BankDialog;
+export default EditBankDialog;

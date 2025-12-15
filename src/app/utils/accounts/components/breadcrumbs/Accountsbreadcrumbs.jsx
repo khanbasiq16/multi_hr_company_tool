@@ -1,6 +1,6 @@
 import React from "react";
-
 import Bankdailog from "../dialog/Bankdailog";
+import Expensesdailog from "../dialog/Expensesdailog";
 
 const Accountsbreadcrumbs = ({ path, path2 }) => {
     const [open, setOpen] = React.useState(false);
@@ -10,13 +10,15 @@ const Accountsbreadcrumbs = ({ path, path2 }) => {
             <div className="flex flex-col gap-0">
                 <h2 className="text-lg font-semibold text-gray-700">{path}</h2>
                 <p className="text-gray opacity-80 text-xs">
-                    home {">"} {path.toLowerCase()}{" "}
+                    home {path ? `> ${path.toLowerCase()}` : ""}
                     {path2 ? `> ${path2.toLowerCase()}` : ""}
                 </p>
             </div>
 
             {path2 === "Banks" ? (
                 <Bankdailog open={open} setOpen={setOpen} />
+            ) : path2 === "Expenses" ? (
+                <Expensesdailog />
             ) : null}
         </div>
     );

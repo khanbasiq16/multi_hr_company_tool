@@ -47,9 +47,8 @@ const page = () => {
         <>
             <Accountslayout>
                 <section className="w-full p-6">
-                    <Accountsbankbreadcrumbs path={"Loans"} bank={bank} setBank={setBank} />
+                    {/* <Accountsbankbreadcrumbs path={"Loans"} bank={bank} setBank={setBank} /> */}
 
-                    {loading ? <BankLoader /> : <Loantransactionlogs logs={bank?.Loanlogs}  bank={bank} setBank={setBank} />}
 
                 </section>
             </Accountslayout>
@@ -58,3 +57,4 @@ const page = () => {
 }
 
 export default page
+

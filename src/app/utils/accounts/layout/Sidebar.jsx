@@ -18,6 +18,7 @@ import {
     ArrowRightLeft,
     BadgeDollarSign,
     Receipt,
+    DollarSign,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -50,15 +51,22 @@ const Sidebar = () => {
             label: "Bank Accounts",
             icon: <BanknoteArrowDown className="w-4 h-4 2xl:w-5 2xl:h-5" />,
         },
-
+        {
+            href: `/accounts/${employeeSlug}/tax`,
+            label: "Taxes",
+            icon: <DollarSign className="w-4 h-4 2xl:w-5 2xl:h-5" />,
+        },
+        // {
+        //     href: `/accounts/${employeeSlug}/expenses`,
+        //     label: "Expense",
+        //     icon: <Receipt className="w-4 h-4 2xl:w-5 2xl:h-5" />,
+        // },
     ];
 
     const parts = pathname.split("/");
     const companyId = parts[4] || null;
 
     const shouldShow = pathname.startsWith(`/accounts/${employeeSlug}/bank/${companyId}`);
-
-    console.log("shouldShow", shouldShow);
 
     const companyDetailsLinks = companyId
         ? [
@@ -77,11 +85,7 @@ const Sidebar = () => {
                 label: "Loans",
                 icon: <BadgeDollarSign className="w-4 h-4 2xl:w-5 2xl:h-5" />,
             },
-            {
-                href: `/accounts/${employeeSlug}/bank/${companyId}/expenses`,
-                label: "Expense",
-                icon: <Receipt className="w-4 h-4 2xl:w-5 2xl:h-5" />,
-            },
+
         ]
         : [];
 

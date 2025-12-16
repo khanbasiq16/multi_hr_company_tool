@@ -11,9 +11,10 @@ const page = () => {
             <Accountslayout>
 
                 <section className="w-full p-6">
-                    <Accountsbreadcrumbs path={"Expenses"} />
+                    <Accountsbreadcrumbs path2={"Expenses"} />
 
-                    
+
+
 
                 </section>
             </Accountslayout>

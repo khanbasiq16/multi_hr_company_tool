@@ -33,6 +33,7 @@ export async function POST(req) {
             id: doc.id,
             ...doc.data(),
         }));
+        
 
         const response = NextResponse.json({
             message: `Currency Added successfully`,

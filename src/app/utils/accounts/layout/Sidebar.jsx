@@ -56,11 +56,11 @@ const Sidebar = () => {
             label: "Taxes",
             icon: <DollarSign className="w-4 h-4 2xl:w-5 2xl:h-5" />,
         },
-        // {
-        //     href: `/accounts/${employeeSlug}/expenses`,
-        //     label: "Expense",
-        //     icon: <Receipt className="w-4 h-4 2xl:w-5 2xl:h-5" />,
-        // },
+        {
+            href: `/accounts/${employeeSlug}/expenses`,
+            label: "Expense",
+            icon: <Receipt className="w-4 h-4 2xl:w-5 2xl:h-5" />,
+        },
     ];
 
     const parts = pathname.split("/");

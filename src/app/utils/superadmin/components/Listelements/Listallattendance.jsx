@@ -80,7 +80,7 @@ const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmplo
         filteredData.push(selectedRows[i].attendanceId);
       }
 
-      const employee = employees.find((emp) => emp.employeeName === selectedEmployee);
+      const employee = employees?.find((emp) => emp.employeeName === selectedEmployee);
 
 
 
@@ -117,7 +117,7 @@ const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmplo
     try {
       const attendanceIds = selectedRows.map(row => row.attendanceId);
 
-      const employee = employees.find(
+      const employee = employees?.find(
         (emp) => emp.employeeName === selectedEmployee
       );
 
@@ -186,7 +186,7 @@ const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmplo
   return (
     <div className="space-y-4">
       {/* Search & Delete */}
-   
+
 
 
       <div className="flex flex-col gap-3 mb-2 sm:flex-row sm:justify-between sm:items-center">
@@ -378,7 +378,7 @@ const ListAllAttendance = () => {
 
   const filteredAttendance = useMemo(() => {
     if (!selectedEmployee) return [];
-    const employee = employees.find(
+    const employee = employees?.find(
       (emp) => emp.employeeName === selectedEmployee
     );
     if (!employee) return [];
@@ -461,7 +461,7 @@ const ListAllAttendance = () => {
 
   const totalDeduction = useMemo(() => {
     if (!selectedEmployee || activeTab !== "checkin") return 0;
-    const selectedEmp = employees.find(
+    const selectedEmp = employees?.find(
       (emp) => emp.employeeName === selectedEmployee
     );
     if (!selectedEmp) return 0;
@@ -567,7 +567,7 @@ const ListAllAttendance = () => {
     }));
   }, [filteredAttendance, activeTab]);
 
-  const selectedEmp = employees.find(
+  const selectedEmp = employees?.find(
     (emp) => emp.employeeName === selectedEmployee
   );
   const totalSalary = selectedEmp?.employeeSalary || 0;
@@ -606,9 +606,9 @@ const ListAllAttendance = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="All">Select Employee</SelectItem>
-            {employees.map((emp) => (
-              <SelectItem key={emp.id} value={emp.employeeName}>
-                {emp.employeeName}
+            {employees?.map((emp) => (
+              <SelectItem key={emp?.id} value={emp?.employeeName}>
+                {emp?.employeeName}
               </SelectItem>
             ))}
           </SelectContent>

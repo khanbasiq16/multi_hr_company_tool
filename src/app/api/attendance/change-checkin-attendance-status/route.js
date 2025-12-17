@@ -43,22 +43,17 @@ export async function POST(req) {
         await updateDoc(empRef, { Attendance: updatedAttendance });
 
 
-        const employeeRef = collection(db, "employees");
+        const employeesRef = collection(db, "employees");
+        const employeesSnap = await getDocs(employeesRef);
+        const employees = employeesSnap.docs.map((doc) => doc.data());
 
-        const snapshot = await getDocs(employeeRef);
 
-        const employees = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
 
         return NextResponse.json({
             success: true,
             message: "Attendance status updated successfully",
-            allemployees: employees
+            allemployees: employees,
         });
-
-
     } catch (error) {
         console.error("Error updating Firebase:", error);
         return NextResponse.json(

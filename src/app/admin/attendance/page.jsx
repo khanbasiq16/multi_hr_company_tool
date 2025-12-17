@@ -10,37 +10,38 @@ import { useDispatch } from 'react-redux'
 const page = () => {
 
 
-   const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const getAllDepartments = async () => {
       try {
         const res = await axios.get("/api/get-all-employees");
 
+
         dispatch(createemployees(res.data?.employees || []));
-        
+
       } catch (error) {
         console.error("Error fetching departments:", error);
-      } 
+      }
     };
-  
+
     getAllDepartments();
   }, []);
-  
+
 
 
   return (
     <>
-    <SuperAdminlayout>
+      <SuperAdminlayout>
         <section className="w-full p-6">
-            <Superbreadcrumb path={"Attendance"}/>
-            
-            <Listallattendance />
+          <Superbreadcrumb path={"Attendance"} />
+
+          <Listallattendance />
 
 
-            
+
         </section>
-    </SuperAdminlayout>
+      </SuperAdminlayout>
     </>
   )
 }

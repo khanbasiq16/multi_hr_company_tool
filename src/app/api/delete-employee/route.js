@@ -25,7 +25,7 @@ export async function POST(req) {
         console.error(`❌ Failed to delete ${empId}:`, err.message);
       }
     }
-
+    
     // 3️⃣ Fetch updated employees list
     const snapshot = await getDocs(collection(db, "employees"));
     const employees = snapshot.docs.map((doc) => ({

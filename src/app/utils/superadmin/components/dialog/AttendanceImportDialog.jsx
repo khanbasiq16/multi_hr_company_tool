@@ -14,12 +14,14 @@ import {
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Plus } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { createemployees } from "@/features/Slice/EmployeeSlice";
 
 const AttendanceImportDialog = ({ selectedEmployee }) => {
     const [open, setOpen] = useState(false);
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
+    const dispatch = useDispatch();
 
     const { employees } = useSelector((state) => state.Employee);
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -42,12 +44,13 @@ const AttendanceImportDialog = ({ selectedEmployee }) => {
 
             const filteredEmployee = employees.find(emp => emp.employeeName === selectedEmployee);
 
-            console.log(filteredEmployee);
-
-
+            const resIp = await fetch("https://api.ipify.org?format=json");
+            const { ip: clientIp } = await resIp.json();
             const formData = new FormData();
+
             formData.append("file", file);
-            formData.append("employeeId", filteredEmployee.employeeId);
+            formData.append("employeeId", filteredEmployee?.id);
+            formData.append("clientIp", clientIp);
 
             const response = await axios.post("/api/attendance/import", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
@@ -58,14 +61,17 @@ const AttendanceImportDialog = ({ selectedEmployee }) => {
             });
 
             if (response.data.success) {
-
                 setImportStatus({
                     processed: 100,
                     total: 100,
                     progress: 100,
                     status: "Import Completed",
                 });
+
+                dispatch(createemployees(response.data.allEmployees));
                 toast.success("Attendance imported successfully!");
+
+                setOpen(false);
             } else {
                 throw new Error(response.data.error || "Import failed");
             }
@@ -105,11 +111,47 @@ const AttendanceImportDialog = ({ selectedEmployee }) => {
 
                     {/* Upload Progress */}
                     {loading && (
-                        <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-blue-600 transition-all"
-                                style={{ width: `${uploadProgress}%` }}
-                            />
+                        <div className="flex flex-col items-center gap-3">
+                            <svg width="120" height="120">
+                                <circle
+                                    cx="60"
+                                    cy="60"
+                                    r="45"
+                                    stroke="#e5e7eb"
+                                    strokeWidth="6"
+                                    fill="none"
+                                />
+                                <circle
+                                    cx="60"
+                                    cy="60"
+                                    r="45"
+                                    stroke="#2563eb"
+                                    strokeWidth="6"
+                                    fill="none"
+                                    strokeLinecap="round"
+                                    strokeDasharray={2 * Math.PI * 45}
+                                    strokeDashoffset={
+                                        (2 * Math.PI * 45) -
+                                        (uploadProgress / 100) * (2 * Math.PI * 45)
+                                    }
+                                    style={{ transition: "stroke-dashoffset 0.4s" }}
+                                />
+                                <text
+                                    x="50%"
+                                    y="50%"
+                                    textAnchor="middle"
+                                    dy=".3em"
+                                    className="text-sm font-semibold fill-blue-600"
+                                >
+                                    {uploadProgress}%
+                                </text>
+                            </svg>
+
+                            <p className="text-sm text-gray-600">
+                                {uploadProgress < 100
+                                    ? "Uploading attendance..."
+                                    : "Upload completed ✅"}
+                            </p>
                         </div>
                     )}
 

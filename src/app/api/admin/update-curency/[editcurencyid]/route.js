@@ -7,10 +7,7 @@ export async function POST(req, { params }) {
         const body = await req.json();
         const { editcurencyid } = params;
         const { currenyName, currencyCode, currencySymbol, Curencyrate } = body;
-
-        console.log(body)
-
-
+        
         // ✅ Validation
         if (!currenyName || !currencyCode || !currencySymbol || !Curencyrate) {
             return NextResponse.json(

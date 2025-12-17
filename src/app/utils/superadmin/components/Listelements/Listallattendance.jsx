@@ -29,11 +29,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import MonthPicker from "../basecomponent/MonthPicker";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Listallattendancewithgraph from "./Listallattendancewithgraph";
 import axios from "axios";
 import toast from "react-hot-toast";
 import AttendanceImportDialog from "../dialog/AttendanceImportDialog";
+import { createemployees } from "@/features/Slice/EmployeeSlice";
 
 /* Status Badge Component */
 const StatusBadge = ({ status }) => {
@@ -61,11 +62,12 @@ const StatusBadge = ({ status }) => {
 };
 
 /* DataTable Component */
-const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmployee, setSelectedEmployee }) => {
+const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmployee, setSelectedEmployee, activeTab }) => {
   const [globalFilter, setGlobalFilter] = useState("");
   const [deleteloading, setDeleteloading] = useState(false);
 
   const { employees } = useSelector((state) => state.Employee);
+  const dispatch = useDispatch()
 
   const handledatadelete = async (selectedRows) => {
     setDeleteloading(true);
@@ -108,8 +110,49 @@ const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmplo
   }
 
 
+  const handlechangestatus = async (status, selectedRows) => {
+
+    toast.loading("Updating Attendance Status...");
+
+    try {
+      const attendanceIds = selectedRows.map(row => row.attendanceId);
+
+      const employee = employees.find(
+        (emp) => emp.employeeName === selectedEmployee
+      );
+
+
+      let url = activeTab === "checkin" ? "/api/attendance/change-checkin-attendance-status" : "/api/attendance/change-checkout-attendance-status"
+
+      const res = await axios.post(url, {
+        ids: attendanceIds,
+        employeeid: employee.employeeId,
+        status,
+      }
+        , {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (res.data.success) {
+        toast.success(res.data.message);
+        dispatch(createemployees(res.data.allemployees))
+        toast.dismiss();
+      }
+
+    } catch (error) {
+      console.log(error.message);
+      console.log(error);
+      toast.error("Attendance update failed");
+      toast.dismiss();
+    }
+
+  };
+
+
   const table = useReactTable({
-    data,
+    data: data,
     columns,
     state: { globalFilter, rowSelection },
     onGlobalFilterChange: setGlobalFilter,
@@ -121,34 +164,119 @@ const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmplo
     getSortedRowModel: getSortedRowModel(),
   });
 
+
+
+  const CHECKIN_STATUSES = [
+    "On Time",
+    "Late",
+    "Half Day",
+    "Short Day",
+    "Absent",
+  ];
+
+
+  const CHECKOUT_STATUSES = [
+    "On Time Check Out",
+    "Late Check Out",
+    "Early Check Out",
+    "Absent",
+  ];
+
+
   return (
     <div className="space-y-4">
       {/* Search & Delete */}
-      <div className="flex justify-between items-center mb-2">
-        <Input
-          placeholder="Search attendance..."
-          value={globalFilter ?? ""}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="w-64"
-        />
-        <div className="flex gap-4">
+   
+
+
+      <div className="flex flex-col gap-3 mb-2 sm:flex-row sm:justify-between sm:items-center">
+
+        {/* LEFT SIDE */}
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+
+          {/* Search */}
+          <Input
+            placeholder="Search attendance..."
+            value={globalFilter ?? ""}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            className="w-full sm:w-64"
+          />
+
+          {/* Change Status Select */}
+          {Object.keys(rowSelection).length > 0 && (
+            <>
+              {activeTab === "checkin" ? (
+                <Select
+                  onValueChange={(status) =>
+                    handlechangestatus(
+                      status,
+                      table.getSelectedRowModel().rows.map(row => row.original)
+                    )
+                  }
+                >
+                  <SelectTrigger className="w-full sm:w-48">
+                    <SelectValue placeholder="Change Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CHECKIN_STATUSES.map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {status}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Select
+                  onValueChange={(status) =>
+                    handlechangestatus(
+                      status,
+                      table.getSelectedRowModel().rows.map(row => row.original)
+                    )
+                  }
+                >
+                  <SelectTrigger className="w-full sm:w-48">
+                    <SelectValue placeholder="Change Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CHECKOUT_STATUSES.map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {status}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* RIGHT SIDE */}
+        <div className="flex justify-between gap-3 sm:justify-end sm:items-center">
+
           <AttendanceImportDialog selectedEmployee={selectedEmployee} />
 
           <Button
             variant="destructive"
+            className="w-10 sm:w-auto"
             disabled={deleteloading || Object.keys(rowSelection).length === 0}
             onClick={() => {
               const selectedRows = table.getSelectedRowModel().rows.map(row => row.original);
               handledatadelete(selectedRows);
             }}
           >
-            {deleteloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+            {deleteloading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Trash2 className="w-4 h-4" />
+            )}
           </Button>
+
         </div>
       </div>
 
+
       {/* Table */}
-      <div className="rounded-md border overflow-hidden">
+      <div className="rounded-md border overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-gray-100 dark:bg-gray-800">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -531,6 +659,7 @@ const ListAllAttendance = () => {
               setRowSelection={setRowSelection}
               selectedEmployee={selectedEmployee}
               setSelectedEmployee={setSelectedEmployee}
+              activeTab={activeTab}
             />
           ) : (
             <p className="text-center text-gray-500 dark:text-gray-400 mt-6">
@@ -548,6 +677,7 @@ const ListAllAttendance = () => {
               setRowSelection={setRowSelection}
               selectedEmployee={selectedEmployee}
               selectedEmployeeData={setSelectedEmployee}
+              activeTab={activeTab}
             />
           ) : (
             <p className="text-center text-gray-500 dark:text-gray-400 mt-6">
@@ -570,3 +700,5 @@ const ListAllAttendance = () => {
 };
 
 export default ListAllAttendance;
+
+

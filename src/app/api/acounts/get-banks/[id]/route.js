@@ -6,7 +6,6 @@ export async function GET(req, { params }) {
   try {
     const { id } = params;
 
-
     if (!id) {
       return NextResponse.json(
         { success: false, error: "User ID is required" },
@@ -21,7 +20,7 @@ export async function GET(req, { params }) {
 
     if (snapshot.empty) {
       return NextResponse.json(
-        { success: false, message: "No banks found for this user" },
+        { success: false, error: "No banks found for this user" },
         { status: 404 }
       );
     }
@@ -30,6 +29,7 @@ export async function GET(req, { params }) {
       id: doc.id,
       ...doc.data(),
     }));
+
 
 
     return NextResponse.json({

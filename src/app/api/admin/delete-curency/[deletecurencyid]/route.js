@@ -29,8 +29,6 @@ export async function POST(req, { params }) {
         // ✅ Delete document
         await deleteDoc(currencyDocRef);
 
-
-
         // ✅ Fetch all currencies after update
         const currencyRef = collection(db, "currency");
         const currencySnapshots = await getDocs(currencyRef);

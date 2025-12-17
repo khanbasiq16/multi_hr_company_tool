@@ -13,4 +13,7 @@ if (!admin.apps.length) {
 const adminAuth = admin.auth();
 const adminDb = admin.firestore();
 
-export { admin, adminAuth, adminDb };
+// ✅ Add Firebase Cloud Messaging
+const fcmAdmin = admin.messaging();
+
+export { admin, adminAuth, adminDb , fcmAdmin };

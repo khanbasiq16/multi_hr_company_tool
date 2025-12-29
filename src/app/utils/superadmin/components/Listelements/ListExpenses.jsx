@@ -1,58 +1,70 @@
-
 "use client";
-import React, { useState, useEffect } from "react";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Building2, MapPin, Phone } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { createcompany } from "@/features/Slice/CompanySlice";
-import Companydailog from "../dialog/Companydailog";
-import { useDispatch, useSelector } from "react-redux";
-import { getallexpense } from "@/features/Slice/ExpenseSlice";
-import Expensedailog from "../dialog/Expensedailog";
+import { useSelector } from "react-redux";
+import ExpensesCatdailog from "../dialog/ExpensesCatdailog";
+import ExpenseDialog from "../dialog/ExpenseDialog";
 import Expensetable from "../Tables/ExpenseTable";
 
 
-const ListExpenses = () => {
-  const [loading, setLoading] = useState(true);
-  const router = useRouter()
-  const dispatch = useDispatch();
-  const { expenses } = useSelector((state) => state.Expense);
 
+const Listexpense = ({ bankaccounts, expenses, setExpenses }) => {
+  const { user } = useSelector((state) => state.User);
+
+  const [expenseCategory, setExpenseCategory] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchExpense = async () => {
-      try {
-        const res = await axios.get("/api/get-all-expense");
+    if (!user?.accountId) return;
 
-        dispatch(getallexpense(res.data?.expenses || []));
-      } catch (error) {
-        console.error("Error fetching companies:", error);
-        setCompanies([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+    setLoading(true);
 
-    fetchExpense();
-  }, []);
+    Promise.all([
+      axios.get(`/api/acounts/expenses/get-expense-category`),
+
+    ])
+      .then(([catRes]) => {
+        if (catRes.data?.success) {
+          setExpenseCategory(catRes.data.expensesCategories || []);
+        }
+
+      })
+      .catch((err) => {
+        console.error("Expense fetch error:", err);
+      })
+      .finally(() => setLoading(false));
+  }, [user?.accountId]);
 
   return (
-    <Card className="p-6 rounded-xl shadow-md flex flex-col h-[64vh] overflow-auto">
-      {loading ? (
-        <p className="text-center text-gray-500">Loading expenses...</p>
-      ) : expenses.length === 0 ? (
-        <div className="flex h-full justify-center items-center">
-          <Expensedailog />
-        </div>
-      ) : (
-        <>
-        <Expensetable expenses={expenses}/>
-        </>
-      )}
-    </Card>
-  )
-}
+    <div className="bg-white p-6 rounded-xl shadow-md flex flex-col h-[64vh] overflow-auto">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold">Expenses</h2>
+        <ExpensesCatdailog categories={expenseCategory} />
+      </div>
 
-export default ListExpenses
+      {loading && (
+        <div className="flex h-full justify-center items-center">
+          <BankLoader />
+        </div>
+      )}
+
+
+      {!loading && expenses.length === 0 && (
+        <div className="flex h-full justify-center items-center">
+          <ExpenseDialog expensesCategories={expenseCategory} bankaccounts={bankaccounts} setExpenses={setExpenses} />
+        </div>
+      )}
+
+
+      {!loading && expenses.length > 0 && (
+        <Expensetable
+          expenses={expenses}
+          expenseCategory={expenseCategory}
+        />
+      )}
+    </div>
+  );
+};
+
+export default Listexpense;

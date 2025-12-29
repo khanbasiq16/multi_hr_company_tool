@@ -1,11 +1,10 @@
-"use client";
-
-import Accountsbreadcrumbs from '@/app/utils/accounts/components/breadcrumbs/Accountsbreadcrumbs';
-import Listexpense from '@/app/utils/accounts/components/Listelements/Listexpense';
-import Accountslayout from '@/app/utils/accounts/layout/Accountslayout';
+"use client"
+import Superbreadcrumb from '@/app/utils/superadmin/components/breadcrumbs/Superbreadcrumb';
+import ListExpenses from '@/app/utils/superadmin/components/Listelements/ListExpenses';
+import SuperAdminlayout from '@/app/utils/superadmin/layout/SuperAdmin';
 import axios from 'axios';
 import { useParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 
 const page = () => {
@@ -15,10 +14,10 @@ const page = () => {
     const [expensesCategories, setExpensesCategories] = useState([]);
     const [expenses, setExpenses] = useState([]);
     const [bankaccounts, setBankaccounts] = useState([]);
-    const[loading , setLoading ]=useState(false)
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-        if (!user?.accountId) return;
+        if (!user) return;
 
         const fetchData = async () => {
             try {
@@ -28,24 +27,22 @@ const page = () => {
                     bankRes
                 ] = await Promise.all([
                     axios.get('/api/acounts/expenses/get-expense-category'),
-                     axios.get(`/api/acounts/expenses/get-expense/${user.accountId}`),
-                    axios.get(`/api/acounts/get-banks/${user?.accountId}`, {
-                        headers: {
-                            'Content-Type': 'application/json',
-
-                        }
-                    })
+                    axios.get(`/api/acounts/expenses/get-all-expenses`),
+                    axios.get(`/api/acounts/banks/get-all-banks`)
                 ]);
 
                 if (expenseCategoryRes.data.success) {
+                    console.log(expenseCategoryRes?.data?.expensesCategories)
                     setExpensesCategories(expenseCategoryRes?.data?.expensesCategories);
                 }
 
                 if (expenseRes.data.success) {
+                    console.log(expenseRes?.data?.expenses)
                     setExpenses(expenseRes?.data?.expenses);
                 }
 
                 if (bankRes.data.success) {
+                    console.log(bankRes?.data?.banks)
                     setBankaccounts(bankRes?.data?.banks);
                 }
             } catch (error) {
@@ -54,22 +51,24 @@ const page = () => {
         };
 
         fetchData();
-    }, [user?.accountId]);
+    }, []);
+
+
 
     return (
-        <Accountslayout>
+        <SuperAdminlayout>
             <section className="w-full p-6">
-                <Accountsbreadcrumbs
-                    path2="Expenses"
+                <Superbreadcrumb
+                    path="Expenses"
                     expensesCategories={expensesCategories}
                     bankaccounts={bankaccounts}
                     setExpenses={setExpenses}
                 />
 
-                <Listexpense bankaccounts={bankaccounts} expenses={expenses} setExpenses={setExpenses}/>
+                <ListExpenses bankaccounts={bankaccounts} expenses={expenses} setExpenses={setExpenses} />
             </section>
-        </Accountslayout>
-    );
-};
+        </SuperAdminlayout>
+    )
+}
 
-export default page;
+export default page

@@ -1,14 +1,13 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Banknote, User, Wallet } from "lucide-react"; // icons replaceable
-import BankDialog from "../dialog/Bankdailog";
-import { useParams, useRouter } from "next/navigation";
-// import { useRouter } from "next/navigation";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Banknote, User, Wallet } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import React from 'react'
+import { useSelector } from 'react-redux';
+import BankDialog from '../dialog/BankDialog';
 
 const Listbanks = () => {
-
     const { banks, loading } = useSelector((state) => state.Banks);
 
     const router = useRouter();
@@ -16,7 +15,6 @@ const Listbanks = () => {
     const { slug } = useParams();
 
     const [open, setOpen] = React.useState(false);
-
     return (
         <div className="bg-white p-6 rounded-xl shadow-md flex flex-col h-[64vh] overflow-auto">
 
@@ -74,8 +72,7 @@ const Listbanks = () => {
                                     size="sm"
                                     className="w-full"
                                     onClick={() => router.push(
-                                        `/accounts/${slug}/bank/${bank?.bankslug
-                                        }`
+                                        `/admin/bank/${bank?.bankslug}`
                                     )}
 
                                 >
@@ -87,7 +84,7 @@ const Listbanks = () => {
                 </div>
             )}
         </div>
-    );
-};
+    )
+}
 
-export default Listbanks;
+export default Listbanks

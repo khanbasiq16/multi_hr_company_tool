@@ -57,6 +57,8 @@ const BankDialog = ({ open, setOpen }) => {
     const handleCurrencySelect = (currencyCode) => {
         const selected = curency.find(c => c.currencyCode === currencyCode);
 
+
+        console.log(selected)
         setFormData({
             ...formData,
             currency: {

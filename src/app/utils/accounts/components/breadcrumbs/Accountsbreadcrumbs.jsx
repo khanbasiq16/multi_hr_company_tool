@@ -3,7 +3,7 @@ import Bankdailog from "../dialog/Bankdailog";
 import ExpensesCatdailog from "../dialog/ExpensesCatdailog";
 import ExpenseDialog from "../dialog/ExpenseDialog";
 
-const Accountsbreadcrumbs = ({ path, path2, expensesCategories, bankaccounts}) => {
+const Accountsbreadcrumbs = ({ path, path2, expensesCategories, bankaccounts , setExpenses}) => {
     const [open, setOpen] = React.useState(false);
     return (
         <div className="bg-white px-6 py-4 mb-5 rounded-xl flex justify-between items-center ">
@@ -19,7 +19,7 @@ const Accountsbreadcrumbs = ({ path, path2, expensesCategories, bankaccounts}) =
             {path2 === "Banks" ? (
                 <Bankdailog open={open} setOpen={setOpen} />
             ) : path2 === "Expenses" ? (
-                <ExpenseDialog expensesCategories={expensesCategories} bankaccounts={bankaccounts} />
+                <ExpenseDialog expensesCategories={expensesCategories} bankaccounts={bankaccounts} setExpenses={setExpenses} />
             ) : null}
         </div>
     );

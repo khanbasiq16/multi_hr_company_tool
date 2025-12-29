@@ -17,6 +17,7 @@ import { createcompany } from "@/features/Slice/CompanySlice";
 import { createdepartment } from "@/features/Slice/DepartmentSlice";
 import { createemployees } from "@/features/Slice/EmployeeSlice";
 import { getallipwhitelist } from "@/features/Slice/IpwhiteSlice";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [departdialog, setDepartdialog] = useState(false);
@@ -25,6 +26,7 @@ const Page = () => {
   const [selectedDept, setSelectedDept] = useState(null);
   const [signupAccess, setSignupAccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const dispatch = useDispatch();
   const { department } = useSelector((state) => state.Department);
@@ -125,6 +127,12 @@ const Page = () => {
     <SuperAdminlayout>
       <div className="p-6 space-y-6">
         {/* 🔘 Toggle for Admin Signup Page */}
+
+
+        <div className="flex w-full justify-between">
+
+
+        
         <div className="flex items-center gap-3 bg-white shadow p-3 rounded-lg w-fit">
           <Label className="text-sm font-medium">Admin Signup Page</Label>
           <Switch
@@ -133,7 +141,19 @@ const Page = () => {
             disabled={loading}
           />
           {loading && <span className="text-xs text-gray-500">Updating...</span>}
+
+        
         </div>
+
+
+          <Button 
+    onClick={() => router.push("/admin/holidays")} 
+    className="bg-[#5965AB] text-white"
+  >
+    📅 Open Holiday Setter
+  </Button>
+
+  </div>
 
         {/* ✅ Top Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

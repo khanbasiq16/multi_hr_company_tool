@@ -1,18 +1,19 @@
 import React from "react";
 import Companydailog from "../dialog/Companydailog";
 import Employeedailog from "../dialog/Employeedailog";
-import Expensedailog from "../dialog/Expensedailog";
 import TemplateDialog from "../dialog/TemplateDialog";
 import AccountDialog from "../dialog/Accountsdialog";
+import BankDialog from "../dialog/BankDialog";
+import ExpenseDialog from "../dialog/ExpenseDialog";
 
-const Superbreadcrumb = ({ path, path2 }) => {
+const Superbreadcrumb = ({ path, path2, expensesCategories, bankaccounts, setExpenses }) => {
   return (
     <div className="bg-white px-6 py-4 mb-5 rounded-xl flex justify-between items-center ">
       {/* Left - Company Name */}
       <div className="flex flex-col gap-0">
-        <h2 className="text-lg font-semibold text-gray-700">{path}</h2>
+        <h2 className="text-lg font-semibold text-gray-700">{path.toLowerCase() === "banks" ? "Bank Accounts" : path}</h2>
         <p className="text-gray opacity-80 text-xs">
-          home {">"} {path.toLowerCase()}{" "}
+          home {">"} {path.toLowerCase() === "banks" ? "bank accounts" : path.toLowerCase()}{" "}
           {path2 ? `> ${path2.toLowerCase()}` : ""}
         </p>
       </div>
@@ -27,6 +28,10 @@ const Superbreadcrumb = ({ path, path2 }) => {
         <TemplateDialog />
       ) : path === "Accountants" ? (
         <AccountDialog />
+      ) : path === "Banks" ? (
+        <BankDialog />
+      ) : path === "Expenses" ? (
+        <ExpenseDialog expensesCategories={expensesCategories} bankaccounts={bankaccounts} setExpenses={setExpenses} />
       ) : null}
     </div>
   );

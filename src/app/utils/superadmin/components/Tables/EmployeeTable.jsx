@@ -256,11 +256,6 @@ export function EmployeeTable({ employees }) {
   };
 
 
-
-
-
-
-
   const handleCheckIn = async (empid, employeeName) => {
     const toastId = toast.loading("Checking in...");
 
@@ -296,6 +291,44 @@ export function EmployeeTable({ employees }) {
 
   };
 
+  const downloadSalaryExcel = async () => {
+    try {
+      const response = await fetch("/api/admin/export-salary", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Download failed");
+      }
+
+      const blob = await response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+
+      const date = new Date();
+      a.download = `Salary_Report_${date.getMonth() + 1}_${date.getFullYear()}.xlsx`;
+
+      document.body.appendChild(a);
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      console.log("Excel downloaded successfully!");
+
+    } catch (error) {
+      console.error("Export Error:", error);
+      alert(error.message || "Excel download karne mein masla hua.");
+    }
+  };
 
 
   const columns = [
@@ -570,92 +603,141 @@ export function EmployeeTable({ employees }) {
   return (
     <div className="w-full">
       {/* FILTER / BULK ACTIONS */}
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter emails..."
-          value={table.getColumn("employeeemail")?.getFilterValue() ?? ""}
-          onChange={(event) =>
-            table.getColumn("employeeemail")?.setFilterValue(event.target.value)
-          }
-          className="w-40"
-        />
 
-        {table.getFilteredSelectedRowModel().rows.length > 0 && (
-          <div className="ml-4">
-            <Select
-              disabled={updatingStatus}
-              onValueChange={(val) => handleBulkStatusChange(val)}
-            >
-              <SelectTrigger className="w-[160px]">
-                <SelectValue placeholder="Change Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="active">Activate</SelectItem>
-                <SelectItem value="deactivate">Deactivate</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        )}
 
-        {/* DELETE DIALOG */}
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button
-              variant="destructive"
-              size="sm"
-              disabled={table.getFilteredSelectedRowModel().rows.length === 0}
-              className="ml-4"
-            >
-              <Trash />
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This will permanently delete the selected employees.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDelete} disabled={deleteloading}>
-                {deleteloading ? (
-                  <div className="flex items-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-white" />
-                    Deleting...
-                  </div>
-                ) : (
-                  "Confirm Delete"
-                )}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+      <div className="flex items-center justify-between py-4 w-full">
+        {/* LEFT SIDE: Search and Bulk Actions */}
+        <div className="flex items-center gap-2">
 
-        {/* COLUMN TOGGLE */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+          <div >
+
+            <Input
+              placeholder="Filter emails..."
+              value={table.getColumn("employeeemail")?.getFilterValue() ?? ""}
+              onChange={(event) =>
+                table.getColumn("employeeemail")?.setFilterValue(event.target.value)
+              }
+              className="w-64" // Search box thoda bada kiya
+            />
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  disabled={table.getFilteredSelectedRowModel().rows.length === 0}
+                  className="ml-4"
                 >
-                  {column.id}
-                </DropdownMenuCheckboxItem>
-              ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+                  <Trash />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently delete the selected employees.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDelete} disabled={deleteloading}>
+                    {deleteloading ? (
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin text-white" />
+                        Deleting...
+                      </div>
+                    ) : (
+                      "Confirm Delete"
+                    )}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+          {table.getFilteredSelectedRowModel().rows.length > 0 && (
+            <>
+              <Select
+                disabled={updatingStatus}
+                onValueChange={(val) => handleBulkStatusChange(val)}
+              >
+                <SelectTrigger className="w-[160px]">
+                  <SelectValue placeholder="Change Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Activate</SelectItem>
+                  <SelectItem value="deactivate">Deactivate</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {/* DELETE DIALOG */}
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    disabled={table.getFilteredSelectedRowModel().rows.length === 0}
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete the selected employees.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete} disabled={deleteloading}>
+                      {deleteloading ? (
+                        <div className="flex items-center gap-2">
+                          <Loader2 className="h-4 w-4 animate-spin text-white" />
+                          Deleting...
+                        </div>
+                      ) : (
+                        "Confirm Delete"
+                      )}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </>
+          )}
+        </div>
+
+        {/* RIGHT SIDE: Column Toggle Buttons */}
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={downloadSalaryExcel}
+            className="bg-[#5965AB] hover:bg-[#4e589c] h-9 text-white font-semibold px-5 rounded-md shadow">
+            + Export Salary Sheet
+          </Button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                Columns <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
+
 
       {/* TABLE */}
       <div className="overflow-hidden rounded-md border">

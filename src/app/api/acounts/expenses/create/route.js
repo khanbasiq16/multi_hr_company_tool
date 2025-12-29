@@ -1,48 +1,52 @@
 import { NextResponse } from "next/server";
-import { collection, doc, setDoc, serverTimestamp, getDocs, getDoc } from "firebase/firestore";
+import {
+    collection,
+    doc,
+    setDoc,
+    serverTimestamp,
+    getDocs,
+    getDoc,
+    updateDoc,
+    arrayUnion,
+    Timestamp,
+} from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { v4 as uuidv4 } from "uuid";
 import cloudinary from "@/lib/cloudinary";
-import { sendNotificationToAdmins } from "@/lib/sendNotificationToAdmins";
-import { sendNotificationToAllAccounts } from "@/lib/sendNotificationToAllAccounts";
 
 export async function POST(req) {
     try {
         const formData = await req.formData();
 
-        const amount = formData.get("amount");
-        const categoryId = formData.get("categoryId");
-        const date = formData.get("date");
-        const description = formData.get("description");
-        const paymentMethod = formData.get("paymentMethod");
-        const bankAccountId = formData.get("bankAccountId");
-        const userid = formData.get("userid");
+        const amount = parseFloat(formData.get("amount"));
+        const categoryId = formData.get("categoryId") || "";
+        const date = formData.get("date") || "";
+        const description = formData.get("description") || "";
+        const paymentMethod = formData.get("paymentMethod") || "";
+        const bankAccountId = formData.get("bankAccountId") || "";
+        const userid = formData.get("userid") || "";
 
-        const files = formData.getAll("files");
-
-        if (!amount) {
+        if (!amount || isNaN(amount)) {
             return NextResponse.json(
-                { meesage: "Amount is required" },
+                { message: "Valid amount is required" },
                 { status: 400 }
             );
         }
 
+        /* ================= IMAGE UPLOAD ================= */
         let imageUrls = [];
+        const files = formData.getAll("files");
 
         if (files && files.length > 0) {
             for (const file of files) {
-                const arrayBuffer = await file.arrayBuffer();
-                const buffer = Buffer.from(arrayBuffer);
+                const buffer = Buffer.from(await file.arrayBuffer());
 
                 const uploadResult = await new Promise((resolve, reject) => {
                     cloudinary.uploader
-                        .upload_stream(
-                            { folder: "expenses" },
-                            (error, result) => {
-                                if (error) reject(error);
-                                else resolve(result);
-                            }
-                        )
+                        .upload_stream({ folder: "expenses" }, (err, result) => {
+                            if (err) reject(err);
+                            else resolve(result);
+                        })
                         .end(buffer);
                 });
 
@@ -52,113 +56,123 @@ export async function POST(req) {
 
         const expenseId = uuidv4();
 
-        const userRef = doc(db, "Users", userid);
-        const userlistData = await getDoc(userRef);
+        /* ================= USER ================= */
+        const userRef = doc(db, "Accounts", userid);
+        const userSnap = await getDoc(userRef);
 
-        if (!userlistData.exists()) {
+        if (!userSnap.exists()) {
             return NextResponse.json(
-                { meesage: "User not found" },
+                { message: "User not found" },
                 { status: 404 }
             );
         }
 
-        const userData = userlistData.data();
+        const userData = userSnap.data();
+        const username = userData?.accountuserName || "";
 
+        /* ================= CATEGORY ================= */
         const categoryRef = doc(db, "expensesCategory", categoryId);
-        const categoryData = await getDoc(categoryRef);
+        const categorySnap = await getDoc(categoryRef);
 
-        if (!categoryData.exists()) {
+        if (!categorySnap.exists()) {
             return NextResponse.json(
-                { meesage: "Category not found" },
+                { message: "Category not found" },
                 { status: 404 }
             );
         }
 
-        const updateCategory = await updateDoc(categoryRef, {
+        const categoryName =
+            categorySnap.data()?.expenseCategoryName || "";
+
+        const categoryType =
+            categorySnap.data()?.expenseCategoryType || "";
+
+        await updateDoc(categoryRef, {
             expensesId: arrayUnion(expenseId),
         });
 
+        /* ================= BANK ================= */
+        let bankId = "";
+        let bankTitle = "";
+
         if (bankAccountId) {
             const bankRef = doc(db, "Banks", bankAccountId);
-            const bankData = await getDoc(bankRef);
+            const bankSnap = await getDoc(bankRef);
 
-            if (!bankData.exists()) {
+            if (!bankSnap.exists()) {
                 return NextResponse.json(
-                    { meesage: "Bank not found" },
+                    { message: "Bank not found" },
                     { status: 404 }
                 );
             }
 
-            const bankdata = bankData.data();
-            const bankBalance = bankdata.balance;
+            const bankData = bankSnap.data();
+            const bankBalance = parseFloat(bankData.balance);
 
             if (bankBalance < amount) {
                 return NextResponse.json(
-                    { meesage: "InSuficient Balance" },
+                    { message: "Insufficient balance" },
                     { status: 400 }
                 );
             }
 
-            const newBalance = (
-                parseFloat(bankBalance) - parseFloat(amount)
-            ).toFixed(2);
+            bankId = bankData?.bankid || "";
+            bankTitle = bankData?.banktitle || "";
 
-            const updateBank = await updateDoc(bankRef, {
+            const newBalance = (bankBalance - amount).toFixed(2);
+
+            await updateDoc(bankRef, {
                 balance: newBalance,
                 expenselogs: arrayUnion({
                     expenseId,
                     amount,
-                    ExpenseCategory: categoryData?.expenseCategoryName,
+                    ExpenseCategory: categoryName,
                     expencaid: categoryId,
                     date,
+                    status: "Debit",
                     paymentMethod,
-                    bankAccountId,
-                    BankAcountName: bankdata?.banktitle,
-                    Username: userData?.accountuserName,
-                    createdAt: serverTimestamp(),
+                    bankAccountId: bankId,
+                    BankAcountName: bankTitle,
+                    Username: username,
+                    createdAt: Timestamp.now(),
                 }),
             });
-
         }
 
-        const createExpense = await setDoc(doc(db, "expenses", expenseId), {
+        /* ================= UPDATE USER ================= */
+        await updateDoc(userRef, {
+            expensesId: arrayUnion(expenseId),
+        });
+
+        /* ================= CREATE EXPENSE ================= */
+        await setDoc(doc(db, "expenses", expenseId), {
             expenseId,
             amount,
-            categoryId,
+            expensecategoryid: categoryId,
+            expensecategoryName: categoryName,
+            expensecategoryType: categoryType,
             date,
             description,
             paymentMethod,
-            bankAccountId,
+            bankAccountId: bankId,
+            bankAccountName: bankTitle,
+            userId: userid,
+            Username: userData.accountuserName,
             imageUrls,
-            createdAt: serverTimestamp(),
+            createdAt: Timestamp.now(),
             status: "active",
         });
 
-        const expenseData = {
-            expenseId,
-            amount,
-            categoryId,
-            date,
-            description,
-            paymentMethod,
-            bankAccountId,
-            Username: userData?.accountuserName,
-            imageUrls,
-            createdAt: serverTimestamp(),
-            status: "active",
-        };
-
-        await sendNotificationToAdmins(expenseData);
-        await sendNotificationToAllAccounts(expenseData);
-
-
-        const expensedata = await collection(db, "expenses");
-        const expenseSnapshot = await getDocs(expensedata);
-        const allExpenseData = expenseSnapshot.docs.map((doc) => doc.data());
-
+        /* ================= RESPONSE ================= */
+        const expenseSnap = await getDocs(collection(db, "expenses"));
+        const allExpenses = expenseSnap.docs.map((d) => d.data());
 
         return NextResponse.json(
-            { success: true, message: "Expense created successfully", data: allExpenseData },
+            {
+                success: true,
+                message: "Expense added successfully",
+                expenses: allExpenses,
+            },
             { status: 201 }
         );
 

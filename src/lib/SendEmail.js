@@ -18,13 +18,13 @@ export const sendEmail = async ({
       transporter = nodemailer.createTransport({
         host: EMAIL_HOST,
         port: EMAIL_PORT,
-        secure: true, // false for 587 (TLS), true for 465 (SSL)
+        secure: true, 
         auth: {
           user: EMAIL_USER,
           pass: EMAIL_PASS,
         },
            tls: {
-        rejectUnauthorized: false, // allows self-signed certificates (common in cPanel/webmail)
+        rejectUnauthorized: false, 
       },
       });
     } else {

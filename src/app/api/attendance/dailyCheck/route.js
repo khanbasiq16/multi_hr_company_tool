@@ -33,6 +33,9 @@ export async function GET() {
     const serverIp = await getServerIp(); 
     const employeesSnap = await getDocs(collection(db, "employees"));
 
+    const holidaysSnap = await getDocs(collection(db, "Holidays"));
+    const holidays = holidaysSnap.docs.map((doc) => doc.data());
+
     
     const today = getKarachiDate();
     const yesterday = new Date(today);
@@ -50,6 +53,23 @@ export async function GET() {
     const yesterdayDateStr = yesterday.toLocaleDateString("en-GB", {
       timeZone: "Asia/Karachi",
     });
+
+    const year = yesterday.getFullYear();
+    const month = String(yesterday.getMonth() + 1).padStart(2, '0');
+    const day = String(yesterday.getDate()).padStart(2, '0');
+    const yesterdayISO = `${year}-${month}-${day}`;
+
+
+    const isHoliday = holidays.some(h => h.date === yesterdayISO);
+    if (isHoliday) {
+      const holidayName = holidays.find(h => h.date === yesterdayISO)?.name || "Public Holiday";
+      console.log(`🛑 Yesterday was a Holiday: ${holidayName} — skipping.`);
+      return NextResponse.json({
+        success: false,
+        message: `Yesterday was a holiday (${holidayName}) — skipping marking`,
+      });
+    }
+    
     const autoCheckouts = [];
 
     for (const empDoc of employeesSnap.docs) {

@@ -17,11 +17,11 @@ const calculateTax = (basicSalary) => {
 
 export async function POST() {
     try {
-        const snapshot = await getDocs(collection(db, "Employees"));
+        const snapshot = await getDocs(collection(db, "employees"));
         const now = new Date();
-        
-        
-        const currentMonth = now.getMonth() + 1; 
+
+
+        const currentMonth = now.getMonth() + 1;
         const currentYear = now.getFullYear();
 
         const salaryRows = snapshot.docs.map(doc => {
@@ -39,25 +39,22 @@ export async function POST() {
             // 2. Attendance Stats
             const lates = monthData.filter(a => a.checkin?.status === "Late").length;
             const absents = monthData.filter(a => a.checkin?.status === "Absent").length;
-            
+
             // 3. Financial Calculations
             const perDaySalary = Math.round(basicSalary / 30);
             const monthlyTax = calculateTax(basicSalary);
-            
+
             // Deductions (Basic Logic)
             const absentDeduction = absents * perDaySalary;
-            const lateDeduction = Math.floor(lates / 3) * (perDaySalary / 2); 
-            
+            const lateDeduction = Math.floor(lates / 3) * (perDaySalary / 2);
+
             const allowances = parseFloat(data.otherAllowances || 0);
             const advance = parseFloat(data.advanceLoan || 0);
             const bonus = parseFloat(data.performanceBonus || 0);
             const commission = parseFloat(data.salesCommission || 0);
 
-
-
             const grossTotal = (basicSalary + allowances + bonus + commission) - (monthlyTax + absentDeduction + lateDeduction + advance);
 
-        
             return {
                 "Name": data.employeeName || "N/A",
                 "Designation": data.department || "N/A",

@@ -103,6 +103,8 @@ npm run lint
 Runs ESLint to analyze code quality.
 
 📁 Recommended Folder Structure
+
+
 multi_hr_company_tool/
 ├── .github/                      # GitHub config (CI, Actions etc.)
 ├── node_modules/                # Installed dependencies

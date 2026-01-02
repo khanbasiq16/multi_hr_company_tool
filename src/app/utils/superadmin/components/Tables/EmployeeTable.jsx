@@ -617,7 +617,7 @@ export function EmployeeTable({ employees }) {
               onChange={(event) =>
                 table.getColumn("employeeemail")?.setFilterValue(event.target.value)
               }
-              className="w-64" // Search box thoda bada kiya
+              className="w-64"
             />
             <AlertDialog>
               <AlertDialogTrigger asChild>

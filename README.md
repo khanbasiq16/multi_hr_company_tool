@@ -103,6 +103,62 @@ npm run lint
 
 Runs ESLint to analyze code quality.
 
+
+### 🔐 Environment Variables
+
+Create a .env.local file in the project root:
+
+NEXT_PUBLIC_API_URL=https://your-backend.com/api
+NEXT_PUBLIC_APP_NAME=MultiHRTool
+
+
+Any additional configuration (like auth keys) should be added here for secure API access.
+
+### 📦 Deployment
+
+This app can be deployed to platforms like Vercel, Netlify, or AWS Amplify.
+
+Vercel Deployment
+
+Install Vercel CLI:
+
+npm i -g vercel
+
+
+Deploy:
+
+vercel
+
+
+Follow the interactive prompts to finish deployment.
+
+### 🤝 Contributing
+
+Contributions are welcome!
+
+Fork the repository
+
+Create your feature branch (git checkout -b feature/new-feature)
+
+Commit your changes (git commit -m "Add new feature")
+
+Push to the branch (git push origin feature/new-feature)
+
+Open a Pull Request
+
+### 📜 License
+
+This project is open-source and available under the MIT License — see the LICENSE file for details.
+
+### ❓About Multi-Company Context
+
+For true multi-company support (backend), consider using frameworks or integrations that support it natively, such as:
+
+Odoo multi-company modules for backend HR data, roles, and company models. 
+Odoo Community
+
+Custom REST APIs exposing employee, company, and permission endpoints.
+
 ### 📁 Recommended Folder Structure
 
 ```text
@@ -176,58 +232,5 @@ multi_hr_company_tool/
 ├── next.config.js        # Next.js configuration
 ├── tailwind.config.js    # Tailwind CSS config
 └── package.json          # NPM scripts & dependencies
+...
 
-### 🔐 Environment Variables
-
-Create a .env.local file in the project root:
-
-NEXT_PUBLIC_API_URL=https://your-backend.com/api
-NEXT_PUBLIC_APP_NAME=MultiHRTool
-
-
-Any additional configuration (like auth keys) should be added here for secure API access.
-
-📦 Deployment
-
-This app can be deployed to platforms like Vercel, Netlify, or AWS Amplify.
-
-Vercel Deployment
-
-Install Vercel CLI:
-
-npm i -g vercel
-
-
-Deploy:
-
-vercel
-
-
-Follow the interactive prompts to finish deployment.
-
-🤝 Contributing
-
-Contributions are welcome!
-
-Fork the repository
-
-Create your feature branch (git checkout -b feature/new-feature)
-
-Commit your changes (git commit -m "Add new feature")
-
-Push to the branch (git push origin feature/new-feature)
-
-Open a Pull Request
-
-📜 License
-
-This project is open-source and available under the MIT License — see the LICENSE file for details.
-
-❓About Multi-Company Context
-
-For true multi-company support (backend), consider using frameworks or integrations that support it natively, such as:
-
-Odoo multi-company modules for backend HR data, roles, and company models. 
-Odoo Community
-
-Custom REST APIs exposing employee, company, and permission endpoints.

@@ -1,11 +1,11 @@
-🛠 HumanEdge Tool
+### 🛠 HumanEdge Tool
 
 A modern web application built with Next.js for managing HR workflows in a multi-company environment.
 This project provides a frontend interface that can be connected to an HR backend (API) to handle employees, companies, roles, and inter-company operations.
 
 ⚠️ Note: The current repository is a Next.js scaffold; the backend APIs and business logic for HR and multi-company features should be implemented separately or integrated with a suitable backend service.
 
-📌 Table of Contents
+### 📌 Table of Contents
 
 About the Project
 
@@ -27,7 +27,7 @@ Contributing
 
 License
 
-🧠 About the Project
+### 🧠 About the Project
 
 Multi HR Company Tool is intended to be a web-based platform allowing HR teams to:
 
@@ -41,7 +41,7 @@ Utilize features like company selection, dashboard views, and user authenticatio
 
 The frontend is built using Next.js, offering server-side rendering, routing, and API integration capabilities.
 
-🧰 Tech Stack
+### 🧰 Tech Stack
 Component	Technology
 Frontend	Next.js (React)
 Styling	Tailwind CSS / CSS Modules
@@ -50,7 +50,7 @@ Deployment	Vercel / Netlify
 
 The application uses standard Next.js conventions (app, pages, or src structure) and development tools like ESLint and Prettier.
 
-✨ Features
+### ✨ Features
 
 The features below should be implemented or integrated with backend services as needed.
 
@@ -64,7 +64,8 @@ The features below should be implemented or integrated with backend services as 
 If this app is intended to integrate with Odoo HR multi-company modules (like hr_employee_multi_company), backend endpoints must expose data accordingly. 
 Odoo Community
 
-🚀 Getting Started
+### 🚀 Getting Started 
+
 Clone the Repository
 git clone https://github.com/khanbasiq16/multi_hr_company_tool.git
 cd multi_hr_company_tool
@@ -80,7 +81,7 @@ Or using yarn:
 
 yarn install
 
-🧪 Available Scripts
+### 🧪 Available Scripts
 
 In the project directory, you can run:
 
@@ -102,82 +103,81 @@ npm run lint
 
 Runs ESLint to analyze code quality.
 
-📁 Recommended Folder Structure
+### 📁 Recommended Folder Structure
 
-
+```text
 multi_hr_company_tool/
-├── .github/                      # GitHub config (CI, Actions etc.)
-├── node_modules/                # Installed dependencies
-├── public/                     # Static assets
+├── .github/              # GitHub config (CI, Actions etc.)
+├── node_modules/         # Installed dependencies
+├── public/               # Static assets
 │   ├── favicon.ico
 │   ├── images/
 │   │   └── logo.png
 │   └── fonts/
-├── src/                       # Source files (main app code)
-│   ├── app/                   # Next.js App Router routes
-│   │   ├── api/               # Backend API routes
-│   │   │   ├── auth/          # Auth API (login, logout)
-│   │   │   └── employees/     # Employee related API
-│   │   ├── dashboard/         # Dashboard pages
-│   │   │   ├── page.jsx       # Dashboard main page
-│   │   │   └── layout.jsx     # Dashboard layout
-│   │   ├── auth/              # Authentication views
+├── src/                  # Source files (main app code)
+│   ├── app/              # Next.js App Router routes
+│   │   ├── api/          # Backend API routes
+│   │   │   ├── auth/     # Auth API (login, logout)
+│   │   │   └── employees/# Employee related API
+│   │   ├── dashboard/    # Dashboard pages
+│   │   │   ├── page.jsx  # Dashboard main page
+│   │   │   └── layout.jsx# Dashboard layout
+│   │   ├── auth/         # Authentication views
 │   │   │   ├── login/
 │   │   │   │   └── page.jsx
 │   │   │   └── signup/
 │   │   │       └── page.jsx
-│   │   ├── companies/         # Company routes
-│   │   │   ├── page.jsx       # All companies list
-│   │   │   └── [id]/          # Single company dynamic route
+│   │   ├── companies/    # Company routes
+│   │   │   ├── page.jsx  # All companies list
+│   │   │   └── [id]/     # Single company dynamic route
 │   │   │       └── page.jsx
-│   │   ├── employees/         # Employee related pages
-│   │   │   ├── page.jsx       # Employee list
-│   │   │   └── [id]/          # Single employee profile
+│   │   ├── employees/    # Employee related pages
+│   │   │   ├── page.jsx  # Employee list
+│   │   │   └── [id]/     # Single employee profile
 │   │   │       └── page.jsx
-│   │   ├── settings/          # Settings pages
+│   │   ├── settings/     # Settings pages
 │   │   │   └── page.jsx
-│   │   ├── layout.jsx         # Root layout (header, nav etc.)
-│   │   ├── loading.jsx        # Global loading state
-│   │   └── not-found.jsx      # 404 page
-│   ├── components/            # Shared React components
+│   │   ├── layout.jsx    # Root layout (header, nav etc.)
+│   │   ├── loading.jsx   # Global loading state
+│   │   └── not-found.jsx # 404 page
+│   ├── components/       # Shared React components
 │   │   ├── Navbar/
 │   │   │   └── Navbar.jsx
 │   │   ├── Sidebar/
 │   │   │   └── Sidebar.jsx
 │   │   ├── EmployeeCard.jsx
 │   │   ├── CompanyCard.jsx
-│   │   └── UI/                # Small UI parts e.g. buttons, inputs
+│   │   └── UI/           # Small UI parts (buttons, inputs)
 │   │       ├── Button.jsx
 │   │       └── Input.jsx
-│   ├── hooks/                 # Custom React hooks
+│   ├── hooks/            # Custom React hooks
 │   │   ├── useAuth.js
 │   │   └── useFetch.js
-│   ├── services/              # API communication logic
-│   │   ├── apiClient.js       # Axios or fetch wrapper
+│   ├── services/         # API communication logic
+│   │   ├── apiClient.js  # Axios or fetch wrapper
 │   │   ├── authService.js
 │   │   ├── companyService.js
 │   │   └── employeeService.js
-│   ├── context/               # React Context API providers
+│   ├── context/          # React Context API providers
 │   │   └── AuthContext.js
-│   ├── utils/                 # Helpers & utilities
+│   ├── utils/            # Helpers & utilities
 │   │   ├── formatDate.js
 │   │   └── storage.js
-│   ├── styles/                # Tailwind / global CSS
+│   ├── styles/           # Tailwind / global CSS
 │   │   ├── globals.css
 │   │   └── tailwind.css
-│   ├── config/                # App configuration
+│   ├── config/           # App configuration
 │   │   └── routes.js
-│   └── types/                 # PropTypes or TypeScript types
+│   └── types/            # PropTypes or TypeScript types
 │       └── index.d.ts
-├── .env.local                  # Local environment variables
-├── .eslintrc.js                # Linting rules
-├── .prettierrc                 # Prettier config
-├── next.config.js              # Next.js configuration
-├── tailwind.config.js          # Tailwind CSS config
-└── package.json                 # NPM scripts & dependencies
+├── .env.local            # Local environment variables
+├── .eslintrc.js          # Linting rules
+├── .prettierrc           # Prettier config
+├── next.config.js        # Next.js configuration
+├── tailwind.config.js    # Tailwind CSS config
+└── package.json          # NPM scripts & dependencies
 
-
-🔐 Environment Variables
+### 🔐 Environment Variables
 
 Create a .env.local file in the project root:
 

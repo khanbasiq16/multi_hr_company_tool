@@ -12,7 +12,6 @@ const ListTemplates = ({loading}) => {
   const dispatch = useDispatch();
   const { templates } = useSelector((state) => state.Templates);
 
- 
 
   return (
     <>
@@ -38,7 +37,7 @@ const ListTemplates = ({loading}) => {
                       template.company.companyLogo || "/placeholder-logo.png"
                     }
                     alt={`${template.company.name} logo`}
-                    className="w-16 h-16    transition-transform duration-300"
+                    className="w-16 h-16 transition-transform duration-300"
                   />
                 </div>
 

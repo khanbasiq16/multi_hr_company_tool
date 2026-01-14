@@ -49,6 +49,25 @@ const TemplateDialog = () => {
     fetchCompanies();
   }, []);
 
+
+  useEffect(() => {
+
+    const fetchallclient = async () => {
+      try {
+        const res = await axios.get("/api/get-all-client");
+        if (res.data.success) {
+          console.log(res.data.clients)
+          setAllClients(res.data.clients);
+          setClient(res.data.clients[0].companyId)
+        }
+      } catch (error) {
+        console.error("Error fetching clients:", error);
+      }
+    };
+    
+    fetchallclient();
+  }, []);
+
   // 🔹 Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -49,6 +49,11 @@ const Sidebar = () => {
       icon: <Users className="w-4 h-4 2xl:w-5 2xl:h-5" />,
     },
     {
+      href: "/admin/templates",
+      label: "Templates",
+      icon: <NotepadTextDashed className="w-4 h-4 2xl:w-5 2xl:h-5" />,
+    },
+    {
       href: "/admin/attendance",
       label: "Attendance",
       icon: <Calendar className="w-4 h-4 2xl:w-5 2xl:h-5" />,
@@ -73,6 +78,7 @@ const Sidebar = () => {
       label: "Expenses",
       icon: <Receipt className="w-4 h-4 2xl:w-5 2xl:h-5" />,
     },
+
   ];
 
   /* ================= SLUG EXTRACTION ================= */

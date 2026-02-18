@@ -14,7 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { role, company  } = body;
+    const { role, company } = body;
 
     if (!role || !company) {
       return NextResponse.json({
@@ -42,7 +42,7 @@ export async function POST(req) {
     await setDoc(templateRef, {
       templateId,
       role,
-      company: companydata,
+      company: companydata?.companyId,
       fields: [],
       createdAt: new Date(),
     });
@@ -53,18 +53,49 @@ export async function POST(req) {
       });
     }
 
-    const templatesRef = collection(db, "templates");
-    const templatesSnapshot = await getDocs(templatesRef);
-    const templates = templatesSnapshot.docs.map((doc) => ({
+
+
+    const templateaRef = collection(db, "templates");
+    const templatesnapshot = await getDocs(templateaRef);
+
+    const rawTemplates = templatesnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
     }));
 
+    // 2. Har template ke liye company ka data fetch karein
+    const enrichedTemplates = await Promise.all(
+      rawTemplates.map(async (template) => {
+        // Maan lete hain template.company mein sirf ID pari hai
+        const companyId = template.company;
+
+        if (companyId) {
+          // Companies collection se is ID ka document nikalein
+          const companyRef = doc(db, "companies", companyId);
+          const companySnap = await getDoc(companyRef);
+
+          if (companySnap.exists()) {
+            // Agar company mil jaye to template ke company field mein pura data assign kar dein
+            return {
+              ...template,
+              company: {
+                id: companySnap.id,
+                ...companySnap.data()
+              }
+            };
+          }
+        }
+        return template;
+      })
+    );
+
+
     return NextResponse.json({
       success: true,
       message: "Template created successfully ",
-      templates,
+      templates: enrichedTemplates,
     });
+
   } catch (error) {
     console.error("Error creating template:", error);
     return NextResponse.json({

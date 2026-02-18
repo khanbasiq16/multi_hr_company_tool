@@ -72,7 +72,6 @@ const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmplo
   const handledatadelete = async (selectedRows) => {
     setDeleteloading(true);
 
-
     try {
       let filteredData = [];
 
@@ -81,8 +80,6 @@ const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmplo
       }
 
       const employee = employees?.find((emp) => emp.employeeName === selectedEmployee);
-
-
 
       const res = await axios.post("/api/attendance/delete-attendance", {
         attendanceIds: filteredData,
@@ -104,8 +101,6 @@ const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmplo
       setDeleteloading(false);
 
     }
-
-
 
   }
 
@@ -150,7 +145,6 @@ const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmplo
 
   };
 
-
   const table = useReactTable({
     data: data,
     columns,
@@ -164,8 +158,6 @@ const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmplo
     getSortedRowModel: getSortedRowModel(),
   });
 
-
-
   const CHECKIN_STATUSES = [
     "On Time",
     "Late",
@@ -173,7 +165,6 @@ const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmplo
     "Short Day",
     "Absent",
   ];
-
 
   const CHECKOUT_STATUSES = [
     "On Time Check Out",

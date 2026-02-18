@@ -107,8 +107,9 @@ const Checkin = ({isCheckedIn , setIsCheckedin , setIsCheckedout}) => {
     if (!canCheckIn) {
       setNoteModal(true);
     } else {
-      const toastId = toast.loading("Checking Your identity...");
       try {
+
+      const toastId = toast.loading("Checking Your identity...");
         const ip = await getcurrentip();
         let time = fetchKarachiTime();
         time = isoTo12Hour(time);

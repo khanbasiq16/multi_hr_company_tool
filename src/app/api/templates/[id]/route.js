@@ -1,33 +1,35 @@
 import { db } from "@/lib/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
   try {
-    const { id } = params; 
-   
+    const { id } = params; // Template Document ID
 
-    const templateRef = collection(db, "templates");
+    // 1. Template ka direct reference lein
+    const templateRef = doc(db, "templates", id);
+    const templateSnap = await getDoc(templateRef);
 
-    const q = query(templateRef, where("company.companyslug", "==", id));
+    if (!templateSnap.exists()) {
+      return NextResponse.json({ success: false, message: "Template not found" }, { status: 404 });
+    }
 
-    const snapshot = await getDocs(q);
+    const templateData = { id: templateSnap.id, ...templateSnap.data() };
 
-    const templates = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const companyId = templateData.company;
 
-    return NextResponse.json({ success: true, templates }, { status: 200 });
+    if (companyId) {
+      const companyRef = doc(db, "companies", companyId);
+      const companySnap = await getDoc(companyRef);
+
+      if (companySnap.exists()) {
+        templateData.company = { id: companySnap.id, ...companySnap.data() };
+      }
+    }
+
+    return NextResponse.json({ success: true, template: templateData }, { status: 200 });
+
   } catch (error) {
-    console.error("Error fetching templates:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Failed to fetch templates",
-        error: error.message,
-      },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

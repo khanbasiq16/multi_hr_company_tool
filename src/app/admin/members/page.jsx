@@ -6,11 +6,12 @@ import { useSelector } from "react-redux";
 
 import SuperAdminlayout    from "@/app/utils/superadmin/layout/SuperAdmin";
 import Superbreadcrumb     from "@/app/utils/superadmin/components/breadcrumbs/Superbreadcrumb";
-import InviteMemberdialog  from "@/app/utils/superadmin/components/dialog/InviteMemberdialog";
-import EditInvitationdialog from "@/app/utils/superadmin/components/dialog/EditInvitationdialog";
+import InviteMemberdialog    from "@/app/utils/superadmin/components/dialog/InviteMemberdialog";
+import EditInvitationdialog  from "@/app/utils/superadmin/components/dialog/EditInvitationdialog";
+import CompanyAccessDialog   from "@/app/utils/superadmin/components/dialog/CompanyAccessDialog";
 
 import {
-  ShieldCheck, UserPlus, Mail, CheckCircle2, Trash2, Pencil,
+  ShieldCheck, UserPlus, Mail, CheckCircle2, Trash2, Pencil, Building2,
 } from "lucide-react";
 
 const MODULE_LABELS = {
@@ -65,8 +66,10 @@ const Page = () => {
   const [members,        setMembers]        = useState([]);
   const [invitations,    setInvitations]    = useState([]);
   const [invitedialog,   setInvitedialog]   = useState(false);
-  const [editMemberOpen, setEditMemberOpen] = useState(false);
-  const [editingMember,  setEditingMember]  = useState(null);
+  const [editMemberOpen,      setEditMemberOpen]      = useState(false);
+  const [editingMember,       setEditingMember]        = useState(null);
+  const [companyAccessOpen,   setCompanyAccessOpen]    = useState(false);
+  const [companyAccessMember, setCompanyAccessMember]  = useState(null);
 
   const { user } = useSelector((s) => s.User);
   const isSuperAdmin       = user?.role === "superAdmin";
@@ -189,6 +192,13 @@ const Page = () => {
                           {isSuperAdmin && (
                             <>
                               <button
+                                onClick={() => { setCompanyAccessMember({ uid: m.uid, name: m.name, email: m.email }); setCompanyAccessOpen(true); }}
+                                className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-violet-500 hover:bg-violet-50 transition-colors shrink-0"
+                                title="Manage company access"
+                              >
+                                <Building2 size={13} />
+                              </button>
+                              <button
                                 onClick={() => { setEditingMember({ id: m.uid, email: m.email, permissions: m.permissions || [] }); setEditMemberOpen(true); }}
                                 className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-blue-500 hover:bg-blue-50 transition-colors shrink-0"
                                 title="Edit permissions"
@@ -261,6 +271,12 @@ const Page = () => {
           </div>
         )}
       </div>
+
+      <CompanyAccessDialog
+        open={companyAccessOpen}
+        onClose={() => { setCompanyAccessOpen(false); setCompanyAccessMember(null); }}
+        member={companyAccessMember}
+      />
 
       {editingMember && (
         <EditInvitationdialog

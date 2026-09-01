@@ -1,8 +1,6 @@
 import { adminDb } from "@/lib/firebaseAdmin";
 import { NextResponse } from "next/server";
-
-const getKarachiDateStr = () =>
-  new Date().toLocaleDateString("en-GB", { timeZone: "Asia/Karachi" }); // DD/MM/YYYY
+import { formatKarachiDate as getKarachiDateStr } from "@/lib/attendanceTime"; // DD/MM/YYYY
 
 export async function POST() {
   try {
@@ -26,9 +24,7 @@ export async function POST() {
       // Only reset if startTime is from a previous day (or missing)
       let shouldReset = true;
       if (startTime) {
-        const startDateStr = new Date(startTime).toLocaleDateString("en-GB", {
-          timeZone: "Asia/Karachi",
-        });
+        const startDateStr = getKarachiDateStr(new Date(startTime));
         if (startDateStr === todayStr) {
           shouldReset = false; // still in today's shift — don't touch
         }

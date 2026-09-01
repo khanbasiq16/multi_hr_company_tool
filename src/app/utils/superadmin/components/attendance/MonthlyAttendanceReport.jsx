@@ -45,14 +45,15 @@ const calcStats = (attendance, monthStr) => {
 
   const c = {
     total: list.length,
-    onTime: 0, late: 0, halfDay: 0, shortDay: 0, absent: 0,
+    earlyIn: 0, onTime: 0, late: 0, halfDay: 0, shortDay: 0, absent: 0,
     earlyOut: 0, lateOut: 0, onTimeOut: 0,
   };
 
   list.forEach((a) => {
     const ci = a.checkin?.status  || "Absent";
     const co = a.checkout?.status || "";
-    if      (ci === "On Time")   c.onTime++;
+    if      (ci === "Early Check In") c.earlyIn++;
+    else if (ci === "On Time")   c.onTime++;
     else if (ci === "Late")      c.late++;
     else if (ci === "Half Day")  c.halfDay++;
     else if (ci === "Short Day") c.shortDay++;
@@ -62,7 +63,7 @@ const calcStats = (attendance, monthStr) => {
     else if (co === "On Time Check Out")    c.onTimeOut++;
   });
 
-  c.present = c.onTime + c.late + c.halfDay + c.shortDay;
+  c.present = c.earlyIn + c.onTime + c.late + c.halfDay + c.shortDay;
 
   let effectiveAbsent = c.absent;
   Object.entries(ABSENT_CONV).forEach(([status, { count, toAbsent }]) => {
@@ -100,6 +101,7 @@ const exportSalaryXLSX = (rows, month) => {
     "Total Days":         r.total,
     "Present":            r.present,
     "Absent":             r.absent,
+    "Early Check In":     r.earlyIn,
     "On Time":            r.onTime,
     "Late":               r.late,
     "Half Day":           r.halfDay,
@@ -187,6 +189,7 @@ export default function MonthlyAttendanceReport() {
   const totals = useMemo(() => ({
     present:         rows.reduce((a, r) => a + r.present,         0),
     absent:          rows.reduce((a, r) => a + r.absent,          0),
+    earlyIn:         rows.reduce((a, r) => a + r.earlyIn,         0),
     late:            rows.reduce((a, r) => a + r.late,            0),
     halfDay:         rows.reduce((a, r) => a + r.halfDay,         0),
     effectiveAbsent: rows.reduce((a, r) => a + r.effectiveAbsent, 0),
@@ -249,9 +252,10 @@ export default function MonthlyAttendanceReport() {
       </div>
 
       {/* ── Summary chips ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-9 gap-3">
         <Chip label="Present"     val={totals.present}          cls="bg-emerald-50  border-emerald-200 text-emerald-700" />
         <Chip label="Absent"      val={totals.absent}           cls="bg-red-50      border-red-200     text-red-700"     />
+        <Chip label="Early In"    val={totals.earlyIn}          cls="bg-cyan-50     border-cyan-200    text-cyan-700"    />
         <Chip label="Late"        val={totals.late}             cls="bg-amber-50    border-amber-200   text-amber-700"   />
         <Chip label="Half Day"    val={totals.halfDay}          cls="bg-blue-50     border-blue-200    text-blue-700"    />
         <Chip label="Eff. Absent" val={totals.effectiveAbsent}  cls="bg-orange-50   border-orange-200  text-orange-700"  />
@@ -287,7 +291,7 @@ export default function MonthlyAttendanceReport() {
                   {[
                     "Employee", "Department",
                     "Bank Name", "Bank Code", "Account No",
-                    "Total Days", "Present", "Absent", "On Time", "Late",
+                    "Total Days", "Present", "Absent", "Early In", "On Time", "Late",
                     "Half Day", "Short Day", "Early Out", "Late Out", "Eff. Absent",
                     "Gross Salary", "Deduction", "Tax", "Net Payable",
                   ].map((h) => (
@@ -300,7 +304,7 @@ export default function MonthlyAttendanceReport() {
               <tbody>
                 {rows.length === 0 ? (
                   <tr>
-                    <td colSpan={19} className="px-4 py-14 text-center text-sm text-slate-400">
+                    <td colSpan={20} className="px-4 py-14 text-center text-sm text-slate-400">
                       {month ? "No records for this month." : "Select a month to view the report."}
                     </td>
                   </tr>
@@ -334,6 +338,9 @@ export default function MonthlyAttendanceReport() {
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-red-50 text-red-600 border border-red-200">
                         <XCircle size={10} />{r.absent}
                       </span>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <span className="inline-block px-2 py-0.5 rounded-full text-xs font-bold bg-cyan-50 text-cyan-700 border border-cyan-100">{r.earlyIn}</span>
                     </td>
                     <td className="px-4 py-3 text-center">
                       <span className="inline-block px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">{r.onTime}</span>

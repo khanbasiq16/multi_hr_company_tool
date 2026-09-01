@@ -38,6 +38,7 @@ const AVATAR_COLORS = [
 ];
 
 const STATUS_STYLE = {
+  "Early Check In":    "bg-cyan-50 text-cyan-700 border-cyan-200",
   "On Time":           "bg-emerald-50 text-emerald-700 border-emerald-200",
   "Late":              "bg-amber-50 text-amber-700 border-amber-200",
   "Half Day":          "bg-blue-50 text-blue-700 border-blue-200",
@@ -75,7 +76,7 @@ const DataTable = ({ columns, data, rowSelection, setRowSelection, selectedEmplo
   const { employees } = useSelector((s) => s.Employee);
   const dispatch = useDispatch();
 
-  const CHECKIN_STATUSES  = ["On Time", "Late", "Half Day", "Short Day", "Absent"];
+  const CHECKIN_STATUSES  = ["Early Check In", "On Time", "Late", "Half Day", "Short Day", "Absent"];
   const CHECKOUT_STATUSES = ["On Time Check Out", "Late Check Out", "Early Check Out", "Absent"];
 
   const handledatadelete = async (selectedRows) => {
@@ -574,6 +575,7 @@ const ListAllAttendance = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="All Status">All Status</SelectItem>
+                  <SelectItem value="Early Check In">Early Check In</SelectItem>
                   <SelectItem value="On Time">On Time</SelectItem>
                   <SelectItem value="Late">Late</SelectItem>
                   <SelectItem value="Half Day">Half Day</SelectItem>

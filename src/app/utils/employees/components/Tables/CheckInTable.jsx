@@ -19,6 +19,7 @@ import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useParams } from "next/navigation";
+import { parseAttendanceDate, toLocalISODate } from "@/lib/attendanceTime";
 
 /* ── Working hours helpers ──────────────────────────────── */
 const parseTime12 = (str) => {
@@ -45,6 +46,7 @@ const calcDuration = (checkinStr, checkoutStr) => {
 
 /* ── Status badge ───────────────────────────────────────── */
 const STATUS_STYLES = {
+  "Early Check In": "bg-cyan-50   text-cyan-700   border-cyan-200",
   "On Time":  "bg-emerald-50 text-emerald-700 border-emerald-200",
   "Late":     "bg-amber-50  text-amber-700  border-amber-200",
   "Half Day": "bg-blue-50   text-blue-700   border-blue-200",
@@ -72,13 +74,7 @@ const CheckInTable = ({ data = [], setemployee }) => {
 
   const processedData = React.useMemo(() =>
     data.map((item, idx) => {
-      let dateObj;
-      if (item.date?.includes("/")) {
-        const [d, m, y] = item.date.split("/");
-        dateObj = new Date(`${y}-${m}-${d}`);
-      } else {
-        dateObj = new Date(item.date || item.createdAt || Date.now());
-      }
+      const dateObj = parseAttendanceDate(item.date || item.createdAt);
       const checkoutTime = item.checkoutTime || null;
       return {
         id: item.id || item._id || idx,
@@ -98,7 +94,7 @@ const CheckInTable = ({ data = [], setemployee }) => {
 
   const filteredData = React.useMemo(() =>
     processedData.filter((item) => {
-      const matchDate  = searchDate  ? item.dateObj.toISOString().split("T")[0] === searchDate : true;
+      const matchDate  = searchDate  ? toLocalISODate(item.dateObj) === searchDate : true;
       const matchMonth = searchMonth ? item.month.toLowerCase().includes(searchMonth.toLowerCase()) : true;
       const matchYear  = searchYear  ? item.year.includes(searchYear) : true;
       return matchDate && matchMonth && matchYear;
@@ -243,6 +239,7 @@ const CheckInTable = ({ data = [], setemployee }) => {
               <SelectValue placeholder={loading ? "Updating…" : "Change Status"} />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="Early Check In"   className="text-xs">Early Check In</SelectItem>
               <SelectItem value="On Time Check In" className="text-xs">On Time</SelectItem>
               <SelectItem value="Late Check In"    className="text-xs">Late</SelectItem>
               <SelectItem value="Half Day"         className="text-xs">Half Day</SelectItem>

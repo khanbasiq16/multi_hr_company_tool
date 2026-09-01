@@ -11,17 +11,9 @@ import {
 } from "firebase/firestore";
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
+import { getKarachiNow, formatKarachiTime, getAttendanceDate } from "@/lib/attendanceTime";
 
-const getKarachiNow = () =>
-  new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Karachi" }));
-
-const fmt12 = (d) => {
-  let h = d.getHours();
-  const m = d.getMinutes().toString().padStart(2, "0");
-  const ap = h >= 12 ? "PM" : "AM";
-  h = h % 12 || 12;
-  return `${h}:${m} ${ap}`;
-};
+const fmt12 = formatKarachiTime;
 
 export async function POST(req) {
   try {
@@ -135,25 +127,7 @@ export async function POST(req) {
     const time = fmt12(now);
 
     // Calculate shift date (handles night shift crossing midnight)
-    let shiftDateStr = now.toLocaleDateString("en-GB");
-
-    const cit = departmentData?.checkInTime;
-    if (cit) {
-      let [tp, mer] = cit.trim().split(" ");
-      let [hh, mm]  = tp.split(":").map(Number);
-      if (mer?.toUpperCase() === "PM" && hh !== 12) hh += 12;
-      if (mer?.toUpperCase() === "AM" && hh === 12) hh  = 0;
-
-      const shiftStart = new Date(now);
-      shiftStart.setHours(hh, mm, 0, 0);
-
-      // Before today's shift start → still inside yesterday's shift window
-      if (now < shiftStart) {
-        const yesterday = new Date(now);
-        yesterday.setDate(yesterday.getDate() - 1);
-        shiftDateStr = yesterday.toLocaleDateString("en-GB");
-      }
-    }
+    let shiftDateStr = getAttendanceDate(now, departmentData?.checkInTime);
 
     // Block if any attendance record already exists for this shift date
     const lastRecord = (userData.Attendance || []).slice(-1)[0];
@@ -191,7 +165,11 @@ export async function POST(req) {
 
       let status = "";
 
-      if (adjustedCurrent >= absentLimit) {
+      if (adjustedCurrent < adjustedCheckIn) {
+        // Employee checked in before their scheduled shift start.
+        status = "Early Check In";
+      }
+      else if (adjustedCurrent >= absentLimit) {
         status = "Late";
       }
       else if (adjustedCurrent <= graceLimit) {

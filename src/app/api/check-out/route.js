@@ -9,17 +9,9 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { NextResponse } from "next/server";
+import { getKarachiNow, formatKarachiTime } from "@/lib/attendanceTime";
 
-const getKarachiNow = () =>
-  new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Karachi" }));
-
-const fmt12srv = (d) => {
-  let h = d.getHours();
-  const m = d.getMinutes().toString().padStart(2, "0");
-  const ap = h >= 12 ? "PM" : "AM";
-  h = h % 12 || 12;
-  return `${h}:${m} ${ap}`;
-};
+const fmt12srv = formatKarachiTime;
 
 export async function POST(req) {
   try {

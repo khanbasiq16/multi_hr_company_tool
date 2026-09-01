@@ -5,6 +5,7 @@ import {
 } from "recharts";
 
 const COLOR_MAP = {
+  "Early Check In":    "#06b6d4",
   "On Time":           "#22c55e",
   "Late":              "#eab308",
   "Half Day":          "#3b82f6",

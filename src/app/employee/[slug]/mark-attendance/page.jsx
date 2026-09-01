@@ -13,10 +13,20 @@ import {
   Clock, Timer, Clock3, CalendarDays,
   Building2, User, CheckCircle2, LogOut,
 } from "lucide-react";
+import { getKarachiNow } from "@/lib/attendanceTime";
 
 const COOLDOWN_SECS = 60;
 
-const CooldownCard = ({ type, secs }) => {
+/* ── check-in status badge (source of truth: backend-computed status) ── */
+const CHECKIN_STATUS_STYLE = {
+  "Early Check In": "bg-cyan-50 text-cyan-700 border-cyan-200",
+  "On Time":        "bg-emerald-50 text-emerald-700 border-emerald-200",
+  "Late":           "bg-amber-50 text-amber-700 border-amber-200",
+  "Half Day":       "bg-blue-50 text-blue-700 border-blue-200",
+  "Short Day":      "bg-violet-50 text-violet-700 border-violet-200",
+};
+
+const CooldownCard = ({ type, secs, checkinInfo }) => {
   const isCheckin = type === "checkin";
   return (
     <div className="flex flex-col items-center py-8 gap-5 text-center">
@@ -35,6 +45,26 @@ const CooldownCard = ({ type, secs }) => {
           {isCheckin ? "Checkout will be available shortly" : "You're all done for today!"}
         </p>
       </div>
+
+      {isCheckin && checkinInfo?.time && (
+        <div className="flex items-center gap-4">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Check In</p>
+            <p className="text-lg font-extrabold text-slate-900 tabular-nums">{checkinInfo.time}</p>
+          </div>
+          {checkinInfo.status && (
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Status</p>
+              <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${
+                CHECKIN_STATUS_STYLE[checkinInfo.status] || "bg-slate-50 text-slate-600 border-slate-200"
+              }`}>
+                {checkinInfo.status}
+              </span>
+            </div>
+          )}
+        </div>
+      )}
+
       <div className={`flex items-center gap-3 px-5 py-3 rounded-2xl border ${
         isCheckin ? "bg-blue-50 border-blue-200" : "bg-emerald-50 border-emerald-200"
       }`}>
@@ -54,9 +84,7 @@ const CooldownCard = ({ type, secs }) => {
 /* ── live karachi clock (server-corrected) ───────────────── */
 const useKarachiClock = () => {
   const [serverOffset, setServerOffset] = useState(0);
-  const [now, setNow] = useState(() =>
-    new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Karachi" }))
-  );
+  const [now, setNow] = useState(() => getKarachiNow());
 
   // Fetch server time once → compute offset to correct device clock skew
   useEffect(() => {
@@ -68,8 +96,7 @@ const useKarachiClock = () => {
 
   useEffect(() => {
     const tick = () => {
-      const corrected = new Date(Date.now() + serverOffset);
-      setNow(new Date(corrected.toLocaleString("en-US", { timeZone: "Asia/Karachi" })));
+      setNow(getKarachiNow(new Date(Date.now() + serverOffset)));
     };
     tick();
     const id = setInterval(tick, 1000);
@@ -134,6 +161,7 @@ const Page = () => {
   const [loading,       setLoading]      = useState(true);
   const [cooldownType,  setCooldownType] = useState(null);  // "checkin" | "checkout" | null
   const [cooldownSecs,  setCooldownSecs] = useState(0);
+  const [checkinInfo,   setCheckinInfo]  = useState(null);  // { time, status } from last check-in response
 
   const { slug } = useParams();
   const { user } = useSelector((s) => s.User);
@@ -179,7 +207,11 @@ const Page = () => {
     return () => clearTimeout(id);
   }, [cooldownSecs]);
 
-  const handleCheckinDone  = () => { setCooldownType("checkin");  setCooldownSecs(COOLDOWN_SECS); };
+  const handleCheckinDone  = (info) => {
+    setCheckinInfo(info || null);
+    setCooldownType("checkin");
+    setCooldownSecs(COOLDOWN_SECS);
+  };
   const handleCheckoutDone = () => { setCooldownType("checkout"); setCooldownSecs(COOLDOWN_SECS); };
 
   const step = cooldownType === "checkout" ? 3 : (isCheckedIn || cooldownType === "checkin") ? 1 : 0;
@@ -258,7 +290,7 @@ const Page = () => {
             </div>
 
           ) : cooldownType ? (
-            <CooldownCard type={cooldownType} secs={cooldownSecs} />
+            <CooldownCard type={cooldownType} secs={cooldownSecs} checkinInfo={checkinInfo} />
 
           ) : !isCheckedIn ? (
             <Checkin

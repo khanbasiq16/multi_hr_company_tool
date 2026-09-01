@@ -19,6 +19,7 @@ import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useParams } from "next/navigation";
+import { parseAttendanceDate, toLocalISODate } from "@/lib/attendanceTime";
 
 /* ── Status badge ───────────────────────────────────────── */
 const STATUS_STYLES = {
@@ -48,13 +49,7 @@ const CheckOutTable = ({ data = [], setemployee }) => {
 
   const processedData = React.useMemo(() =>
     data.map((item, idx) => {
-      let dateObj;
-      if (item.date?.includes("/")) {
-        const [d, m, y] = item.date.split("/");
-        dateObj = new Date(`${y}-${m}-${d}`);
-      } else {
-        dateObj = new Date(item.date || item.createdAt || Date.now());
-      }
+      const dateObj = parseAttendanceDate(item.date || item.createdAt);
       return {
         id: item.id || item._id || idx,
         ip:            item.ip            || "N/A",
@@ -72,7 +67,7 @@ const CheckOutTable = ({ data = [], setemployee }) => {
 
   const filteredData = React.useMemo(() =>
     processedData.filter((item) => {
-      const matchDate  = searchDate  ? item.dateObj.toISOString().split("T")[0] === searchDate : true;
+      const matchDate  = searchDate  ? toLocalISODate(item.dateObj) === searchDate : true;
       const matchMonth = searchMonth ? item.month.toLowerCase().includes(searchMonth.toLowerCase()) : true;
       const matchYear  = searchYear  ? item.year.includes(searchYear) : true;
       return matchDate && matchMonth && matchYear;

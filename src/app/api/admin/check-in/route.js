@@ -11,12 +11,17 @@ import {
 } from "firebase/firestore";
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
+import { getKarachiNow, formatKarachiTime, getAttendanceDate } from "@/lib/attendanceTime";
 
 export async function POST(req) {
     try {
 
         const body = await req.json();
-        const { employeeId, note, time, ip } = body;
+        const { employeeId, note, ip } = body;
+
+        // Server-authoritative Karachi time — never trust client clock
+        const now  = getKarachiNow();
+        const time = formatKarachiTime(now);
 
         if (!employeeId) {
             console.log("❌ Employee ID Missing");
@@ -131,7 +136,11 @@ export async function POST(req) {
 
             let status = "";
 
-            if (adjustedCurrent >= absentLimit) {
+            if (adjustedCurrent < adjustedCheckIn) {
+                // Employee checked in before their scheduled shift start.
+                status = "Early Check In";
+            }
+            else if (adjustedCurrent >= absentLimit) {
                 status = "Late";
             }
             else if (adjustedCurrent <= graceLimit) {
@@ -164,9 +173,10 @@ export async function POST(req) {
 
 
         let attendanceid = uuidv4()
+        const shiftDateStr = getAttendanceDate(now, departmentData?.checkInTime);
         const attendanceEntry = {
             id: attendanceid,
-            date: new Date().toLocaleDateString("en-GB"),
+            date: shiftDateStr,
             checkin: {
                 note,
                 time,

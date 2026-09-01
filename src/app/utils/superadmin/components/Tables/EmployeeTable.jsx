@@ -40,6 +40,7 @@ import { toast } from "react-hot-toast";
 import { createemployees } from "@/features/Slice/EmployeeSlice";
 import { useDispatch } from "react-redux";
 import axios from "axios";
+import { getKarachiNow, formatKarachiTime } from "@/lib/attendanceTime";
 
 /* ── avatar colour cycle ───────────────────────────────── */
 const AVATAR_COLORS = [
@@ -53,22 +54,8 @@ const AVATAR_COLORS = [
 ];
 
 /* ── helpers ──────────────────────────────────────────── */
-const fetchKarachiTime = () => {
-  try {
-    return new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Karachi" }));
-  } catch {
-    return new Date();
-  }
-};
-
-const isoTo12Hour = (date) => {
-  let h = date.getHours();
-  const m = date.getMinutes().toString().padStart(2, "0");
-  const ampm = h >= 12 ? "PM" : "AM";
-  if (h === 0) h = 12;
-  else if (h > 12) h -= 12;
-  return `${h}:${m} ${ampm}`;
-};
+const fetchKarachiTime = getKarachiNow;
+const isoTo12Hour = formatKarachiTime;
 
 const getCurrentIp = async () => {
   const res = await fetch("https://api.ipify.org?format=json");

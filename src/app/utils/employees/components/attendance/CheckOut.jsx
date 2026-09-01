@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { updateCheckOut } from "@/features/Slice/UserSlice";
 import SwipeSlider from "./SwipeSlider";
+import { getKarachiNow, formatKarachiTime } from "@/lib/attendanceTime";
 
 const CheckOut = ({ isCheckedIn, isCheckedout, setIsCheckedout, setIsCheckedin, onCheckoutDone }) => {
   const { user }                             = useSelector((state) => state.User);
@@ -71,10 +72,7 @@ const CheckOut = ({ isCheckedIn, isCheckedout, setIsCheckedout, setIsCheckedin, 
   const progressPct = Math.min(100, Math.round((elapsedSecs / requiredSecs) * 100));
 
   /* ── helpers ──────────────────────────────────────────── */
-  const getKarachiTime = () => {
-    const corrected = new Date(Date.now() + serverOffset);
-    return new Date(corrected.toLocaleString("en-US", { timeZone: "Asia/Karachi" }));
-  };
+  const getKarachiTime = () => getKarachiNow(new Date(Date.now() + serverOffset));
 
   const getIP = async () => {
     try {
@@ -83,13 +81,7 @@ const CheckOut = ({ isCheckedIn, isCheckedout, setIsCheckedout, setIsCheckedin, 
     } catch { return "0.0.0.0"; }
   };
 
-  const fmt12 = (d) => {
-    let h = d.getHours();
-    const m  = d.getMinutes().toString().padStart(2, "0");
-    const ap = h >= 12 ? "PM" : "AM";
-    h = h % 12 || 12;
-    return `${h}:${m} ${ap}`;
-  };
+  const fmt12 = formatKarachiTime;
 
   const fmtDate = (d) =>
     d.toLocaleDateString("en-US", {

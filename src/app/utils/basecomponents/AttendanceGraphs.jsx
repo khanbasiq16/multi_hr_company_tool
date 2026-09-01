@@ -7,6 +7,7 @@ import {
 import { TrendingUp } from "lucide-react";
 
 const COLOR_MAP = {
+  "Early Check In":    "#06b6d4",
   "On Time":           "#22c55e",
   "Late":              "#eab308",
   "Half Day":          "#f97316",
@@ -18,6 +19,7 @@ const COLOR_MAP = {
 };
 
 const LEGEND = [
+  { label: "Early Check In", color: "#06b6d4" },
   { label: "On Time",      color: "#22c55e" },
   { label: "Late",         color: "#eab308" },
   { label: "Half / Short", color: "#a855f7" },

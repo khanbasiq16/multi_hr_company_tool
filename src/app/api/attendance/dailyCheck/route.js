@@ -2,6 +2,7 @@ import { db } from "@/lib/firebase";
 import { collection, getDocs, doc, updateDoc, query, where } from "firebase/firestore";
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
+import { getKarachiNow as getKarachiDate, formatKarachiTime } from "@/lib/attendanceTime";
 
 async function getServerIp() {
   try {
@@ -14,19 +15,7 @@ async function getServerIp() {
   }
 }
 
-function getKarachiDate() {
-  const options = { timeZone: "Asia/Karachi" };
-  return new Date(new Date().toLocaleString("en-US", options));
-}
-
-function to12HourFormat(date) {
-  let hours = date.getHours();
-  const minutes = date.getMinutes().toString().padStart(2, "0");
-  const modifier = hours >= 12 ? "PM" : "AM";
-  if (hours === 0) hours = 12;
-  else if (hours > 12) hours -= 12;
-  return `${hours}:${minutes} ${modifier}`;
-}
+const to12HourFormat = formatKarachiTime;
 
 export async function GET() {
   try {

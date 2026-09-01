@@ -4,6 +4,7 @@ import { resetCheckIn } from "@/features/Slice/CheckInSlice";
 import { resetTimer } from "@/features/Slice/StopwatchSlice";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { getKarachiNow } from "@/lib/attendanceTime";
 
 
 export default function TimerWatcher() {
@@ -11,16 +12,7 @@ export default function TimerWatcher() {
   const { user } = useSelector((state) => state.User);
   const { isRunning } = useSelector((state) => state.Stopwatch); // optional: check if timer is running
 
-  const fetchKarachiTime = () => {
-    try {
-      const karachiDate = new Date().toLocaleString("en-US", {
-        timeZone: "Asia/Karachi",
-      });
-      return new Date(karachiDate);
-    } catch {
-      return new Date();
-    }
-  };
+  const fetchKarachiTime = getKarachiNow;
 
   useEffect(() => {
     if (!user?.department?.checkOutTime) return;

@@ -13,19 +13,21 @@ import { setattendanceid } from "@/features/Slice/CheckInSlice";
 import axios               from "axios";
 import { resetCheckOut }   from "@/features/Slice/CheckOutSlice";
 import SwipeSlider         from "./SwipeSlider";
+import { getKarachiNow, formatKarachiTime } from "@/lib/attendanceTime";
 
 const Checkin = ({ isCheckedIn, setIsCheckedin, setIsCheckedout, onCheckinDone }) => {
   const { user } = useSelector((state) => state.User);
   const dispatch = useDispatch();
 
-  const [noteModal,     setNoteModal]    = useState(false);
-  const [confirmModal,  setConfirmModal] = useState(false);
-  const [confirmTime,   setConfirmTime]  = useState({ time: "", date: "" });
-  const [lateTime,      setLateTime]     = useState({ time: "", date: "" });
-  const [note,          setNote]         = useState("");
-  const [loading,       setLoading]      = useState(false);
-  const [sliderKey,     setSliderKey]    = useState(0);
-  const [serverOffset,  setServerOffset] = useState(0);
+  const [noteModal,      setNoteModal]      = useState(false);
+  const [confirmModal,   setConfirmModal]   = useState(false);
+  const [isEarlyCheckin, setIsEarlyCheckin] = useState(false);
+  const [confirmTime,    setConfirmTime]    = useState({ time: "", date: "" });
+  const [lateTime,       setLateTime]       = useState({ time: "", date: "" });
+  const [note,           setNote]           = useState("");
+  const [loading,        setLoading]        = useState(false);
+  const [sliderKey,      setSliderKey]      = useState(0);
+  const [serverOffset,   setServerOffset]   = useState(0);
 
   /* ── fetch server time once on mount ─────────────────── */
   useEffect(() => {
@@ -36,10 +38,7 @@ const Checkin = ({ isCheckedIn, setIsCheckedin, setIsCheckedout, onCheckinDone }
   }, []);
 
   /* ── helpers ──────────────────────────────────────────── */
-  const getKarachiTime = () => {
-    const corrected = new Date(Date.now() + serverOffset);
-    return new Date(corrected.toLocaleString("en-US", { timeZone: "Asia/Karachi" }));
-  };
+  const getKarachiTime = () => getKarachiNow(new Date(Date.now() + serverOffset));
 
   const getIP = async () => {
     try {
@@ -48,13 +47,7 @@ const Checkin = ({ isCheckedIn, setIsCheckedin, setIsCheckedout, onCheckinDone }
     } catch { return "0.0.0.0"; }
   };
 
-  const fmt = (d) => {
-    let h = d.getHours();
-    const m  = d.getMinutes().toString().padStart(2, "0");
-    const ap = h >= 12 ? "PM" : "AM";
-    h = h % 12 || 12;
-    return `${h}:${m} ${ap}`;
-  };
+  const fmt = formatKarachiTime;
 
   const fmtDate = (d) =>
     d.toLocaleDateString("en-US", {
@@ -74,7 +67,10 @@ const Checkin = ({ isCheckedIn, setIsCheckedin, setIsCheckedout, onCheckinDone }
         note:       noteText,
       });
       if (res.data.success) {
-        toast.success("Check-in successful!");
+        const statusLabel = res.data.attendance?.checkin?.status || "";
+        toast.success(
+          statusLabel === "Early Check In" ? "Checked in early!" : "Check-in successful!"
+        );
         dispatch(setattendanceid(res.data.attendanceid));
         dispatch(resetCheckOut());
         dispatch(startTimer(res.data.startTime));
@@ -82,13 +78,15 @@ const Checkin = ({ isCheckedIn, setIsCheckedin, setIsCheckedout, onCheckinDone }
         setIsCheckedout(false);
         setNoteModal(false);
         setConfirmModal(false);
+        setIsEarlyCheckin(false);
         setNote("");
-        onCheckinDone?.();
+        onCheckinDone?.(res.data.attendance?.checkin);
         return true;
       } else {
         toast.error(res.data.error || res.data.message || "Check-in failed");
         setConfirmModal(false);
         setNoteModal(false);
+        setIsEarlyCheckin(false);
         resetSlider();
         return false;
       }
@@ -99,6 +97,7 @@ const Checkin = ({ isCheckedIn, setIsCheckedin, setIsCheckedout, onCheckinDone }
         "Check-in failed. Please try again.";
       setConfirmModal(false);
       setNoteModal(false);
+      setIsEarlyCheckin(false);
       toast.error(message);
       resetSlider();
       return false;
@@ -139,10 +138,14 @@ const Checkin = ({ isCheckedIn, setIsCheckedin, setIsCheckedout, onCheckinDone }
       return;
     }
 
-    // Too early — shift hasn't started yet
+    // Early — shift hasn't started yet. Allowed: show an early check-in
+    // confirmation instead of blocking; backend computes the authoritative status.
     if (now < office) {
       resetSlider();
-      return toast.error(`Shift starts at ${checkInStr}. Please check in at the right time.`);
+      setIsEarlyCheckin(true);
+      setConfirmTime({ time: fmt(now), date: fmtDate(now) });
+      setConfirmModal(true);
+      return;
     }
 
     // Late — past grace period
@@ -155,6 +158,7 @@ const Checkin = ({ isCheckedIn, setIsCheckedin, setIsCheckedout, onCheckinDone }
 
     // On time → show confirmation dialog
     resetSlider();
+    setIsEarlyCheckin(false);
     setConfirmTime({ time: fmt(now), date: fmtDate(now) });
     setConfirmModal(true);
   };
@@ -200,20 +204,33 @@ const Checkin = ({ isCheckedIn, setIsCheckedin, setIsCheckedout, onCheckinDone }
         )}
       </div>
 
-      {/* ── On-time confirmation dialog ── */}
+      {/* ── Check-in confirmation dialog (on-time or early) ── */}
       <Dialog open={confirmModal} onOpenChange={(open) => {
-        if (!open) { setConfirmModal(false); resetSlider(); }
+        if (!open) { setConfirmModal(false); setIsEarlyCheckin(false); resetSlider(); }
       }}>
         <DialogContent className="sm:max-w-sm rounded-2xl p-6">
           <DialogHeader>
-            <DialogTitle className="text-base font-bold">Confirm Check-In</DialogTitle>
+            <DialogTitle className="text-base font-bold flex items-center gap-2">
+              {isEarlyCheckin ? "Confirm Early Check-In" : "Confirm Check-In"}
+              {isEarlyCheckin && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-50 text-cyan-700 border border-cyan-200">
+                  Early
+                </span>
+              )}
+            </DialogTitle>
           </DialogHeader>
+
+          {isEarlyCheckin && (
+            <p className="text-xs text-cyan-700 bg-cyan-50 border border-cyan-100 rounded-xl px-3 py-2 -mt-1">
+              You're checking in before your scheduled shift start ({user?.department?.checkInTime || "—"}). This will be recorded as <span className="font-bold">Early Check In</span>.
+            </p>
+          )}
 
           <div className="space-y-3 my-1">
             {/* Time */}
-            <div className="flex items-center gap-3 p-3 bg-blue-50 border border-blue-100 rounded-xl">
-              <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
-                <Clock size={15} className="text-blue-600" />
+            <div className={`flex items-center gap-3 p-3 rounded-xl border ${isEarlyCheckin ? "bg-cyan-50 border-cyan-100" : "bg-blue-50 border-blue-100"}`}>
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${isEarlyCheckin ? "bg-cyan-100" : "bg-blue-100"}`}>
+                <Clock size={15} className={isEarlyCheckin ? "text-cyan-600" : "text-blue-600"} />
               </div>
               <div>
                 <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Check-In Time</p>
@@ -251,7 +268,7 @@ const Checkin = ({ isCheckedIn, setIsCheckedin, setIsCheckedout, onCheckinDone }
           <DialogFooter className="gap-2 mt-2">
             <Button
               variant="outline"
-              onClick={() => { setConfirmModal(false); resetSlider(); }}
+              onClick={() => { setConfirmModal(false); setIsEarlyCheckin(false); resetSlider(); }}
               className="rounded-xl"
               disabled={loading}
             >
@@ -260,11 +277,11 @@ const Checkin = ({ isCheckedIn, setIsCheckedin, setIsCheckedout, onCheckinDone }
             <Button
               onClick={() => doCheckin("")}
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
+              className={`text-white rounded-xl ${isEarlyCheckin ? "bg-cyan-600 hover:bg-cyan-700" : "bg-blue-600 hover:bg-blue-700"}`}
             >
               {loading
                 ? <><Loader2 size={14} className="animate-spin mr-1.5" />Checking in…</>
-                : "Confirm Check In"}
+                : isEarlyCheckin ? "Confirm Early Check In" : "Confirm Check In"}
             </Button>
           </DialogFooter>
         </DialogContent>

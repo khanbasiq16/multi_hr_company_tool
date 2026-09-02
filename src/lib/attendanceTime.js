@@ -40,33 +40,60 @@ export const formatKarachiTime = (date) => {
 export const formatKarachiDate = (date = new Date()) =>
   date.toLocaleDateString("en-GB", { timeZone: APP_TIMEZONE });
 
+const setTimeOnDate = (baseDate, timeStr) => {
+  const d = new Date(baseDate);
+  let [tp, mer] = timeStr.trim().split(" ");
+  let [hh, mm] = tp.split(":").map(Number);
+  if (mer?.toUpperCase() === "PM" && hh !== 12) hh += 12;
+  if (mer?.toUpperCase() === "AM" && hh === 12) hh = 0;
+  d.setHours(hh, mm, 0, 0);
+  return d;
+};
+
 /**
  * The attendance "shift date" for a check-in, night-shift aware.
- * `now` must be a Karachi-normalized Date (see getKarachiNow). If the
- * shift's scheduled check-in time hasn't occurred yet today, the check-in
- * still belongs to yesterday's shift window (e.g. a 9PM–6AM shift checked
- * into at 1AM belongs to the previous day's shift date).
+ * `now` must be a Karachi-normalized Date (see getKarachiNow).
+ *
+ * A check-in only belongs to YESTERDAY's shift when `now` still falls
+ * inside yesterday's overnight shift window (start → end, end computed by
+ * rolling into the next calendar day for an overnight shift). Any other
+ * pre-shift-start time — e.g. 8:57 PM for a 9:00 PM shift — is an early
+ * check-in for TODAY's upcoming shift, not a continuation of yesterday's
+ * already-finished one.
+ *
+ * Do NOT simplify this back to `if (now < shiftStart) shiftDate = yesterday`
+ * — that conflates "still finishing yesterday's overnight shift" with
+ * "checking in early for today's shift" and wrongly matches today's early
+ * check-in against yesterday's completed attendance record.
  */
-export const getAttendanceDate = (now, checkInTimeStr) => {
-  let shiftDateStr = now.toLocaleDateString("en-GB");
+export const getAttendanceDate = (now, checkInTimeStr, checkOutTimeStr) => {
+  if (!checkInTimeStr) {
+    return now.toLocaleDateString("en-GB");
+  }
 
-  if (checkInTimeStr) {
-    let [tp, mer] = checkInTimeStr.trim().split(" ");
-    let [hh, mm] = tp.split(":").map(Number);
-    if (mer?.toUpperCase() === "PM" && hh !== 12) hh += 12;
-    if (mer?.toUpperCase() === "AM" && hh === 12) hh = 0;
+  const todayStart = setTimeOnDate(now, checkInTimeStr);
 
-    const shiftStart = new Date(now);
-    shiftStart.setHours(hh, mm, 0, 0);
+  let todayEnd = checkOutTimeStr ? setTimeOnDate(now, checkOutTimeStr) : null;
+  if (todayEnd && todayEnd <= todayStart) {
+    // Checkout time is numerically before/equal check-in time → overnight shift.
+    todayEnd = new Date(todayEnd);
+    todayEnd.setDate(todayEnd.getDate() + 1);
+  }
 
-    if (now < shiftStart) {
-      const yesterday = new Date(now);
-      yesterday.setDate(yesterday.getDate() - 1);
-      shiftDateStr = yesterday.toLocaleDateString("en-GB");
+  if (todayEnd) {
+    const yesterdayStart = new Date(todayStart);
+    yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+    const yesterdayEnd = new Date(todayEnd);
+    yesterdayEnd.setDate(yesterdayEnd.getDate() - 1);
+
+    // Still inside yesterday's overnight shift window → belongs to yesterday.
+    if (now >= yesterdayStart && now < yesterdayEnd) {
+      return yesterdayStart.toLocaleDateString("en-GB");
     }
   }
 
-  return shiftDateStr;
+  // Early, on-time, or late for TODAY's shift.
+  return todayStart.toLocaleDateString("en-GB");
 };
 
 /**

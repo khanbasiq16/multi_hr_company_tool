@@ -173,7 +173,7 @@ export async function POST(req) {
 
 
         let attendanceid = uuidv4()
-        const shiftDateStr = getAttendanceDate(now, departmentData?.checkInTime);
+        const shiftDateStr = getAttendanceDate(now, departmentData?.checkInTime, departmentData?.checkOutTime);
         const attendanceEntry = {
             id: attendanceid,
             date: shiftDateStr,

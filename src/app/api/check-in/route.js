@@ -127,11 +127,13 @@ export async function POST(req) {
     const time = fmt12(now);
 
     // Calculate shift date (handles night shift crossing midnight)
-    let shiftDateStr = getAttendanceDate(now, departmentData?.checkInTime);
+    let shiftDateStr = getAttendanceDate(now, departmentData?.checkInTime, departmentData?.checkOutTime);
 
     // Block if any attendance record already exists for this shift date
     const lastRecord = (userData.Attendance || []).slice(-1)[0];
-    if (lastRecord?.date === shiftDateStr && Object.keys(lastRecord.checkin || {}).length > 0) {
+    const isDuplicate = lastRecord?.date === shiftDateStr && Object.keys(lastRecord.checkin || {}).length > 0;
+
+    if (isDuplicate) {
       return NextResponse.json(
         { success: false, error: "Attendance already recorded for today's shift. See you next shift!" },
         { status: 400 }
